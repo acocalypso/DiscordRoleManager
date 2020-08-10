@@ -187,13 +187,13 @@ bot.on("messageCreate", async (message) => {
 
 		if (g.members.filter(m => m.roles.includes(ModR.id)) || g.members.filter(m => m.roles.includes(AdminR.id)) || m.id === config.ownerID) {
 			if (!args[0]) {
-				bot.createMessage(c.id, "syntax:\n `!temprole @mention <DAYS> <ROLE-NAME>`,\n or `!temprole remove @mention`\n or `!temprole check @mention`").catch((err) => { console.log(err) });
+				bot.createMessage(c.id, "syntax:\n `(prefix)temprole @mention <DAYS> <ROLE-NAME>`,\n or `(prefix)temprole remove @mention`\n or `!temprole check @mention`").catch((err) => { console.log(err) });
 			}
 			if (args[0] && !mentioned) {
-				bot.createMessage(c.id, "please `@mention` a person you want me to give/remove `!temprole` to...").catch((err) => { console.log(err) });
+				bot.createMessage(c.id, "please `@mention` a person you want me to give/remove `(prefix)temprole` to...").catch((err) => { console.log(err) });
 			}
 			if (!args[1] && mentioned) {
-				bot.createMessage(c.id, "incomplete data, please try: \n `!temprole @mention <DAYS> <ROLE-NAME>`,\n or `!temprole remove @mention`\n or `!temprole check @mention`").catch((err) => { console.log(err) });
+				bot.createMessage(c.id, "incomplete data, please try: \n `(prefix)temprole @mention <DAYS> <ROLE-NAME>`,\n or `(prefix)temprole remove @mention`\n or `(prefix)temprole check @mention`").catch((err) => { console.log(err) });
 			}
 			else {
 				let dateMultiplier = 86400000;
@@ -341,7 +341,7 @@ bot.on("messageCreate", async (message) => {
 										})).catch((err) => { console.log(err) });
 								}
 								else {
-									bot.createMessage(c.id, "this user already has a **temporary** role... try using `!temprole remove @" + mentioned.username + "` if you want to **change** their role.").catch((err) => { console.log(err) });
+									bot.createMessage(c.id, "this user already has a **temporary** role... try using `(prefix)temprole remove @" + mentioned.username + "` if you want to **change** their role.").catch((err) => { console.log(err) });
 								}
 							}
 						});
