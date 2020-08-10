@@ -1,0 +1,17 @@
+{
+  "name": "discordrolebot",
+  "version": "1.0.0",
+  "description": "rolebot",
+  "main": "start.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "AcoVanConis",
+  "license": "ISC",
+  "dependencies": {
+    "eris": "^0.13.3",
+    "fs": "0.0.1-security",
+    "regexp": "^1.0.0",
+    "sqlite3": "^5.0.0"
+  }
+}
