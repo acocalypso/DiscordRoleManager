@@ -1,2 +1,2 @@
 # DiscordRoleManager
-Manager Discord Roles the lazzyyy way
+Manage Discord Roles the lazzyyy way
