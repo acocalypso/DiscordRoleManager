@@ -75,6 +75,7 @@ You may want to use pm2 or systemd to run it as a service
 
 ## Additional IMPORTANT Infos:
 This is a port from https://github.com/Kneckter/DiscordRoleBot
+
 Many thanks to him for his original (no longer supported) version.
 
 Used libs:
