@@ -58,6 +58,7 @@ You may want to use pm2 or systemd to run it as a service
 
 ## Usage example
 
+```
 (prefix)check » to check the time left on your subscription
 (prefix)map » a link to our web map
 (prefix)subscribe/?paypal » for a link to our PayPal
@@ -69,8 +70,7 @@ You may want to use pm2 or systemd to run it as a service
 
 (prefix)help » display help commands
 (prefix)help mods >> display mod commands
-
-
+```
 
 
 ## Additional IMPORTANT Infos:
