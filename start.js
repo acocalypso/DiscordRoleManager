@@ -409,7 +409,7 @@ function GetTimestamp() {
 function RestartBot(type) {
 	if (type == 'manual') { process.exit(1); }
 	else {
-		console.error(GetTimestamp() + "Unexpected error, bot stopping, likely websocket");
+		console.error(GetTimestamp() + "Unexpected error, bot stopping.");
 		process.exit(1);
 	}
 	return;
@@ -441,27 +441,24 @@ function timeConverter(UNIX_timestamp) {
 
 bot.on('error', function (err) {
 	if (typeof err == 'object') {
-		err = JSON.stringify(err);
+		console.error(GetTimestamp() + 'Uncaught error: ' + err);
 	}
-	console.error(GetTimestamp() + 'Uncaught exception: ' + err);
 	RestartBot();
 	return;
 });
 
 process.on('uncaughtException', function (err) {
 	if (typeof err == 'object') {
-		err = JSON.stringify(err);
+		console.error(GetTimestamp() + 'Uncaught exception: ' + err);
 	}
-	console.error(GetTimestamp() + 'Uncaught exception: ' + err);
 	RestartBot();
 	return;
 });
 
 process.on('unhandledRejection', function (err) {
 	if (typeof err == 'object') {
-		err = JSON.stringify(err);
+		console.error(GetTimestamp() + 'Uncaught Rejection: ' + err);
 	}
-	console.error(GetTimestamp() + 'Uncaught exception: ' + err);
 	RestartBot();
 	return;
 });
