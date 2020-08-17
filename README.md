@@ -77,6 +77,3 @@ Many thanks to him for his original (no longer supported) version.
 Used libs:
 - ErisJS
 - sqlite3
-- fs
-- regexp
-
