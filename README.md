@@ -21,24 +21,20 @@
   "ownerID": "", // discord bot owner (usually the one who is using the bot)
   "serverName": "", // discord Server Name
   "serverID": "", // discord Server ID
-
+  "language": "", // de,en
   "cmdPrefix": "?", // prefix for commands
-
   "adminRoleName": "", // Name of the Admin Role
   "modRoleName": "", // Name of the moderator Role
-
   "mapMain": {
     "enabled": "yes", // yes or no
     "url": "https://yourmap.com" // link to your site / map
   },
-
   "paypal": {
     "enabled": "yes", // yes or no
     "url": "https://www.paypal.me/xyz", // URL to your paypal donation site
     "img": "https://raw.githubusercontent.com/Kneckter/RoleDiscordBot/master/paypal_icon.jpg"
   },
-
-  "mainChannelID": "" //channel where commands are accepted
+  "mainChannelID": "" //channel where admin / mod infos are posted
 }
 
 ```
