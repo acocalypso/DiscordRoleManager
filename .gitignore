@@ -1,0 +1,5 @@
+#DiscordRoleManager
+node_modules/
+config/config.json
+.vs/
+package-lock.json

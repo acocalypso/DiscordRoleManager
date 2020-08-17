@@ -1,9 +1,13 @@
 ﻿const Eris = require('eris');
-const config = require('./config.json');
+const config = require('./config/config.json');
 const sql = require('sqlite3');
 let db = new sql.Database('./dataBase.sqlite');
-const regex = require('regexp');
-const fs = require('fs');
+
+// Load locale
+const language = config.language;
+const lang = require('./locale/' + language + '.json');
+
+
 
 var bot = new Eris(config.token, {
     disableEveryone: true,
@@ -24,6 +28,7 @@ setInterval(function () {
 	let dbTime = "";
 	let daysLeft = "";
 	let notify = "";
+	const stringValue = "";
 
 	db.all(`SELECT * FROM temporary_roles`, function (err, rows) {
 		if (!rows) {
@@ -36,6 +41,7 @@ setInterval(function () {
 				daysLeft = (dbTime * 1) - (timeNow * 1);
 
 				let rName = bot.guilds.get(config.serverID).roles.find(rName => rName.name === rows[rowNumber].temporaryRole);
+				const tempRole = rows[rowNumber].temporaryRole;
 				member = bot.guilds.get(config.serverID).members.get(rows[rowNumber].userID);
 
 				// CHECK IF THEIR ACCESS HAS EXPIRED
@@ -46,10 +52,10 @@ setInterval(function () {
 
 					// REMOVE ROLE FROM MEMBER IN GUILD
 					member.removeRole(rName.id).catch(console.error);
-
-					bot.createMessage(config.mainChannelID, "⚠ " + member.user.username + " has **lost** their role of: **"
-						+ rows[rowNumber].temporaryRole + "** - their **temporary** access has __EXPIRED__ 😭 ").catch(console.error);
-
+					const stringValue = lang.lost_role;
+					const has_lost = stringValue.replace(/\$role\$/gi, tempRole);
+					bot.createMessage(config.mainChannelID, "⚠ " + member.user.username + " " + has_lost).catch(console.error);
+					
 					// REMOVE DATABASE ENTRY
 					db.get(`DELETE FROM temporary_roles WHERE userID="${rows[rowNumber].userID}"`), function (err) {
 						if (err) {
@@ -67,9 +73,13 @@ setInterval(function () {
 					}
 
 					// NOTIFY THE USER IN DM THAT THEY WILL EXPIRE
-					bot.getDMChannel(member.user.id).then(dm => dm.createMessage("Servus " + member.user.username + "!\n\n Your Role **" + rName.name + "** on **" + bot.guilds.get(config.serverID).name + "** will be removed in 5 days.\n"
-						+ "If you want to continue, please do another donation.\n"
-						+ "\n\nThank you.").catch((err) => { console.log(err) })).catch((err) => { console.log(err) });
+
+					const stringValue = lang.dm_expire;
+					const memberUsername = member.user.username;
+					const dm_expire_1 = stringValue.replace(/\$memberUsername\$/gi, memberUsername);
+					const dm_expire_2 = dm_expire_1.replace(/\$rName\$/gi, rName.name);
+					const dm_expire_final = dm_expire_2.replace(/\$guildServer\$/gi, bot.guilds.get(config.serverID).name);
+					bot.getDMChannel(member.user.id).then(dm => dm.createMessage(dm_expire_final).catch((err) => { console.log(err) })).catch((err) => { console.log(err) });
 
 					// NOTIFY THE ADMINS OF THE PENDING EXPIRY
 					bot.createMessage(config.mainChannelID, "⚠ " + member.user.username + " will lose their role of: ***" + rName.name + "*** in less than 5 days").catch((err) => { console.log(err) });
@@ -282,9 +292,11 @@ bot.on("messageCreate", async (message) => {
 								endDateVal.setTime(dmFinalDate);
 								dmFinalDate = endDateVal.getDate() + "." + (endDateVal.getMonth() + 1) + "." + endDateVal.getFullYear();
 
-								bot.getDMChannel(mentioned.id).then(dm => dm.createMessage("Hello " + mentioned.username + "!\n\nYour access has been extended.\n"
-									+ "You will loose the role at " + dmFinalDate + ".\n\n"
-									+ "Thanks for your support").catch(error => {
+								const stringValue = lang.dm_access_extended;
+								const dm_access_extend_1 = stringValue.replace(/\$memberUsername\$/gi, mentioned.username);
+								const dm_access_extend_2 = dm_access_extend_1.replace(/\$dmFinalDate\$/gi, dmFinalDate);
+
+								bot.getDMChannel(mentioned.id).then(dm => dm.createMessage(dm_access_extend_2).catch(error => {
 										console.error(GetTimestamp() + "Failed to send a DM to user: " + mentioned.id);
 									})).catch((err) => { console.log(err) });
 
@@ -334,9 +346,12 @@ bot.on("messageCreate", async (message) => {
 									bot.guilds.get(config.serverID).addMemberRole(mentioned.id, theirRole.id, 'Donater').catch((err) => { console.log(err) });
 									console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + mentioned.username + "\" (" + mentioned.id + ") was given role: " + daRoles + " by: " + m.user.username + " (" + m.id + ")");
 									bot.createMessage(c.id, "🎉 " + mentioned.username + " has been given a **temporary** role of: **" + daRoles + "**, enjoy! They will lose this role on: `" + finalDateDisplay + "`").catch((err) => { console.log(err) });
-									bot.getDMChannel(mentioned.id).then(dm => dm.createMessage("Servus " + mentioned.username + "!\n\nDein Zugriff wurde angelegt..\n"
-										+ "Der Zugriff verfällt am " + finalDateDisplay + ".\n\n"
-										+ "Vielen Dank für deine Unterstützung <3").catch(error => {
+
+									const stringValue = lang.dm_access_granted;
+									const dm_granted_1 = stringValue.replace(/\$memberUsername\$/gi, mentioned.username);
+									const dm_granted_2 = dm_granted_1.replace(/\$finalDateDisplay\$/gi, finalDateDisplay);
+									const dm_granted_3 = dm_granted_2.replace(/\$map\$/gi, config.mapMain.url);
+									bot.getDMChannel(mentioned.id).then(dm => dm.createMessage(dm_granted_3).catch(error => {
 											console.error(GetTimestamp() + "Failed to send a DM to user: " + mentioned.id);
 										})).catch((err) => { console.log(err) });
 								}

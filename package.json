@@ -13,5 +13,13 @@
     "fs": "0.0.1-security",
     "regexp": "^1.0.0",
     "sqlite3": "^5.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acocalypso/DiscordRoleManager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/acocalypso/DiscordRoleManager/issues"
+  },
+  "homepage": "https://github.com/acocalypso/DiscordRoleManager#readme"
 }
