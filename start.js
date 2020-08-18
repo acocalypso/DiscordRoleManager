@@ -61,7 +61,12 @@ setInterval(function () {
 						if (err) {
 							console.log(err.message);
                         }
-                    }
+					}
+					const stringValue = lang.dm_lost_role;
+					const dm_lost_role_1 = stringValue.replace(/\$memberUsername\$/gi, member.user.username);
+					const dm_lost_role_2 = dm_lost_role_1.replace(/\$rName\$/gi, rName.Name);
+					const dm_lost_role_3 = dm_lost_role_2.replace(/\$guildServer\$/gi, bot.guilds.get(config.serverID).name);
+					bot.getDMChannel(member.user.id).then(dm => dm.createMessage(dm_lost_role_3).catch((err) => { console.log(err) })).catch((err) => { console.log(err) });
 
 					console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + member.user.username + "\" (" + member.id + ") have lost their role: " + rName.name + "... time EXPIRED");
 				}
