@@ -55,14 +55,20 @@ You may want to use pm2 or systemd to run it as a service
 ## Usage example
 
 ```
+User commands:
+
 (prefix)check » to check the time left on your subscription
 (prefix)map » a link to our web map
-(prefix)subscribe/?paypal » for a link to our PayPal
+(prefix)subscribe or (prefix)paypal » for a link to your PayPal account
+
+Admin / Mod commands:
 
 (prefix)temprole @mention <DAYS> <ROLE-NAME> » to assign a temporary roles
 (prefix)temprole add @mention <DAYS> » to add more time to a temporary role assignment
 (prefix)temprole remove @mention » to remove a temporary role assignment
 (prefix)temprole check @mention » to check the time left on a temporary role assignment
+
+Help commands:
 
 (prefix)help » display help commands
 (prefix)help mods >> display mod commands
