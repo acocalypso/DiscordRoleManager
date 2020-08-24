@@ -15,7 +15,7 @@
   "paypal": {
     "enabled": "yes",
     "url": "https://www.paypal.me/xyz",
-    "img": "https://raw.githubusercontent.com/Kneckter/RoleDiscordBot/master/paypal_icon.jpg"
+    "img": "https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/master/paypal_icon.jpg"
   },
   "mainChannelID": ""
 }

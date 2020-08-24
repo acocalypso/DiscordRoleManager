@@ -32,7 +32,7 @@
   "paypal": {
     "enabled": "yes", // yes or no
     "url": "https://www.paypal.me/xyz", // URL to your paypal donation site
-    "img": "https://raw.githubusercontent.com/Kneckter/RoleDiscordBot/master/paypal_icon.jpg"
+    "img": "https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/master/paypal_icon.jpg"
   },
   "mainChannelID": "" //channel where admin / mod infos are posted
 }
