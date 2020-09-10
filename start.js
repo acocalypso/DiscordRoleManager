@@ -100,7 +100,7 @@ setInterval(function () {
 		}
 	});
 	//console.log(GetTimestamp()+"[ADMIN] Stored accounts checked for expiry and nofication.");
-}, 15000);
+}, 60000);
 // 86400000 = 1day
 // 3600000 = 1hr
 // 60000 = 1min
@@ -469,13 +469,13 @@ bot.on('error', function (err) {
 	return;
 });
 
-/*process.on('uncaughtException', function (err) {
+process.on('uncaughtException', function (err) {
 	if (typeof err == 'object') {
 		console.error(GetTimestamp() + 'Uncaught exception: ' + err);
 	}
 	RestartBot();
 	return;
-});*/
+});
 
 process.on('unhandledRejection', function (err) {
 	if (typeof err == 'object') {
