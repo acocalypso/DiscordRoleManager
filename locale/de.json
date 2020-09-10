@@ -1,0 +1,7 @@
+﻿{
+  "lost_role": "hat die Rolle: **$role$** verloren - der **temporäre** Zugriff ist __AUSGELAUFEN__ 😭",
+  "dm_expire": "Hallo $memberUsername$!\n\nDeine Role **$rName$** auf **$guildServer$** wird in 5 Tagen entfernt.\nWenn du diese weiterhin behalten möchstest musst du eine neue Spende tätigen.\n\nDanke.",
+  "dm_lost_role": "Hallo $memberUsername$!\n\nDeine Role **$rName$** auf **$guildServer$** wurde entfernt.\nWenn du erneut Zugriff möchtest, musst du eine neue Spende tätigen.\n\nDanke.",
+  "dm_access_granted": "Servus $memberUsername$!\n\nDein Zugriff wurde angelegt und verfällt am $finalDateDisplay$.\n\nVielen Dank für deine Unterstützung.\n\nLiveMap: $map$",
+  "dm_access_extended": "Hallo $memberUsername$!\n\nDein Zugriff wurde verlängert..\nDer Zugriff ist bis zum $dmFinalDate$ gültig.\n\nDanke für deine Unterstützung."
+}

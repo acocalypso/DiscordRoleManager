@@ -1,0 +1,23 @@
+{
+  "token": "",
+  "botID": "",
+  "ownerID": "",
+  "serverName": "",
+  "serverID": "",
+  "language": "",
+  "cmdPrefix": "?",
+  "adminRoleName": "",
+  "modRoleName": "",
+  "mapMain": {
+    "enabled": "yes",
+    "url": "https://yourmap.com"
+  },
+  "paypal": {
+    "enabled": "yes",
+    "url": "https://www.paypal.me/xyz",
+    "img": "https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/master/paypal_icon.jpg"
+  },
+  "mainChannelID": ""
+}
+
+
