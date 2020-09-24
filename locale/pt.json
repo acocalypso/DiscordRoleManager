@@ -4,6 +4,6 @@
   "dm_lost_role": "Olá $memberUsername$!\n\nO teu perfil **$rName$** em **$guildServer$** expirou.\nSe pretenderes repor o acesso, por favor renova a tua subscrição.\n\nObrigado.",
   "dm_access_granted": "Olá $memberUsername$!\n\nO teu acesso encontra-se ativo até $finalDateDisplay$.\n\nObrigado pelo teu apoio.\n\nMapa: $map$",
   "dm_access_extended": "Olá  $memberUsername$!\n\nO teu acesso foi extendido.\nEncontra-se agora válido até $dmFinalDate$.\n\nObrigado pelo teu apoio.",
-  "paypal_title": "Click HERE to Subscribe. (PT)",
-  "paypal_description": "Thank you! \nYour support is greatly appreciated. (PT)"
+  "paypal_title": "Clica AQUI para subscrever",
+  "paypal_description": "Obrigado! \nContamos com o teu apoio."
 }
