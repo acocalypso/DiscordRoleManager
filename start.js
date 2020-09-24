@@ -208,13 +208,13 @@ bot.on("messageCreate", async (message) => {
 
 		if (g.members.filter(m => m.roles.includes(ModR.id)) || g.members.filter(m => m.roles.includes(AdminR.id)) || m.id === config.ownerID) {
 			if (!args[0]) {
-				bot.createMessage(c.id, "syntax:\n `(prefix)temprole @mention <DAYS> <ROLE-NAME>`,\n or `(prefix)temprole remove @mention`\n or `!temprole check @mention`").catch((err) => { console.log(err) });
+				bot.createMessage(c.id, "syntax:\n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention`\n or `" + config.cmdPrefix + "temprole check @mention`").catch((err) => { console.log(err) });
 			}
 			if (args[0] && !mentioned) {
 				bot.createMessage(c.id, "please `@mention` a person you want me to give/remove `(prefix)temprole` to...").catch((err) => { console.log(err) });
 			}
 			if (!args[1] && mentioned) {
-				bot.createMessage(c.id, "incomplete data, please try: \n `(prefix)temprole @mention <DAYS> <ROLE-NAME>`,\n or `(prefix)temprole remove @mention`\n or `(prefix)temprole check @mention`").catch((err) => { console.log(err) });
+				bot.createMessage(c.id, "incomplete data, please try: \n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention`\n or `" + config.cmdPrefix + "temprole check @mention`").catch((err) => { console.log(err) });
 			}
 			else {
 				let dateMultiplier = 86400000;
