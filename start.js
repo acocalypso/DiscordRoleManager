@@ -182,14 +182,18 @@ bot.on("messageCreate", async (message) => {
 	}
 
 	// ######################### PAYPAL/SUBSCRIBE ########################
+	
+	const paypal_title = lang.paypal_title;
+	const paypal_description = lang.paypal_description;
+	
 	if (command === "paypal" || command === "subscribe") {
 		if (config.paypal.enabled === "yes") {
 			let embedMSG = {
 				'color': 0xFF0000,
-				'title': 'Click HERE to Subscribe',
+				'title': paypal_title,
 				'url': config.paypal.url,
 				'thumbnail': { 'url': config.paypal.img },
-				'description': 'Thank you! \nYour support is greatly appreciated.'
+				'description': paypal_description
 			};
 			bot.createMessage(c.id, { embed: embedMSG }).catch((err) => { console.log(err) });
 		}
