@@ -166,7 +166,7 @@ bot.on("messageCreate", async (message) => {
 				bot.createMessage(c.id, cmds).catch((err) => { console.log(err) });
 			}
 			else {
-				bot.createMessage(c.id, "you are **NOT** allowed to use this command! \ntry using: `!commads`").catch((err) => { console.log(err) });
+				bot.createMessage(c.id, "you are **NOT** allowed to use this command! \ntry using: `" + config.cmdPrefix + "commads`").catch((err) => { console.log(err) });
 			}
 		}
 		if (!args[0]) {
@@ -232,12 +232,12 @@ bot.on("messageCreate", async (message) => {
 							else {
 								let startDateVal = new Date();
 								startDateVal.setTime(row.startDate);
-								startDateVal = (startDateVal.getMonth() + 1) + "/" + startDateVal.getDate() + "/" + startDateVal.getFullYear();
+								startDateVal = startDateVal.getDate() + "." + (startDateVal.getMonth() + 1) + "." + startDateVal.getFullYear();
 
 								let endDateVal = new Date();
 								endDateVal.setTime(row.endDate);
 
-								finalDate = (endDateVal.getMonth() + 1) + "/" + endDateVal.getDate() + "/" + endDateVal.getFullYear();
+								finalDate = ndDateVal.getDate() + "." + (endDateVal.getMonth() + 1) + "." + endDateVal.getFullYear();
 								bot.createMessage(c.id, "✅ " + mentioned.username + " will lose the role: **" + row.temporaryRole + "** on: `" + finalDate + "`! They were added on: `" + startDateVal + "`").catch((err) => { console.log(err) });
 							}
 						}
@@ -317,7 +317,7 @@ bot.on("messageCreate", async (message) => {
 									}
 									else {
 										endDateVal.setTime(finalDate);
-										finalDate = (endDateVal.getMonth() + 1) + "/" + endDateVal.getDate() + "/" + endDateVal.getFullYear();
+										finalDate = endDateVal.getDate() + "." + (endDateVal.getMonth() + 1) + "." + endDateVal.getFullYear();
 										bot.createMessage(c.id, "✅ " + mentioned.username + " has had time added until: `" + finalDate + "`! They were added on: `" + startDateVal + "`").catch((err) => { console.log(err) });
 									}
 								});
@@ -367,7 +367,7 @@ bot.on("messageCreate", async (message) => {
 										})).catch((err) => { console.log(err) });
 								}
 								else {
-									bot.createMessage(c.id, "this user already has a **temporary** role... try using `(prefix)temprole remove @" + mentioned.username + "` if you want to **change** their role.").catch((err) => { console.log(err) });
+									bot.createMessage(c.id, "this user already has a **temporary** role... try using `" + config.cmdPrefix + "temprole remove @" + mentioned.username + "` if you want to **change** their role.").catch((err) => { console.log(err) });
 								}
 							}
 						});
@@ -402,12 +402,12 @@ bot.on("messageCreate", async (message) => {
 				else {
 					let startDateVal = new Date();
 					startDateVal.setTime(row.startDate);
-					startDateVal = (startDateVal.getMonth() + 1) + "/" + startDateVal.getDate() + "/" + startDateVal.getFullYear();
+					startDateVal = startDateVal.getDate() + "." + (startDateVal.getMonth() + 1) + "." + startDateVal.getFullYear();
 
 					let endDateVal = new Date();
 					endDateVal.setTime(row.endDate);
 
-					finalDate = (endDateVal.getMonth() + 1) + "/" + endDateVal.getDate() + "/" + endDateVal.getFullYear();
+					finalDate = endDateVal.getDate() + "." + (endDateVal.getMonth() + 1) + "." + endDateVal.getFullYear();
 					bot.createMessage(c.id, "✅ You will lose the role: **" + row.temporaryRole + "** on: `" + finalDate + "`! The role was added on: `" + startDateVal + "`").catch((err) => { console.log(err) });
 				}
 			}

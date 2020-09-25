@@ -4,6 +4,6 @@
   "dm_lost_role": "Hallo $memberUsername$!\n\nDeine Role **$rName$** auf **$guildServer$** wurde entfernt.\nWenn du erneut Zugriff möchtest, musst du eine neue Spende tätigen.\n\nDanke.",
   "dm_access_granted": "Servus $memberUsername$!\n\nDein Zugriff wurde angelegt und verfällt am $finalDateDisplay$.\n\nVielen Dank für deine Unterstützung.\n\nLiveMap: $map$",
   "dm_access_extended": "Hallo $memberUsername$!\n\nDein Zugriff wurde verlängert..\nDer Zugriff ist bis zum $dmFinalDate$ gültig.\n\nDanke für deine Unterstützung.",
-  "paypal_title": "Click HERE to Subscribe",
-  "paypal_description": "Thank you! \nYour support is greatly appreciated."
+  "paypal_title": "Klicke HIER für Paypal",
+  "paypal_description": "Danke!\nDeine Unterstützung wird sehr geschätzt."
 }
