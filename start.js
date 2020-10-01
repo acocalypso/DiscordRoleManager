@@ -293,7 +293,7 @@ bot.on("messageCreate", async (message) => {
 								}
 								let startDateVal = new Date();
 								startDateVal.setTime(row.startDate);
-								startDateVal = (startDateVal.getMonth() + 1) + "/" + startDateVal.getDate() + "/" + startDateVal.getFullYear();
+								startDateVal = startDateVal.getDate() + "." + (startDateVal.getMonth() + 1) + "." +  startDateVal.getFullYear();
 
 								let endDateVal = new Date();
 								let finalDate = (parseInt(row.endDate) + parseInt((args[2]) * (dateMultiplier)));
