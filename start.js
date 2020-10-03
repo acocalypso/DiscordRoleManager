@@ -237,7 +237,7 @@ bot.on("messageCreate", async (message) => {
 								let endDateVal = new Date();
 								endDateVal.setTime(row.endDate);
 
-								finalDate = ndDateVal.getDate() + "." + (endDateVal.getMonth() + 1) + "." + endDateVal.getFullYear();
+								finalDate = endDateVal.getDate() + "." + (endDateVal.getMonth() + 1) + "." + endDateVal.getFullYear();
 								bot.createMessage(c.id, "✅ " + mentioned.username + " will lose the role: **" + row.temporaryRole + "** on: `" + finalDate + "`! They were added on: `" + startDateVal + "`").catch((err) => { console.log(err) });
 							}
 						}
