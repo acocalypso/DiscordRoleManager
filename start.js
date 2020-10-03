@@ -211,7 +211,7 @@ bot.on("messageCreate", async (message) => {
 				bot.createMessage(c.id, "syntax:\n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention`\n or `" + config.cmdPrefix + "temprole check @mention`").catch((err) => { console.log(err) });
 			}
 			if (args[0] && !mentioned) {
-				bot.createMessage(c.id, "please `@mention` a person you want me to give/remove `(prefix)temprole` to...").catch((err) => { console.log(err) });
+				bot.createMessage(c.id, "please `@mention` a person you want me to give/remove `" + config.cmdPrefix + "temprole` to...").catch((err) => { console.log(err) });
 			}
 			if (!args[1] && mentioned) {
 				bot.createMessage(c.id, "incomplete data, please try: \n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention`\n or `" + config.cmdPrefix + "temprole check @mention`").catch((err) => { console.log(err) });
