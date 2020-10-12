@@ -379,47 +379,7 @@ bot.on("messageCreate", async (message) => {
 								}
 							});
 						});
-
-							// ADD MEMBER TO DATASE, AND ADD THE ROLE TO MEMBER
-							db.get(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}";`, function (err, row) {
-								if (err) {
-									console.log(err.message);
-								}
-								else {
-									//mentioned = message.mentions.members.first();
-									if (!row) {
-										let curDate = new Date().getTime();
-										let finalDateDisplay = new Date();
-										let finalDate = ((args[1]) * (dateMultiplier));
-										finalDate = ((curDate) + (finalDate));
-										finalDateDisplay.setTime(finalDate);
-										finalDateDisplay = finalDateDisplay.getDate() + "." + (finalDateDisplay.getMonth() + 1) + "." + finalDateDisplay.getFullYear();
-
-										db.run("INSERT INTO temporary_roles (userID, temporaryRole, startDate, endDate, addedBy, notified) VALUES (?, ?, ?, ?, ?, 0)",
-											[mentioned.id, daRoles, curDate, finalDate, m.id]);
-										let theirRole = g.roles.find(role => role.name === daRoles);
-										bot.guilds.get(config.serverID).addMemberRole(mentioned.id, theirRole.id, 'Donater').catch((err) => { console.log(err) });
-										console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + mentioned.username + "\" (" + mentioned.id + ") was given role: " + daRoles + " by: " + m.user.username + " (" + m.id + ")");
-										bot.createMessage(c.id, "🎉 " + mentioned.username + " has been given a **temporary** role of: **" + daRoles + "**, enjoy! They will lose this role on: `" + finalDateDisplay + "`").catch((err) => { console.log(err) });
-
-										const stringValue = lang.dm_access_granted;
-										const dm_granted_1 = stringValue.replace(/\$memberUsername\$/gi, mentioned.username);
-										const dm_granted_2 = dm_granted_1.replace(/\$finalDateDisplay\$/gi, finalDateDisplay);
-										const dm_granted_3 = dm_granted_2.replace(/\$map\$/gi, config.mapMain.url);
-										bot.getDMChannel(mentioned.id).then(dm => dm.createMessage(dm_granted_3).catch(error => {
-											console.error(GetTimestamp() + "Failed to send a DM to user: " + mentioned.id);
-										})).catch((err) => { console.log(err) });
-									}
-									else {
-										bot.createMessage(c.id, "this user already has a **temporary** role... try using `" + config.cmdPrefix + "temprole remove @" + mentioned.username + "` if you want to **change** their role.").catch((err) => { console.log(err) });
-									}
-								}
-							});
 						}
-						else {
-							bot.createMessage(c.id, "I couldn't find such role, please check the spelling and try again.").catch((err) => { console.log(err) });
-						}
-
 					}
 				}
 			}
