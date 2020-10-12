@@ -27,7 +27,7 @@ bot.on('ready', function () {
 
 // ############################# SERVER LISTENER ############################
 
-/*setInterval(function () {
+setInterval(function () {
 	let timeNow = new Date().getTime();
 	let dbTime = "";
 	let daysLeft = "";
@@ -134,7 +134,7 @@ bot.on('ready', function () {
 // 86400000 = 1day
 // 3600000 = 1hr
 // 60000 = 1min
-*/
+
 // ############################# SERVER LISTENER END ############################
 
 bot.on("messageCreate", async (message) => {
@@ -372,7 +372,7 @@ bot.on("messageCreate", async (message) => {
 										if (err) throw err;
 										// if there is no error, you have the result
 											// iterate for all the rows in result
-											bot.createMessage(c.id, "✅ " + args[0] + " has had time added until: `" + creationDate + "`!").catch((err) => { console.log(err) });
+											bot.createMessage(c.id, "✅ " + args[0] + " has been created on: `" + creationDate + "`!").catch((err) => { console.log(err) });
 									});
 								} else {
 									bot.createMessage(c.id, "⚠ [ERROR] " + args[0] + " is __ALREADY__ in the `DataBase`").catch((err) => { console.log(err) });
