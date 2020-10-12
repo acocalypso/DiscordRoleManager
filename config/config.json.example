@@ -8,7 +8,7 @@
   "cmdPrefix": "?",
   "adminRoleName": "",
   "modRoleName": "",
-  "debug": "yes",
+  "debug": "no",
   "mapMain": {
     "enabled": "yes",
     "url": "https://yourmap.com"

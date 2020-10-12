@@ -130,7 +130,7 @@ setInterval(function () {
 		}
 	});
 	//console.log(GetTimestamp()+"[ADMIN] Stored accounts checked for expiry and nofication.");
-}, 15000);
+}, 60000);
 // 86400000 = 1day
 // 3600000 = 1hr
 // 60000 = 1min
@@ -282,64 +282,62 @@ bot.on("messageCreate", async (message) => {
 								}
 							});
 						});
+						conn.end();
 					};
 
-/*
 					// ADD TIME TO A USER
 					if (args[0] === "add") {
 						if (!parseInt(args[2])) {
-							bot.createMessage(c.id, "Error: second value has to be **X** number of days, IE:\n`!" + command + " @" + arg[1] + " 90 " + daRoles + "`").catch((err) => { console.log(err) });
+							bot.createMessage(c.id, "Error: second value has to be **X** number of days, IE:\n`!" + command + " @" + arg[1] + " 90").catch((err) => { console.log(err) });
 						}
-
+						/*
 						if (args[1] && !mentioned) {
-							bot.createMessage(c.id, "please `@mention` a person you want me to add time to...").catch((err) => { console.log(err) });
-						}
+							bot.createMessage(c.id, "please add a person you want me to add time to...").catch((err) => { console.log(err) });
+						}*/
 						if (!args[2]) {
 							bot.createMessage(c.id, "for how **many** days do you want " + mentioned.username + " to have to have this role?").catch((err) => { console.log(err) });
 						}
 						else {
-							db.get(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}";`, function (err, row) {
-								if (err) {
-									console.log(err.message);
-								}
-								else {
-									if (!row) {
-										bot.createMessage(c.id, "⚠ [ERROR] " + mentioned.username + " is __NOT__ in the `DataBase`").catch((err) => { console.log(err) });
+							conn.connect(function (err) {
+								if (err) throw err;
+								// if connection is successful
+								conn.query(`SELECT * FROM abos WHERE TelegramUser ="${args[1]}"`, function (err, result, fields) {
+									// if any error while executing above query, throw error
+									if (err) throw err;
+									// if there is no error, you have the result
+									// iterate for all the rows in result
+									if (result.length === 0) {
+										bot.createMessage(c.id, "⚠ [ERROR] " + args[1] + " is __NOT__ in the `DataBase`").catch((err) => { console.log(err) });
+									} else {
+										Object.keys(result).forEach(function (key) {
+											tele_result = result[key];
+
+											let startDateVal = new Date();
+											startDateVal.setTime(tele_result.paydate);
+											startDateVal = startDateVal.getDate() + "." + (startDateVal.getMonth() + 1) + "." + startDateVal.getFullYear();
+
+											let endDateVal = new Date(tele_result.endtime).getTime();
+											let finalDate = (parseInt(endDateVal) + parseInt((args[2]) * (dateMultiplier)));
+											let expireDate = new Date(parseInt(finalDate));
+											expireDate = expireDate.getFullYear() + "-" + (expireDate.getMonth() + 1) + "-" + expireDate.getDate() + " " + expireDate.getHours() + ":" + expireDate.getMinutes() + ":" + expireDate.getSeconds();
+
+											
+											conn.query(`UPDATE abos SET endtime="${expireDate}" WHERE TelegramUser="${args[1]}"`,
+												function (err, result, fields) {
+													// if any error while executing above query, throw error
+													if (err) throw err;
+													// if there is no error, you have the result
+													// iterate for all the rows in result
+										
+													bot.createMessage(c.id, "✅ " + args[1] + " has had time added until: `" + expireDate + "`! They were added on: `" + startDateVal + "`").catch((err) => { console.log(err) });
+												});
+										});					
 									}
-									let startDateVal = new Date();
-									startDateVal.setTime(row.startDate);
-									startDateVal = startDateVal.getDate() + "." + (startDateVal.getMonth() + 1) + "." + startDateVal.getFullYear();
-
-									let endDateVal = new Date();
-									let finalDate = (parseInt(row.endDate) + parseInt((args[2]) * (dateMultiplier)));
-									let dmFinalDate = (parseInt(row.endDate) + parseInt((args[2]) * (dateMultiplier)));
-
-									console.log("Mentioned User: %s", mentioned.username);
-									endDateVal.setTime(dmFinalDate);
-									dmFinalDate = endDateVal.getDate() + "." + (endDateVal.getMonth() + 1) + "." + endDateVal.getFullYear();
-
-									const stringValue = lang.dm_access_extended;
-									const dm_access_extend_1 = stringValue.replace(/\$memberUsername\$/gi, mentioned.username);
-									const dm_access_extend_2 = dm_access_extend_1.replace(/\$dmFinalDate\$/gi, dmFinalDate);
-
-									bot.getDMChannel(mentioned.id).then(dm => dm.createMessage(dm_access_extend_2).catch(error => {
-										console.error(GetTimestamp() + "Failed to send a DM to user: " + mentioned.id);
-									})).catch((err) => { console.log(err) });
-
-									db.get(`UPDATE temporary_roles SET endDate="${finalDate}", notified=0 WHERE userID="${mentioned.id}";`, function (err) {
-										if (err) {
-											console.log(err.message);
-										}
-										else {
-											endDateVal.setTime(finalDate);
-											finalDate = endDateVal.getDate() + "." + (endDateVal.getMonth() + 1) + "." + endDateVal.getFullYear();
-											bot.createMessage(c.id, "✅ " + mentioned.username + " has had time added until: `" + finalDate + "`! They were added on: `" + startDateVal + "`").catch((err) => { console.log(err) });
-										}
-									});
-								}
+								});
 							});
 						}
-					}*/
+					}
+
 					if (/@[A-Za-z0-9]+/.test(args[0])) {
 
 						if (!parseInt(args[1])) {
@@ -362,7 +360,7 @@ bot.on("messageCreate", async (message) => {
 									let finalDate = ((args[1]) * (dateMultiplier));
 									finalDate = ((curDate) + (finalDate));
 									finalDateDisplay.setTime(finalDate);
-									finalDateDisplay = + finalDateDisplay.getFullYear() + "-" + (finalDateDisplay.getMonth() + 1) + "-" + finalDateDisplay.getDate() + " " + finalDateDisplay.getHours() + ":" + finalDateDisplay.getMinutes() + ":" + finalDateDisplay.getSeconds();
+									finalDateDisplay = finalDateDisplay.getFullYear() + "-" + (finalDateDisplay.getMonth() + 1) + "-" + finalDateDisplay.getDate() + " " + finalDateDisplay.getHours() + ":" + finalDateDisplay.getMinutes() + ":" + finalDateDisplay.getSeconds();
 									let creationDate = new Date(curDate); //2020-10-12 15:05:51 - Thu Nov 12 2020 14:09:36 GMT+0100 (GMT+01:00) {}
 									creationDate = creationDate.getDate() + "." + (creationDate.getMonth() + 1) + "." + creationDate.getFullYear();
 									
@@ -379,6 +377,7 @@ bot.on("messageCreate", async (message) => {
 								}
 							});
 						});
+						conn.end();
 						}
 					}
 				}
@@ -411,35 +410,6 @@ bot.on("messageCreate", async (message) => {
 			}
 			else {
 				let dateMultiplier = 86400000;
-
-				if (args[0] === "telegram") {
-
-					if (config.telegram.tele_enabled == "yes") {
-						var conn = mysql.createConnection({
-							host: config.telegram.tele_db_host,
-							user: config.telegram.tele_db_user,
-							password: config.telegram.tele_db_pass,
-							database: config.telegram.tele_db_name
-						});
-
-
-						conn.connect(function (err) {
-							if (err) throw err;
-							// if connection is successful
-							conn.query("SELECT * FROM abos", function (err, result, fields) {
-								// if any error while executing above query, throw error
-								if (err) throw err;
-								// if there is no error, you have the result
-								// iterate for all the rows in result
-								Object.keys(result).forEach(function (key) {
-									pmsf_result = result[key];
-									console.log(pmsf_result.id);
-								});
-							});
-						});
-					}
-
-				}
 
 				// CHECK DATABASE FOR ROLES
 				if (args[0] === "check") {
