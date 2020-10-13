@@ -8,6 +8,7 @@
   "cmdPrefix": "?",
   "adminRoleName": "",
   "modRoleName": "",
+  "debug": "no",
   "mapMain": {
     "enabled": "yes",
     "url": "https://yourmap.com"
@@ -17,7 +18,23 @@
     "url": "https://www.paypal.me/xyz",
     "img": "https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/master/paypal_icon.jpg"
   },
-  "mainChannelID": ""
+  "mainChannelID": "",
+  "pmsfopole": {
+    "pmsf_enabled": "yes",
+    "pmsf_db_host": "",
+    "pmsf_db_name": "",
+    "pmsf_db_port": "",
+    "pmsf_db_user": "",
+    "pmsf_db_pass": ""
+  },
+  "telegram": {
+    "tele_enabled": "yes",
+    "tele_db_host": "",
+    "tele_db_name": "",
+    "tele_db_port": "",
+    "tele_db_user": "",
+    "tele_db_pass": ""
+  }
 }
 
 
