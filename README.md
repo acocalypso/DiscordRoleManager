@@ -25,6 +25,7 @@
   "cmdPrefix": "?", // prefix for commands
   "adminRoleName": "", // Name of the Admin Role
   "modRoleName": "", // Name of the moderator Role
+  "debug": "no",
   "mapMain": {
     "enabled": "yes", // yes or no
     "url": "https://yourmap.com" // link to your site / map
@@ -34,7 +35,15 @@
     "url": "https://www.paypal.me/xyz", // URL to your paypal donation site
     "img": "https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/master/paypal_icon.jpg"
   },
-  "mainChannelID": "" //channel where admin / mod infos are posted
+  "mainChannelID": "", //channel where admin / mod infos are posted
+  "telegram": {		// Support for https://github.com/Micha854/full_auto_abo_telegram/ usermanagement.
+    "tele_enabled": "yes",
+    "tele_db_host": "",
+    "tele_db_name": "",
+    "tele_db_port": "",
+    "tele_db_user": "",
+    "tele_db_pass": ""
+  }
 }
 
 ```
@@ -68,6 +77,11 @@ Admin / Mod commands:
 (prefix)temprole remove @mention » to remove a temporary role assignment
 (prefix)temprole check @mention » to check the time left on a temporary role assignment
 
+full_auto_abo_telegram https://github.com/Micha854/full_auto_abo_telegram/
+(prefix)telegram @telegramuser days
+(prefix)telegram add @telegramuser days
+(prefix)telegram check @telegramuser
+
 Help commands:
 
 (prefix)help » display help commands
@@ -83,3 +97,4 @@ Many thanks to him for his original (no longer supported) version.
 Used libs:
 - ErisJS
 - sqlite3
+- mysql
