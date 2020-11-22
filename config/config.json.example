@@ -19,14 +19,6 @@
     "img": "https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/master/paypal_icon.jpg"
   },
   "mainChannelID": "",
-  "pmsfopole": {
-    "pmsf_enabled": "yes",
-    "pmsf_db_host": "",
-    "pmsf_db_name": "",
-    "pmsf_db_port": "",
-    "pmsf_db_user": "",
-    "pmsf_db_pass": ""
-  },
   "telegram": {
     "tele_enabled": "yes",
     "tele_db_host": "",
