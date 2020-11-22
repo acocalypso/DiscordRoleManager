@@ -1,7 +1,7 @@
 ﻿const Eris = require('eris');
 const config = require('./config/config.json');
 const sql = require('sqlite3');
-let db = new sql.Database('./dataBase.sqlite');
+var db = new sql.Database('./dataBase.sqlite');
 var mysql = require('mysql');
 
 // Load locale
@@ -16,14 +16,14 @@ var bot = new Eris(config.token, {
     partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'GUILD_MEMBER', 'USER']
 });
 
-bot.on('ready', function () {
+bot.on('ready', () => {
 
     console.log('Ready!');
     CreateDB();
 });
 
 
-
+bot.connect();
 
 // ############################# SERVER LISTENER ############################
 
@@ -243,7 +243,7 @@ bot.on("messageCreate", async (message) => {
 								if (err) throw err;
 								// if there is no error, you have the result
 								// iterate for all the rows in result
-								if (result.length === 0 ) {
+								if (result.length === 0) {
 									bot.createMessage(c.id, "⚠ [ERROR] " + args[1] + " is __NOT__ in the `DataBase`").catch((err) => { console.log(err) });
 								} else {
 									Object.keys(result).forEach(function (key) {
@@ -295,17 +295,17 @@ bot.on("messageCreate", async (message) => {
 											let expireDate = new Date(parseInt(finalDate));
 											expireDate = expireDate.getFullYear() + "-" + (expireDate.getMonth() + 1) + "-" + expireDate.getDate() + " " + expireDate.getHours() + ":" + expireDate.getMinutes() + ":" + expireDate.getSeconds();
 
-											
+
 											conn.query(`UPDATE abos SET endtime="${expireDate}" WHERE TelegramUser="${args[1]}"`,
 												function (err, result, fields) {
 													// if any error while executing above query, throw error
 													if (err) throw err;
 													// if there is no error, you have the result
 													// iterate for all the rows in result
-										
+
 													bot.createMessage(c.id, "✅ " + args[1] + " has had time added until: `" + expireDate + "`! They were added on: `" + startDateVal + "`").catch((err) => { console.log(err) });
 												});
-										});					
+										});
 									}
 								});
 							});
@@ -328,7 +328,7 @@ bot.on("messageCreate", async (message) => {
 								// if there is no error, you have the result
 								// iterate for all the rows in result
 								if (result.length === 0) {
-										
+
 									let curDate = new Date().getTime();
 									let finalDateDisplay = new Date();
 									let finalDate = ((args[1]) * (dateMultiplier));
@@ -337,22 +337,21 @@ bot.on("messageCreate", async (message) => {
 									finalDateDisplay = finalDateDisplay.getFullYear() + "-" + (finalDateDisplay.getMonth() + 1) + "-" + finalDateDisplay.getDate() + " " + finalDateDisplay.getHours() + ":" + finalDateDisplay.getMinutes() + ":" + finalDateDisplay.getSeconds();
 									let creationDate = new Date(curDate); //2020-10-12 15:05:51 - Thu Nov 12 2020 14:09:36 GMT+0100 (GMT+01:00) {}
 									creationDate = creationDate.getDate() + "." + (creationDate.getMonth() + 1) + "." + creationDate.getFullYear();
-									
+
 									conn.query(`INSERT INTO abos (buyerName, buyerEmail, Amount, TelegramUser, userid, channels,pass,TransID,paydate,endtime,info) VALUES ('', '', 0, '${args[0]}', NULL, '', '', NULL, NOW(), '${finalDateDisplay}', 0)`,
 										function (err, result, fields) {
-										// if any error while executing above query, throw error
-										if (err) throw err;
-										// if there is no error, you have the result
+											// if any error while executing above query, throw error
+											if (err) throw err;
+											// if there is no error, you have the result
 											// iterate for all the rows in result
 											bot.createMessage(c.id, "✅ " + args[0] + " has been created on: `" + creationDate + "`!").catch((err) => { console.log(err) });
-									});
+										});
 								} else {
 									bot.createMessage(c.id, "⚠ [ERROR] " + args[0] + " is __ALREADY__ in the `DataBase`").catch((err) => { console.log(err) });
 								}
 							});
 						});
 						conn.end();
-						}
 					}
 				}
 			}
@@ -360,12 +359,10 @@ bot.on("messageCreate", async (message) => {
 				message.delete();
 				bot.createMessage(c.id, "you are **NOT** allowed to use this command!").catch((err) => { console.log(err) });
 			}
+		} else {
+				bot.createMessage(c.id, "Telegram not enabled in config!").catch((err) => { console.log(err) });
 		}
-	else {
-		if (config.telegram.tele_enabled == "no") {
-			bot.createMessage(c.id, "Telegram not enabled in config");
-		}
-        }		
+	}
 
 
 	if (command.startsWith("temprole") || command === "tr" || command === "trole") {
@@ -663,5 +660,3 @@ if (!config.debug == "yes") {
 		bot.connect();
 	});
 }
-
-bot.connect();
