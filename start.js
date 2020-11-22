@@ -33,32 +33,6 @@ setInterval(function () {
 	let daysLeft = "";
 	let notify = "";
 	let stringValue = "";
-	var pmsf_result = "";
-
-	if (config.pmsfopole.pmsf_enabled == "yes") {
-		var conn = mysql.createConnection({
-			host: config.pmsfopole.pmsf_db_host,
-			user: config.pmsfopole.pmsf_db_user,
-			password: config.pmsfopole.pmsf_db_pass,
-			database: config.pmsfopole.pmsf_db_name
-		});
-
-
-		conn.connect(function (err) {
-			if (err) throw err;
-			// if connection is successful
-			conn.query("SELECT * FROM users", function (err, result, fields) {
-				// if any error while executing above query, throw error
-				if (err) throw err;
-				// if there is no error, you have the result
-				// iterate for all the rows in result
-				Object.keys(result).forEach(function (key) {
-					pmsf_result = result[key];
-					console.log(pmsf_result.id);
-				});
-			});
-		});
-	}
 
 	db.all(`SELECT * FROM temporary_roles`, function (err, rows) {
 		if (!rows) {

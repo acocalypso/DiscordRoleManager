@@ -22,5 +22,6 @@
   "bugs": {
     "url": "https://github.com/acocalypso/DiscordRoleManager/issues"
   },
-  "homepage": "https://github.com/acocalypso/DiscordRoleManager#readme"
+  "homepage": "https://github.com/acocalypso/DiscordRoleManager#readme",
+  "devDependencies": {}
 }
