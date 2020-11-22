@@ -429,7 +429,7 @@ bot.on("messageCreate", async (message) => {
 										console.log(err.message);
 									}
 								}
-								console.log(mention.username + "was removed from DB");
+								console.log(mentioned.username + "was removed from DB");
 								bot.createMessage(c.id, "⚠ " + mentioned.username + " has **lost** their role of: **" + theirRole.name + "** and has been removed from the `DataBase`").catch((err) => { console.log(err) });
 							}
 						}
