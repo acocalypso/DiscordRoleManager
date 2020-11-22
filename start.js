@@ -387,8 +387,10 @@ bot.on("messageCreate", async (message) => {
 				bot.createMessage(c.id, "you are **NOT** allowed to use this command!").catch((err) => { console.log(err) });
 			}
 		}
-		else {
+	else {
+		if (config.telegram.tele_enabled == "no") {
 			bot.createMessage(c.id, "Telegram not enabled in config");
+		}
         }		
 
 
