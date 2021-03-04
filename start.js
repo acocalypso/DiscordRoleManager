@@ -106,7 +106,7 @@ setInterval(function () {
 						}
 					}
 				} else {
-					bot.createMessage(config.mainChannelID, "⚠ " + rows[rowNumber].temporaryRole + " does not exist! Please check your role assignment").catch((err) => { console.log(err) });
+					bot.createMessage(config.mainChannelID, "⚠ " + rows[rowNumber].temporaryRole + " for user " + member.user.username + " does not exist! Please check your role assignment").catch((err) => { console.log(err) });
 				}
 			}
 		}
