@@ -1,6 +1,7 @@
 ﻿const Eris = require('eris');
 const config = require('./config/config.json');
 const sql = require('sqlite3');
+const fs = require('fs');
 var db = new sql.Database('./dataBase.sqlite');
 var mysql = require('mysql');
 
@@ -8,12 +9,9 @@ var mysql = require('mysql');
 const language = config.language;
 const lang = require('./locale/' + language + '.json');
 
-
-
 var bot = new Eris(config.token, {
     disableEveryone: true,
-    getAllUsers: true,
-    partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'GUILD_MEMBER', 'USER']
+    getAllUsers: true
 });
 
 bot.on('ready', () => {
@@ -34,6 +32,12 @@ setInterval(function () {
 	let notify = "";
 	let stringValue = "";
 
+	/*/### Mysql Stuff ###
+	get_expired_user();
+	
+	});*/
+
+	//### DB2 Stuf ###
 	db.all(`SELECT * FROM temporary_roles`, function (err, rows) {
 		if (!rows) {
 			console.log(GetTimestamp() + "No one is in the DataBase");
@@ -47,58 +51,62 @@ setInterval(function () {
 				let rName = bot.guilds.get(config.serverID).roles.find(rName => rName.name === rows[rowNumber].temporaryRole);
 				const tempRole = rows[rowNumber].temporaryRole;
 				member = bot.guilds.get(config.serverID).members.get(rows[rowNumber].userID);
-
-				// CHECK IF THEIR ACCESS HAS EXPIRED
-				if (typeof member !== 'undefined') {
-					if (daysLeft < 1) {
-						if (!member) {
-							member.user.username = "<@" + rows[rowNumber].userID + ">"; member.id = "";
-						}
-
-						// REMOVE ROLE FROM MEMBER IN GUILD
-						member.removeRole(rName.id).catch(console.error);
-						stringValue = lang.lost_role;
-						const has_lost = stringValue.replace(/\$role\$/gi, tempRole);
-						bot.createMessage(config.mainChannelID, "⚠ " + member.user.username + " " + has_lost).catch(console.error);
-
-						// REMOVE DATABASE ENTRY
-						db.get(`DELETE FROM temporary_roles WHERE userID="${rows[rowNumber].userID}"`), function (err) {
-							if (err) {
-								console.log(err.message);
+				// CHECK IF ROLE EXISTS on Server
+				if (typeof rName !== 'undefined') {
+					// CHECK IF THEIR ACCESS HAS EXPIRED
+					if (typeof member !== 'undefined') {
+						if (daysLeft < 1) {
+							if (!member) {
+								member.user.username = "<@" + rows[rowNumber].userID + ">"; member.id = "";
 							}
+
+							// REMOVE ROLE FROM MEMBER IN GUILD
+							member.removeRole(rName.id).catch(console.error);
+							stringValue = lang.lost_role;
+							const has_lost = stringValue.replace(/\$role\$/gi, tempRole);
+							bot.createMessage(config.mainChannelID, "⚠ " + member.user.username + " " + has_lost).catch(console.error);
+
+							// REMOVE DATABASE ENTRY
+							db.get(`DELETE FROM temporary_roles WHERE userID="${rows[rowNumber].userID}"`), function (err) {
+								if (err) {
+									console.log(err.message);
+								}
+							}
+							stringValue = lang.dm_lost_role;
+							const dm_lost_role_1 = stringValue.replace(/\$memberUsername\$/gi, member.user.username);
+							const dm_lost_role_2 = dm_lost_role_1.replace(/\$rName\$/gi, rName.name);
+							const dm_lost_role_3 = dm_lost_role_2.replace(/\$guildServer\$/gi, bot.guilds.get(config.serverID).name);
+							bot.getDMChannel(member.user.id).then(dm => dm.createMessage(dm_lost_role_3).catch((err) => { console.log(err) })).catch((err) => { console.log(err) });
+
+							console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + member.user.username + "\" (" + member.id + ") have lost their role: " + rName.name + "... time EXPIRED");
 						}
-						stringValue = lang.dm_lost_role;
-						const dm_lost_role_1 = stringValue.replace(/\$memberUsername\$/gi, member.user.username);
-						const dm_lost_role_2 = dm_lost_role_1.replace(/\$rName\$/gi, rName.name);
-						const dm_lost_role_3 = dm_lost_role_2.replace(/\$guildServer\$/gi, bot.guilds.get(config.serverID).name);
-						bot.getDMChannel(member.user.id).then(dm => dm.createMessage(dm_lost_role_3).catch((err) => { console.log(err) })).catch((err) => { console.log(err) });
 
-						console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + member.user.username + "\" (" + member.id + ") have lost their role: " + rName.name + "... time EXPIRED");
-					}
-				
-					// CHECK IF THEIR ONLY HAVE 5 DAYS LEFT
-					if (daysLeft < 432000000 && notify == "0") {
-						if (!member) {
-							member.user.username = "<@" + rows[rowNumber].userID + ">"; member.id = "";
+						// CHECK IF THEIR ONLY HAVE 5 DAYS LEFT
+						if (daysLeft < 432000000 && notify == "0") {
+							if (!member) {
+								member.user.username = "<@" + rows[rowNumber].userID + ">"; member.id = "";
+							}
+
+							// NOTIFY THE USER IN DM THAT THEY WILL EXPIRE
+
+							stringValue = lang.dm_expire;
+							const memberUsername = member.user.username;
+							const dm_expire_1 = stringValue.replace(/\$memberUsername\$/gi, memberUsername);
+							const dm_expire_2 = dm_expire_1.replace(/\$rName\$/gi, rName.name);
+							const dm_expire_final = dm_expire_2.replace(/\$guildServer\$/gi, bot.guilds.get(config.serverID).name);
+							bot.getDMChannel(member.user.id).then(dm => dm.createMessage(dm_expire_final).catch((err) => { console.log(err) })).catch((err) => { console.log(err) });
+
+							// NOTIFY THE ADMINS OF THE PENDING EXPIRY
+							bot.createMessage(config.mainChannelID, "⚠ " + member.user.username + " will lose their role of: ***" + rName.name + "*** in less than 5 days").catch((err) => { console.log(err) });
+
+							// UPDATE THE DB TO REMEMBER THAT THEY WERE NOTIFIED
+							db.get(`UPDATE temporary_roles SET notified=1 WHERE userID="${rows[rowNumber].userID}"`);
+
+							console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + member.user.username + "\" (" + member.id + ") has been notified that they will lose their role in less than 5 days");
 						}
-
-						// NOTIFY THE USER IN DM THAT THEY WILL EXPIRE
-
-						stringValue = lang.dm_expire;
-						const memberUsername = member.user.username;
-						const dm_expire_1 = stringValue.replace(/\$memberUsername\$/gi, memberUsername);
-						const dm_expire_2 = dm_expire_1.replace(/\$rName\$/gi, rName.name);
-						const dm_expire_final = dm_expire_2.replace(/\$guildServer\$/gi, bot.guilds.get(config.serverID).name);
-						bot.getDMChannel(member.user.id).then(dm => dm.createMessage(dm_expire_final).catch((err) => { console.log(err) })).catch((err) => { console.log(err) });
-
-						// NOTIFY THE ADMINS OF THE PENDING EXPIRY
-						bot.createMessage(config.mainChannelID, "⚠ " + member.user.username + " will lose their role of: ***" + rName.name + "*** in less than 5 days").catch((err) => { console.log(err) });
-
-						// UPDATE THE DB TO REMEMBER THAT THEY WERE NOTIFIED
-						db.get(`UPDATE temporary_roles SET notified=1 WHERE userID="${rows[rowNumber].userID}"`);
-
-						console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + member.user.username + "\" (" + member.id + ") has been notified that they will lose their role in less than 5 days");
 					}
+				} else {
+					bot.createMessage(config.mainChannelID, "⚠ " + rows[rowNumber].temporaryRole + " does not exist! Please check your role assignment").catch((err) => { console.log(err) });
 				}
 			}
 		}
@@ -162,8 +170,8 @@ bot.on("messageCreate", async (message) => {
 	// ######################### COMMANDS/HELP ###########################
 	if (command === "commands" || command === "help") {
 		if (args[0] === "mods") {
-			if (g.members.filter(m => m.roles.includes(ModR.id)) || g.members.filter(m => m.roles.includes(AdminR.id))) {
-				cmds = "`" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`   \\\u00BB   to assign a temporary roles\n"
+			if (g.members.filter(m => m.roles.includes(AdminR.id)) || g.members.filter(m => m.roles.includes(ModR.id))) {
+				    cmds = "`" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`   \\\u00BB   to assign a temporary roles\n"
 					+ "`" + config.cmdPrefix + "temprole check @mention`   \\\u00BB   to check the time left on a temporary role assignment\n"
 					+ "`" + config.cmdPrefix + "temprole remove @mention`   \\\u00BB   to remove a temporary role assignment\n"
 					+ "`" + config.cmdPrefix + "temprole add @mention <DAYS>`   \\\u00BB   to add more time to a temporary role assignment\n";
@@ -609,12 +617,13 @@ function RestartBot(type) {
 }
 
 function CreateDB() {
-	// CREATE DATABASE TABLE 
-	db.run('CREATE TABLE IF NOT EXISTS temporary_roles (userID TEXT, temporaryRole TEXT, startDate TEXT, endDate TEXT, addedBy TEXT, notified TEXT);', function (err) {
-		if (err) {
-			console.log(err.message);
-		}
-		console.log("Table created");
+			// CREATE DATABASE TABLE 
+			db.run('CREATE TABLE IF NOT EXISTS temporary_roles (userID TEXT, temporaryRole TEXT, startDate TEXT, endDate TEXT, addedBy TEXT, notified TEXT);', function (err) {
+				if (err) {
+					console.log(err.message);
+				} else {
+					console.log("Table created");
+				}
 	});
 }
 

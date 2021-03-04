@@ -26,6 +26,13 @@
     "tele_db_port": "",
     "tele_db_user": "",
     "tele_db_pass": ""
+  },
+  "mysql_database": {
+    "mysql_host": "localhost",
+    "mysql_port": 3306,
+    "mysql_db": "rolemanager",
+    "mysql_user": "dummy",
+    "mysql_pass": "dummy"
   }
 }
 
