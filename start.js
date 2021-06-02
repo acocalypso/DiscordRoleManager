@@ -72,16 +72,22 @@ bot.connect();
 									console.error(GetTimestamp() + `[InitDB] Failed to execute role check query 5: (${err})`);
 									process.exit(-1);
 								});
-							bot.channels.cache.get(config.mainChannelID).send("⚠ " + rows[rowNumber].username + " has **left** the server and **lost** their role of: **" +
+							bot.createMessage(config.mainChannelID,"⚠ " + rows[rowNumber].username + " has **left** the server and **lost** their role of: **" +
 								rName.name + "** - their **temporary** access has __EXPIRED__ 😭 ").catch(err => { console.error(GetTimestamp() + err); });
 							console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + rows[rowNumber].username + "\" (" + rows[rowNumber].userID +
 								") has left the server and lost their role: " + rName.name + "... time EXPIRED");
 							continue;
 						}
 						// REMOVE ROLE FROM MEMBER IN GUILD
-						member.roles.remove(rName).then(async member => {
-							bot.channels.cache.get(config.mainChannelID).send("⚠ " + member.user.username + " has **lost** their role of: **" +
+						member.removeRole(rName.id).then(async member => {
+							bot.createMessage(config.mainChannelID,"⚠ " + member.user.username + " has **lost** their role of: **" +
 								rName.name + "** - their **temporary** access has __EXPIRED__ 😭 ").catch(err => { console.error(GetTimestamp() + err); });
+							stringValue = lang.dm_lost_role;
+							const dm_lost_role_1 = stringValue.replace(/\$memberUsername\$/gi, member.user.username);
+							const dm_lost_role_2 = dm_lost_role_1.replace(/\$rName\$/gi, rName.name);
+							const dm_lost_role_3 = dm_lost_role_2.replace(/\$guildServer\$/gi, bot.guilds.get(config.serverID).name);
+							bot.getDMChannel(member.user.id).then(dm => dm.createMessage(dm_lost_role_3).catch((err) => { console.log(err) })).catch((err) => { console.log(err) })
+
 							// REMOVE DATABASE ENTRY
 							await query(`DELETE FROM temporary_roles WHERE userID='${member.id}' AND temporaryRole='${rName.name}'`)
 								.catch(err => {
@@ -92,7 +98,7 @@ bot.connect();
 								") have lost their role: " + rName.name + "... time EXPIRED");
 						}).catch(error => {
 							console.error(GetTimestamp() + error.message);
-							bot.channels.cache.get(config.mainChannelID).send("**⚠ Could not remove the " +
+							bot.createMessage(config.mainChannelID,"**⚠ Could not remove the " +
 								rName.name + " role from " + member.user.username + "!**").catch(err => { console.error(GetTimestamp() + err); });
 						});
 					}
@@ -103,24 +109,24 @@ bot.connect();
 						let finalDate = await formatTimeString(endDateVal);
 						// NOTIFY THE USER IN DM THAT THEY WILL EXPIRE
 						if (config.paypal.enabled == "yes") {
-							member.send("Hello " + member.user.username + "! Your role of **" + rows[rowNumber].temporaryRole + "** on " +
-								bot.guilds.cache.get(config.serverID).name + " will be removed in less than 5 days on \`" + finalDate +
-								"\`. If you would like to keep the role, please send a donation to <" + config.paypal.url +
-								">. If you need help, please notify an admin.")
-								.catch(error => {
-									console.error(GetTimestamp() + "Failed to send a DM to user: " + member.id);
-								});
+
+							stringValue = lang.dm_expire;
+							const memberUsername = member.user.username;
+							const dm_expire_1 = stringValue.replace(/\$memberUsername\$/gi, memberUsername);
+							const dm_expire_2 = dm_expire_1.replace(/\$rName\$/gi, rName.name);
+							const dm_expire_final = dm_expire_2.replace(/\$guildServer\$/gi, bot.guilds.get(config.serverID).name);
+							bot.getDMChannel(member.user.id).then(dm => dm.createMessage(dm_expire_final).catch((err) => { console.log(GetTimestamp() + "Failed to send a DM to user: " + member.id + " -" + err) }));
 						}
 						else {
-							member.send("Hello " + member.user.username + "! Your role of **" + rows[rowNumber].temporaryRole + "** on " +
-								bot.guilds.cache.get(config.serverID).name + " will be removed in less than 5 days on \`" + finalDate +
-								"\`. If you would like to keep the role, please notify an admin.")
-								.catch(error => {
-									console.error(GetTimestamp() + "Failed to send a DM to user: " + member.id);
-								});
+							stringValue = lang.dm_expire;
+							const memberUsername = member.user.username;
+							const dm_expire_1 = stringValue.replace(/\$memberUsername\$/gi, memberUsername);
+							const dm_expire_2 = dm_expire_1.replace(/\$rName\$/gi, rName.name);
+							const dm_expire_final = dm_expire_2.replace(/\$guildServer\$/gi, bot.guilds.get(config.serverID).name);
+							bot.getDMChannel(member.user.id).then(dm => dm.createMessage(dm_expire_final).catch((err) => { console.log(GetTimestamp() + "Failed to send a DM to user: " + member.id + " -" + err) }));
 						}
 						// NOTIFY THE ADMINS OF THE PENDING EXPIRY
-						bot.channels.cache.get(config.mainChannelID).send("⚠ " + member.user.username + " will lose their role of: **" +
+						bot.createMessage(config.mainChannelID,"⚠ " + member.user.username + " will lose their role of: **" +
 							rName.name + "** in less than 5 days on \`" + finalDate + "\`.").catch(err => { console.error(GetTimestamp() + err); });
 						// UPDATE THE DB TO REMEMBER THAT THEY WERE NOTIFIED
 						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
@@ -142,100 +148,6 @@ bot.connect();
 	// 86400000 = 1day
 	// 3600000 = 1hr
 	// 60000 = 1min
-
-	// ##########################################################################
-	// ############################## TEXT MESSAGE ##############################
-	// ##########################################################################
-
-	/*//### DB2 Stuf ###
-	 *
-setInterval(function () {
-	let timeNow = new Date().getTime();
-	let dbTime = "";
-	let daysLeft = "";
-	let notify = "";
-	let stringValue = "";
-	db.all(`SELECT * FROM temporary_roles`, function (err, rows) {
-		if (!rows) {
-			console.log(GetTimestamp() + "No one is in the DataBase");
-		}
-		else {
-			for (rowNumber = "0"; rowNumber < rows.length; rowNumber++) {
-				dbTime = rows[rowNumber].endDate;
-				notify = rows[rowNumber].notified;
-				daysLeft = (dbTime * 1) - (timeNow * 1);
-
-				let rName = bot.guilds.get(config.serverID).roles.find(rName => rName.name === rows[rowNumber].temporaryRole);
-				const tempRole = rows[rowNumber].temporaryRole;
-				member = bot.guilds.get(config.serverID).members.get(rows[rowNumber].userID);
-				// CHECK IF ROLE EXISTS on Server
-				if (typeof rName !== 'undefined') {
-					// CHECK IF THEIR ACCESS HAS EXPIRED
-					if (typeof member !== 'undefined') {
-						if (daysLeft < 1) {
-							if (!member) {
-								member.user.username = "<@" + rows[rowNumber].userID + ">"; member.id = "";
-							}
-
-							// REMOVE ROLE FROM MEMBER IN GUILD
-							member.removeRole(rName.id).catch(console.error);
-							stringValue = lang.lost_role;
-							const has_lost = stringValue.replace(/\$role\$/gi, tempRole);
-							bot.createMessage(config.mainChannelID, "⚠ " + member.user.username + " " + has_lost).catch(console.error);
-
-							// REMOVE DATABASE ENTRY
-							db.get(`DELETE FROM temporary_roles WHERE userID="${rows[rowNumber].userID}"`), function (err) {
-								if (err) {
-									console.log(err.message);
-								}
-							}
-							stringValue = lang.dm_lost_role;
-							const dm_lost_role_1 = stringValue.replace(/\$memberUsername\$/gi, member.user.username);
-							const dm_lost_role_2 = dm_lost_role_1.replace(/\$rName\$/gi, rName.name);
-							const dm_lost_role_3 = dm_lost_role_2.replace(/\$guildServer\$/gi, bot.guilds.get(config.serverID).name);
-							bot.getDMChannel(member.user.id).then(dm => dm.createMessage(dm_lost_role_3).catch((err) => { console.log(err) })).catch((err) => { console.log(err) });
-
-							console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + member.user.username + "\" (" + member.id + ") have lost their role: " + rName.name + "... time EXPIRED");
-						}
-
-						// CHECK IF THEIR ONLY HAVE 5 DAYS LEFT
-						if (daysLeft < 432000000 && notify == "0") {
-							if (!member) {
-								member.user.username = "<@" + rows[rowNumber].userID + ">"; member.id = "";
-							}
-
-							// NOTIFY THE USER IN DM THAT THEY WILL EXPIRE
-
-							stringValue = lang.dm_expire;
-							const memberUsername = member.user.username;
-							const dm_expire_1 = stringValue.replace(/\$memberUsername\$/gi, memberUsername);
-							const dm_expire_2 = dm_expire_1.replace(/\$rName\$/gi, rName.name);
-							const dm_expire_final = dm_expire_2.replace(/\$guildServer\$/gi, bot.guilds.get(config.serverID).name);
-							bot.getDMChannel(member.user.id).then(dm => dm.createMessage(dm_expire_final).catch((err) => { console.log(err) })).catch((err) => { console.log(err) });
-
-							// NOTIFY THE ADMINS OF THE PENDING EXPIRY
-							bot.createMessage(config.mainChannelID, "⚠ " + member.user.username + " will lose their role of: ***" + rName.name + "*** in less than 5 days").catch((err) => { console.log(err) });
-
-							// UPDATE THE DB TO REMEMBER THAT THEY WERE NOTIFIED
-							db.get(`UPDATE temporary_roles SET notified=1 WHERE userID="${rows[rowNumber].userID}"`);
-
-							console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + member.user.username + "\" (" + member.id + ") has been notified that they will lose their role in less than 5 days");
-						}
-					}
-				} else {
-					bot.createMessage(config.mainChannelID, "⚠ " + rows[rowNumber].temporaryRole + " for user " + member.user.username + " does not exist! Please check your role assignment").catch((err) => { console.log(err) });
-				}
-			}
-		}
-	});
-	//console.log(GetTimestamp()+"[ADMIN] Stored accounts checked for expiry and nofication.");
-}, 60000);
-// 86400000 = 1day
-// 3600000 = 1hr
-// 60000 = 1min
-
-// ############################# SERVER LISTENER END ############################
-*/
 
 	bot.on("messageCreate", async (message) => {
 		// MAKE SURE ITS A COMMAND
@@ -888,22 +800,7 @@ setInterval(function () {
 									// Wait 30 seconds and let user know we are about to migrate the database and for them to make a backup until we handle backups and rollbacks.
 									console.log(GetTimestamp() + '[InitDB] MIGRATION IS ABOUT TO START IN 30 SECONDS, PLEASE MAKE SURE YOU HAVE A BACKUP!!!');
 									await wait(30 * 1000);
-									await query(`CREATE TABLE IF NOT EXISTS paypal_info (
-                                        invoice varchar(32) NOT NULL,
-                                        userID bigint(19) unsigned NOT NULL,
-                                        orderDate int(11) unsigned NOT NULL,
-                                        temporaryRole varchar(35) DEFAULT NULL,
-                                        days tinyint(3) unsigned DEFAULT NULL,
-                                        order_id varchar(20) NOT NULL,
-                                        order_json longtext DEFAULT NULL,
-                                        order_verified tinyint(1) unsigned NOT NULL DEFAULT 0,
-                                        payment_verified tinyint(1) unsigned NOT NULL DEFAULT 0,
-                                        fulfilled tinyint(1) unsigned NOT NULL DEFAULT 0,
-                                        PRIMARY KEY (\`invoice\`))`)
-										.catch(err => {
-											console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}b: (${err})`);
-											process.exit(-1);
-										});
+									
 									await query(`ALTER TABLE \`temporary_roles\` ADD PRIMARY KEY (\`userID\`, \`temporaryRole\`);`)
 										.catch(err => {
 											console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}c: (${err})`);
@@ -941,11 +838,7 @@ setInterval(function () {
 									// Wait 30 seconds and let user know we are about to migrate the database and for them to make a backup until we handle backups and rollbacks.
 									console.log(GetTimestamp() + '[InitDB] MIGRATION IS ABOUT TO START IN 30 SECONDS, PLEASE MAKE SURE YOU HAVE A BACKUP!!!');
 									await wait(30 * 1000);
-									await query(`ALTER TABLE \`paypal_info\` ADD COLUMN rejection tinyint(1) unsigned DEFAULT 0;`)
-										.catch(err => {
-											console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}b: (${err})`);
-											process.exit(-1);
-										});
+									
 									await query(`INSERT INTO metadata (\`key\`, \`value\`) VALUES("DB_VERSION", ${dbVersion + 1}) ON DUPLICATE KEY UPDATE \`value\` = ${dbVersion + 1};`)
 										.catch(err => {
 											console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}a: (${err})`);
