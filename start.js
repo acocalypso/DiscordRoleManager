@@ -17,7 +17,9 @@ var bot = new Eris(config.token, {
 bot.on('ready', () => {
 
     console.log('Ready!');
-    CreateDB();
+	SQLConnect().then(x => {
+		InitDB();
+	}).catch(err => { console.log(GetTimestamp() + err); })
 });
 
 
@@ -32,12 +34,128 @@ setInterval(function () {
 	let notify = "";
 	let stringValue = "";
 
-	/*/### Mysql Stuff ###
-	get_expired_user();
-	
-	});*/
+	// ##########################################################################
+	// ############################# SERVER LISTENER ############################
+	// ##########################################################################
+	// DATABASE TIMER FOR TEMPORARY ROLES
+	setInterval(async function () {
+		
+		//check for expired users
+		let timeNow = new Date().getTime();
+		let dbTime = 0;
+		let daysLeft = 0;
+		let notify = 0;
+		await query(`SELECT * FROM temporary_roles`)
+			.then(async rows => {
+				if (!rows[0]) {
+					console.info(GetTimestamp() + "No one is in the DataBase");
+					return;
+				}
+				for (rowNumber = "0"; rowNumber < rows.length; rowNumber++) {
+					dbTime = parseInt(rows[rowNumber].endDate) * 1000;
+					notify = rows[rowNumber].notified;
+					daysLeft = dbTime - timeNow;
+					let leftServer = rows[rowNumber].leftServer;
+					let rName = bot.guilds.get(config.serverID).roles.find(rName => rName.name === rows[rowNumber].temporaryRole);
+					let member = await bot.guilds.get(config.serverID).members.get(rows[rowNumber].userID);
+					// Check if we pulled the member's information correctly or if they left the server.
+					if (!member && !leftServer) {
+						continue;
+					}
+					// Update usernames for legacy data
+					if (!rows[rowNumber].username && !leftServer) {
+						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
+						await query(`UPDATE temporary_roles SET username="${name}" WHERE userID="${member.id}"`)
+							.catch(err => {
+								console.error(GetTimestamp() + `[InitDB] Failed to execute role check query 4: (${err})`);
+							});
+						console.log(GetTimestamp() + "Updated the username for " + member.id + " to " + name);
+					}
+					// CHECK IF THEIR ACCESS HAS EXPIRED
+					if (daysLeft < 1) {
+						// If they left the server, remove the entry without attempting the role removal
+						if (leftServer) {
+							await query(`DELETE FROM temporary_roles WHERE userID='${rows[rowNumber].userID}' AND temporaryRole='${rName.name}'`)
+								.catch(err => {
+									console.error(GetTimestamp() + `[InitDB] Failed to execute role check query 5: (${err})`);
+									process.exit(-1);
+								});
+							bot.channels.cache.get(config.mainChannelID).send("⚠ " + rows[rowNumber].username + " has **left** the server and **lost** their role of: **" +
+								rName.name + "** - their **temporary** access has __EXPIRED__ 😭 ").catch(err => { console.error(GetTimestamp() + err); });
+							console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + rows[rowNumber].username + "\" (" + rows[rowNumber].userID +
+								") has left the server and lost their role: " + rName.name + "... time EXPIRED");
+							continue;
+						}
+						// REMOVE ROLE FROM MEMBER IN GUILD
+						member.roles.remove(rName).then(async member => {
+							bot.channels.cache.get(config.mainChannelID).send("⚠ " + member.user.username + " has **lost** their role of: **" +
+								rName.name + "** - their **temporary** access has __EXPIRED__ 😭 ").catch(err => { console.error(GetTimestamp() + err); });
+							// REMOVE DATABASE ENTRY
+							await query(`DELETE FROM temporary_roles WHERE userID='${member.id}' AND temporaryRole='${rName.name}'`)
+								.catch(err => {
+									console.error(GetTimestamp() + `[InitDB] Failed to execute role check query 2: (${err})`);
+									process.exit(-1);
+								});
+							console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + member.user.username + "\" (" + member.id +
+								") have lost their role: " + rName.name + "... time EXPIRED");
+						}).catch(error => {
+							console.error(GetTimestamp() + error.message);
+							bot.channels.cache.get(config.mainChannelID).send("**⚠ Could not remove the " +
+								rName.name + " role from " + member.user.username + "!**").catch(err => { console.error(GetTimestamp() + err); });
+						});
+					}
+					// CHECK IF THERE ARE ONLY HAVE 5 DAYS LEFT
+					if (daysLeft < 432000000 && notify == "0" && !leftServer) {
+						let endDateVal = new Date();
+						endDateVal.setTime(dbTime);
+						let finalDate = await formatTimeString(endDateVal);
+						// NOTIFY THE USER IN DM THAT THEY WILL EXPIRE
+						if (config.paypal.enabled == "yes") {
+							member.send("Hello " + member.user.username + "! Your role of **" + rows[rowNumber].temporaryRole + "** on " +
+								bot.guilds.cache.get(config.serverID).name + " will be removed in less than 5 days on \`" + finalDate +
+								"\`. If you would like to keep the role, please send a donation to <" + config.paypal.url +
+								">. If you need help, please notify an admin.")
+								.catch(error => {
+									console.error(GetTimestamp() + "Failed to send a DM to user: " + member.id);
+								});
+						}
+						else {
+							member.send("Hello " + member.user.username + "! Your role of **" + rows[rowNumber].temporaryRole + "** on " +
+								bot.guilds.cache.get(config.serverID).name + " will be removed in less than 5 days on \`" + finalDate +
+								"\`. If you would like to keep the role, please notify an admin.")
+								.catch(error => {
+									console.error(GetTimestamp() + "Failed to send a DM to user: " + member.id);
+								});
+						}
+						// NOTIFY THE ADMINS OF THE PENDING EXPIRY
+						bot.channels.cache.get(config.mainChannelID).send("⚠ " + member.user.username + " will lose their role of: **" +
+							rName.name + "** in less than 5 days on \`" + finalDate + "\`.").catch(err => { console.error(GetTimestamp() + err); });
+						// UPDATE THE DB TO REMEMBER THAT THEY WERE NOTIFIED
+						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
+						await query(`UPDATE temporary_roles SET notified=1, username="${name}" WHERE userID="${member.id}" AND temporaryRole="${rName.name}"`)
+							.catch(err => {
+								console.error(GetTimestamp() + `[InitDB] Failed to execute role check query 3: (${err})`);
+								process.exit(-1);
+							});
+						console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + member.user.username + "\" (" + member.id +
+							") has been notified that they will lose their role (" + rName.name + ") in less than 5 days on " + finalDate);
+					}
+				}
+			})
+			.catch(err => {
+				console.error(GetTimestamp() + `[InitDB] Failed to execute role check query 1: (${err})`);
+				process.exit(-1);
+			});
+	}, 600000);
+// 86400000 = 1day
+// 3600000 = 1hr
+// 60000 = 1min
 
-	//### DB2 Stuf ###
+// ##########################################################################
+// ############################## TEXT MESSAGE ##############################
+// ##########################################################################
+
+	/*//### DB2 Stuf ###
 	db.all(`SELECT * FROM temporary_roles`, function (err, rows) {
 		if (!rows) {
 			console.log(GetTimestamp() + "No one is in the DataBase");
@@ -118,6 +236,7 @@ setInterval(function () {
 // 60000 = 1min
 
 // ############################# SERVER LISTENER END ############################
+*/
 
 bot.on("messageCreate", async (message) => {
 	// MAKE SURE ITS A COMMAND
@@ -174,8 +293,8 @@ bot.on("messageCreate", async (message) => {
 				    cmds = "`" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`   \\\u00BB   to assign a temporary roles\n"
 					+ "`" + config.cmdPrefix + "temprole check @mention`   \\\u00BB   to check the time left on a temporary role assignment\n"
 					+ "`" + config.cmdPrefix + "temprole remove @mention`   \\\u00BB   to remove a temporary role assignment\n"
-					+ "`" + config.cmdPrefix + "temprole add @mention <DAYS>`   \\\u00BB   to add more time to a temporary role assignment\n";
-				bot.createMessage(c.id, cmds).catch((err) => { console.log(err) });
+					+ "`" + config.cmdPrefix + "temprole add @mention <DAYS>`   \\\u00BB   to add more time to a temporary role assignment\n";		
+					bot.createMessage(c.id, cmds).catch((err) => { console.log(err) });
 			}
 			else {
 				bot.createMessage(c.id, "you are **NOT** allowed to use this command! \ntry using: `" + config.cmdPrefix + "commads`").catch((err) => { console.log(err) });
@@ -625,6 +744,197 @@ function CreateDB() {
 					console.log("Table created");
 				}
 	});
+}
+
+function SQLConnect() {
+	return new Promise(function (resolve, reject) {
+		sqlConnection = mysql.createConnection({
+			host: config.mysql_database.mysql_host,
+			database: config.mysql_database.mysql_db,
+			user: config.mysql_database.mysql_user,
+			port: config.mysql_database.mysql_port,
+			password: config.mysql_database.mysql_pass,
+			supportBigNumbers: true
+		});
+		sqlConnection.connect(function (err) {
+			if (err) {
+				return reject;
+			}
+			console.log(GetTimestamp() + "SQL connection etablished!");
+			resolve(true);
+		});
+	});
+}
+
+async function InitDB() {
+	// Create MySQL tabels
+	let currVersion = 5;
+	let dbVersion = 0;
+	await query(`CREATE TABLE IF NOT EXISTS metadata (
+                        \`key\` VARCHAR(50) PRIMARY KEY NOT NULL,
+                        \`value\` VARCHAR(50) DEFAULT NULL);`)
+		.then(async x => {
+			await query(`SELECT \`value\` FROM metadata WHERE \`key\` = "DB_VERSION" LIMIT 1;`)
+				.then(async result => {
+					//Save the DB version if one is returned
+					if (result.length > 0) {
+						dbVersion = parseInt(result[0].value);
+					}
+					console.log(GetTimestamp() + `[InitDB] DB version: ${dbVersion}, Latest: ${currVersion}`);
+					if (dbVersion < currVersion) {
+						for (dbVersion; dbVersion < currVersion; dbVersion++) {
+							if (dbVersion == 0) {
+								// Setup the temp roles table
+								console.log(GetTimestamp() + '[InitDB] Creating the initial tables');
+								await query(`CREATE TABLE IF NOT EXISTS temporary_roles (
+                                        userID bigint(19) unsigned NOT NULL,
+                                        temporaryRole varchar(35) NOT NULL,
+                                        startDate int(11) unsigned NOT NULL,
+                                        endDate int(11) unsigned NOT NULL,
+                                        addedBy bigint(19) unsigned NOT NULL,
+                                        notified tinyint(1) unsigned DEFAULT 0)`)
+									.catch(err => {
+										console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}b: (${err})`);
+										process.exit(-1);
+									});
+
+								// Migrate the old sqlite entries into the table
+								sql.all(`SELECT * FROM temporary_roles`, (err, rows) => {
+									if (err) {
+										console.error(GetTimestamp() + err.message);
+									}
+									else if (rows) {
+										for (rowNumber = 0; rowNumber < rows.length; rowNumber++) {
+											let values = rows[rowNumber].userID + ',\''
+												+ rows[rowNumber].temporaryRole + '\','
+												+ Math.round(rows[rowNumber].startDate / 1000) + ','
+												+ Math.round(rows[rowNumber].endDate / 1000) + ','
+												+ rows[rowNumber].addedBy + ','
+												+ rows[rowNumber].notified;
+											query(`INSERT INTO temporary_roles VALUES(${values});`)
+												.catch(err => {
+													console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}c: (${err})`);
+													process.exit(-1);
+												});
+										}
+									}
+								});
+								await query(`INSERT INTO metadata (\`key\`, \`value\`) VALUES("DB_VERSION", ${dbVersion + 1}) ON DUPLICATE KEY UPDATE \`value\` = ${dbVersion + 1};`)
+									.catch(err => {
+										console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}a: (${err})`);
+										process.exit(-1);
+									});
+								console.log(GetTimestamp() + '[InitDB] Migration #1 complete.');
+							}
+							else if (dbVersion == 1) {
+								// Wait 30 seconds and let user know we are about to migrate the database and for them to make a backup until we handle backups and rollbacks.
+								console.log(GetTimestamp() + '[InitDB] MIGRATION IS ABOUT TO START IN 30 SECONDS, PLEASE MAKE SURE YOU HAVE A BACKUP!!!');
+								await wait(30 * 1000);
+								await query(`ALTER TABLE temporary_roles
+                                            ADD COLUMN username varchar(35) DEFAULT NULL;`)
+									.catch(err => {
+										console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}b: (${err})`);
+										process.exit(-1);
+									});
+								await query(`ALTER TABLE \`temporary_roles\` COLLATE='utf8mb4_general_ci', CONVERT TO CHARSET utf8mb4;`)
+									.catch(err => {
+										console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}c: (${err})`);
+										process.exit(-1);
+									});
+								await query(`ALTER TABLE \`metadata\` COLLATE='utf8mb4_general_ci', CONVERT TO CHARSET utf8mb4;`)
+									.catch(err => {
+										console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}d: (${err})`);
+										process.exit(-1);
+									});
+								await query(`INSERT INTO metadata (\`key\`, \`value\`) VALUES("DB_VERSION", ${dbVersion + 1}) ON DUPLICATE KEY UPDATE \`value\` = ${dbVersion + 1};`)
+									.catch(err => {
+										console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}a: (${err})`);
+										process.exit(-1);
+									});
+								console.log(GetTimestamp() + '[InitDB] Migration #2 complete.');
+							}
+							else if (dbVersion == 2) {
+								// Wait 30 seconds and let user know we are about to migrate the database and for them to make a backup until we handle backups and rollbacks.
+								console.log(GetTimestamp() + '[InitDB] MIGRATION IS ABOUT TO START IN 30 SECONDS, PLEASE MAKE SURE YOU HAVE A BACKUP!!!');
+								await wait(30 * 1000);
+								await query(`CREATE TABLE IF NOT EXISTS paypal_info (
+                                        invoice varchar(32) NOT NULL,
+                                        userID bigint(19) unsigned NOT NULL,
+                                        orderDate int(11) unsigned NOT NULL,
+                                        temporaryRole varchar(35) DEFAULT NULL,
+                                        days tinyint(3) unsigned DEFAULT NULL,
+                                        order_id varchar(20) NOT NULL,
+                                        order_json longtext DEFAULT NULL,
+                                        order_verified tinyint(1) unsigned NOT NULL DEFAULT 0,
+                                        payment_verified tinyint(1) unsigned NOT NULL DEFAULT 0,
+                                        fulfilled tinyint(1) unsigned NOT NULL DEFAULT 0,
+                                        PRIMARY KEY (\`invoice\`))`)
+									.catch(err => {
+										console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}b: (${err})`);
+										process.exit(-1);
+									});
+								await query(`ALTER TABLE \`temporary_roles\` ADD PRIMARY KEY (\`userID\`, \`temporaryRole\`);`)
+									.catch(err => {
+										console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}c: (${err})`);
+										process.exit(-1);
+									});
+								await query(`ALTER TABLE \`metadata\` COLLATE='utf8mb4_general_ci', CONVERT TO CHARSET utf8mb4;`)
+									.catch(err => {
+										console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}d: (${err})`);
+										process.exit(-1);
+									});
+								await query(`INSERT INTO metadata (\`key\`, \`value\`) VALUES("DB_VERSION", ${dbVersion + 1}) ON DUPLICATE KEY UPDATE \`value\` = ${dbVersion + 1};`)
+									.catch(err => {
+										console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}a: (${err})`);
+										process.exit(-1);
+									});
+								console.log(GetTimestamp() + '[InitDB] Migration #3 complete.');
+							}
+							else if (dbVersion == 3) {
+								// Wait 30 seconds and let user know we are about to migrate the database and for them to make a backup until we handle backups and rollbacks.
+								console.log(GetTimestamp() + '[InitDB] MIGRATION IS ABOUT TO START IN 30 SECONDS, PLEASE MAKE SURE YOU HAVE A BACKUP!!!');
+								await wait(30 * 1000);
+								await query(`ALTER TABLE \`temporary_roles\` ADD COLUMN leftServer tinyint(1) unsigned DEFAULT 0;`)
+									.catch(err => {
+										console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}b: (${err})`);
+										process.exit(-1);
+									});
+								await query(`INSERT INTO metadata (\`key\`, \`value\`) VALUES("DB_VERSION", ${dbVersion + 1}) ON DUPLICATE KEY UPDATE \`value\` = ${dbVersion + 1};`)
+									.catch(err => {
+										console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}a: (${err})`);
+										process.exit(-1);
+									});
+								console.log(GetTimestamp() + '[InitDB] Migration #4 complete.');
+							}
+							else if (dbVersion == 4) {
+								// Wait 30 seconds and let user know we are about to migrate the database and for them to make a backup until we handle backups and rollbacks.
+								console.log(GetTimestamp() + '[InitDB] MIGRATION IS ABOUT TO START IN 30 SECONDS, PLEASE MAKE SURE YOU HAVE A BACKUP!!!');
+								await wait(30 * 1000);
+								await query(`ALTER TABLE \`paypal_info\` ADD COLUMN rejection tinyint(1) unsigned DEFAULT 0;`)
+									.catch(err => {
+										console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}b: (${err})`);
+										process.exit(-1);
+									});
+								await query(`INSERT INTO metadata (\`key\`, \`value\`) VALUES("DB_VERSION", ${dbVersion + 1}) ON DUPLICATE KEY UPDATE \`value\` = ${dbVersion + 1};`)
+									.catch(err => {
+										console.error(GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}a: (${err})`);
+										process.exit(-1);
+									});
+								console.log(GetTimestamp() + '[InitDB] Migration #5 complete.');
+							}
+						}
+						console.log(GetTimestamp() + '[InitDB] Migration process done.');
+					}
+				})
+				.catch(err => {
+					console.error(GetTimestamp() + `[InitDB] Failed to get version info: (${err})`);
+					process.exit(-1);
+				});
+		})
+		.catch(err => {
+			console.error(GetTimestamp() + `[InitDB] Failed to create metadata table: (${err})`);
+			process.exit(-1);
+		});
 }
 
 function timeConverter(UNIX_timestamp) {
