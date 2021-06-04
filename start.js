@@ -203,9 +203,9 @@ bot.on("messageCreate", async (message) => {
 		if (args[0] === "mods") {
 			if (g.members.filter(m => m.roles.includes(AdminR.id)) || g.members.filter(m => m.roles.includes(ModR.id))) {
 				cmds = "`" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`   \\\u00BB   to assign a temporary roles\n"
-					+ "`" + config.cmdPrefix + "temprole check @mention`   \\\u00BB   to check the time left on a temporary role assignment\n"
-					+ "`" + config.cmdPrefix + "temprole remove @mention`   \\\u00BB   to remove a temporary role assignment\n"
-					+ "`" + config.cmdPrefix + "temprole add @mention <DAYS>`   \\\u00BB   to add more time to a temporary role assignment\n";
+					+ "`" + config.cmdPrefix + "temprole check @mention <ROLE-NAME>`  \\\u00BB   to check the time left on a temporary role assignment\n"
+					+ "`" + config.cmdPrefix + "temprole remove @mention <ROLE-NAME>`   \\\u00BB   to remove a temporary role assignment\n"
+					+ "`" + config.cmdPrefix + "temprole add @mention <DAYS> <ROLE-NAME>`   \\\u00BB   to add more time to a temporary role assignment\n";
 				bot.createMessage(c.id, cmds).catch((err) => { console.log(err) });
 			}
 			else {
@@ -392,7 +392,6 @@ bot.on("messageCreate", async (message) => {
 				}
 			}
 			else {
-				message.delete();
 				bot.createMessage(c.id, "you are **NOT** allowed to use this command!").catch((err) => { console.log(err) });
 			}
 		} else {
@@ -608,7 +607,6 @@ bot.on("messageCreate", async (message) => {
 
 	}
 	else {
-		message.delete();
 		bot.createMessage(c.id, "you are **NOT** allowed to use this command!").catch((err) => { console.log(GetTimestamp() + err); });
 	}
 
@@ -617,11 +615,29 @@ bot.on("messageCreate", async (message) => {
 	// ############################## CHECK ##############################
 	if (command === "check") {
 
+		msg = message.content;
+		args = msg.split(" ").slice(1);
+		if (!args[0]) {
+			bot.createMessage(c.id,"Please enter the role you want to check like `" + config.cmdPrefix + "check Spender`");
+			return;
+		}
+		// ROLES WITH SPACES
+		let daRole = "";
+		for (var x = 0; x < args.length; x++) {
+			daRole += args[x] + " ";
+		}
+		daRole = daRole.slice(0, -1);
+		// CHECK ROLE EXIST
+		let rName = g.roles.find(rName => rName.name === daRole);
+		if (!rName) {
+			bot.createMessage(c.id,"I couldn't find such role, please check the spelling and try again.");
+			return;
+		}
+
 		// CHECK DATABASE FOR ROLES
 		await query(`SELECT * FROM temporary_roles WHERE userID="${m.id}" AND temporaryRole="${daRole}"`)
 			.then(async row => {
 				if (!row[0]) {
-					message.delete();
 					bot.createMessage(c.id, "⚠ [ERROR] " + message.author.username + " is __NOT__ in the database for the role ").catch((err) => { console.log(err) });
 					return;
 				}
@@ -632,7 +648,6 @@ bot.on("messageCreate", async (message) => {
 				let endDateVal = new Date();
 				endDateVal.setTime(row[0].endDate * 1000);
 				let finalDate = await formatTimeString(endDateVal);
-				message.delete();
 
 				bot.createMessage(c.id, "✅ You will lose the role: **" + row[0].temporaryRole + "** on: `" + finalDate + "`! The role was added on: `" + startDateTime + "`").catch((err) => { console.log(err) });
 
