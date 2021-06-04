@@ -201,7 +201,7 @@ bot.on("messageCreate", async (message) => {
 	// ######################### COMMANDS/HELP ###########################
 	if (command === "commands" || command === "help") {
 		if (args[0] === "mods") {
-			if (g.members.filter(m => m.roles.includes(AdminR.id)) || g.members.filter(m => m.roles.includes(ModR.id))) {
+			if (m.roles.includes(AdminR.id) || m.roles.includes(ModR.id)) {
 				cmds = "`" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`   \\\u00BB   to assign a temporary roles\n"
 					+ "`" + config.cmdPrefix + "temprole check @mention <ROLE-NAME>`  \\\u00BB   to check the time left on a temporary role assignment\n"
 					+ "`" + config.cmdPrefix + "temprole remove @mention <ROLE-NAME>`   \\\u00BB   to remove a temporary role assignment\n"
@@ -209,7 +209,8 @@ bot.on("messageCreate", async (message) => {
 				bot.createMessage(c.id, cmds).catch((err) => { console.log(err) });
 			}
 			else {
-				bot.createMessage(c.id, "you are **NOT** allowed to use this command! \ntry using: `" + config.cmdPrefix + "commads`").catch((err) => { console.log(err) });
+				bot.createMessage(c.id, "you are **NOT** allowed to use this command! \ntry using: `" + config.cmdPrefix + "commands`").catch((err) => { console.log(err) });
+				return;
 			}
 		}
 		if (!args[0]) {
@@ -258,7 +259,7 @@ bot.on("messageCreate", async (message) => {
 			msg = message.content;
 			args = msg.split(" ").slice(1);
 
-			if (g.members.filter(m => m.roles.includes(ModR.id)) || g.members.filter(m => m.roles.includes(AdminR.id)) || m.id === config.ownerID) {
+			if (m.roles.includes(ModR.id) || m.roles.includes(AdminR.id) || m.id === config.ownerID) {
 				if (!args[0]) {
 					bot.createMessage(c.id, "syntax:\n `" + config.cmdPrefix + "telegram @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "telegram check @mention`").catch((err) => { console.log(err) });
 				}
@@ -406,7 +407,7 @@ bot.on("messageCreate", async (message) => {
 		msg = message.content;
 		args = msg.split(" ").slice(1);
 
-		if (g.members.filter(m => m.roles.includes(ModR.id)) || g.members.filter(m => m.roles.includes(AdminR.id)) || m.id === config.ownerID) {
+		if (m.roles.includes(ModR.id) || m.roles.includes(AdminR.id) || m.id === config.ownerID) {
 			if (!args[0]) {
 				bot.createMessage(c.id, "syntax:\n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention`\n or `" + config.cmdPrefix + "temprole check @mention`").catch((err) => { console.log(err) });
 				return;
