@@ -48,8 +48,9 @@ bot.connect();
 					notify = rows[rowNumber].notified;
 					daysLeft = dbTime - timeNow;
 					let leftServer = rows[rowNumber].leftServer;
-					let rName = bot.guilds.get(config.serverID).roles.find(rName => rName.name === rows[rowNumber].temporaryRole);
+					let rName = await bot.guilds.get(config.serverID).roles.find(rName => rName.name === rows[rowNumber].temporaryRole);
 					let member = await bot.guilds.get(config.serverID).members.get(rows[rowNumber].userID);
+					console.log("User: %s - Role: %s", member,rName);
 					// Check if we pulled the member's information correctly or if they left the server.
 					if (!member && !leftServer) {
 						continue;
@@ -79,7 +80,7 @@ bot.connect();
 							continue;
 						}
 						// REMOVE ROLE FROM MEMBER IN GUILD
-						member.removeRole(rName.id).then(async member => {
+						member.removeRole(rName.id).then(async members => {
 							bot.createMessage(config.mainChannelID,"⚠ " + member.user.username + " has **lost** their role of: **" +
 								rName.name + "** - their **temporary** access has __EXPIRED__ 😭 ").catch(err => { console.error(GetTimestamp() + err); });
 							stringValue = lang.dm_lost_role;
@@ -523,6 +524,7 @@ bot.on("messageCreate", async (message) => {
 									let endDateVal = new Date();
 									endDateVal.setTime(finalDate);
 									finalDate = await formatTimeString(endDateVal);
+									dmFinalDate = finalDate;
 									console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + mentioned.username + "\" (" + mentioned.id + ") was given " + days + " days by: " + m.user.username + " (" + m.id + ") for the role: " + daRole);
 									bot.createMessage(c.id, "✅ " + mentioned.username + " has had time added until: `" + finalDate + "`! They were added on: `" + startDateTime + "`");
 
