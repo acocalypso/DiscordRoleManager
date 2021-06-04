@@ -421,7 +421,7 @@ bot.on("messageCreate", async (message) => {
 			}
 			else {
 				let daRole = "";
-				let  = 0;
+				let = 0;
 				if (args[0] === "add") {
 					daRole = args[3];
 					days = args[2];
@@ -430,11 +430,11 @@ bot.on("messageCreate", async (message) => {
 					daRole = args[2];
 					days = args[1];
 				}
-				
+
 
 				let rName = g.roles.find(rName => rName.name === daRole);
 				if (!rName) {
-					bot.createMessage(c.id,"I couldn't find such role, please check the spelling and try again.");
+					bot.createMessage(c.id, "I couldn't find such role, please check the spelling and try again.");
 					return;
 				}
 
@@ -494,7 +494,7 @@ bot.on("messageCreate", async (message) => {
 				// ADD TIME TO A USER
 				else if (args[0] === "add") {
 					if (!Number(args[2])) {
-						bot.createMessage(c.id, "Error: second value has to be **X** number of days, IE:\n`!" + config.cmdPrefix+ "" + command + " @" + mentioned.username + " 90 " + daRole + "`").catch((err) => { console.log(err) });
+						bot.createMessage(c.id, "Error: second value has to be **X** number of days, IE:\n`!" + config.cmdPrefix + "" + command + " @" + mentioned.username + " 90 " + daRole + "`").catch((err) => { console.log(err) });
 						return;
 					}
 
@@ -604,10 +604,9 @@ bot.on("messageCreate", async (message) => {
 			}
 
 		}
-
-	}
-	else {
-		bot.createMessage(c.id, "you are **NOT** allowed to use this command!").catch((err) => { console.log(GetTimestamp() + err); });
+		else {
+			bot.createMessage(c.id, "you are **NOT** allowed to use this command!").catch((err) => { console.log(GetTimestamp() + err); });
+		}
 	}
 
 
