@@ -9,7 +9,6 @@
   "adminRoleName": "",
   "modRoleName": "",
   "debug": "no",
-  "restoreRoleOnJoin": "yes",
   "mapMain": {
     "enabled": "yes",
     "url": "https://yourmap.com"
