@@ -50,7 +50,7 @@ bot.connect();
 					let leftServer = rows[rowNumber].leftServer;
 					let rName = await bot.guilds.get(config.serverID).roles.find(rName => rName.name === rows[rowNumber].temporaryRole);
 					let member = await bot.guilds.get(config.serverID).members.get(rows[rowNumber].userID);
-					console.log("User: %s - Role: %s", member,rName);
+
 					// Check if we pulled the member's information correctly or if they left the server.
 					if (!member && !leftServer) {
 						continue;
@@ -145,7 +145,7 @@ bot.connect();
 				console.error(GetTimestamp() + `[InitDB] Failed to execute role check query 1: (${err})`);
 				process.exit(-1);
 			});
-	}, 15000);
+	}, 60000);
 	// 86400000 = 1day
 	// 3600000 = 1hr
 	// 60000 = 1min
@@ -580,6 +580,14 @@ bot.on("messageCreate", async (message) => {
 										mentioned.id + ") was given the \"" + daRole + "\" role by " + m.user.username + " (" + m.id + ")");
 									bot.createMessage(c.id, "🎉 " + mentioned.username + " has been given a **temporary** role of: **" + daRole +
 										"**, enjoy! They will lose this role on: `" + finalDateDisplay + "`");
+
+									const stringValue = lang.dm_access_granted;
+									const dm_granted_1 = stringValue.replace(/\$memberUsername\$/gi, mentioned.username);
+									const dm_granted_2 = dm_granted_1.replace(/\$finalDateDisplay\$/gi, finalDateDisplay);
+									const dm_granted_3 = dm_granted_2.replace(/\$map\$/gi, config.mapMain.url);
+									bot.getDMChannel(mentioned.id).then(dm => dm.createMessage(dm_granted_3).catch(error => {
+										console.error(GetTimestamp() + "Failed to send a DM to user: " + mentioned.id);
+									})).catch((err) => { console.log(err) });
 								})
 								.catch(err => {
 									console.error(GetTimestamp() + `[InitDB] Failed to execute query 16: (${err})`);
@@ -643,6 +651,50 @@ bot.on("messageCreate", async (message) => {
 	}
 });
 
+// Check for bot events other than messages
+bot.on('guildMemberRemove', async member => {
+
+	let c = message.channel;
+
+	// Used to note database entries when users leave the server.
+	let guild = member.guild.id;
+	if (guild != config.serverID) {
+		return;
+	}
+	// Check if the user had any temp roles
+	await query(`SELECT * FROM temporary_roles WHERE userID="${member.id}"`)
+		.then(async rows => {
+			// Update all entries from the database
+			if (rows[0]) {
+				await query(`UPDATE temporary_roles SET leftServer = 1 WHERE userID="${member.id}"`)
+					.then(async result => {
+						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
+						console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + name + "\" (" + member.id + ") has left the server. All role assignments have been marked in the database.");
+						bot.createMessage(c.id,":exclamation: " + name + " has left the server.");
+					})
+					.catch(err => {
+						console.error(GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove 2: (${err})`);
+						return;
+					});
+			}
+			if (rows[0]) {
+				await query(`DELETE FROM temporary_roles WHERE userID="${member.id}"`)
+					.then(async result => {
+						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
+						console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + name + "\" (" + member.id + ") got removed from the database.");
+						bot.createMessage(c.id, ":exclamation: " + name + " All access removed from database.");
+					})
+					.catch(err => {
+						console.error(GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove 2: (${err})`);
+						return;
+					});
+			}
+		})
+		.catch(err => {
+			console.error(GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove 1: (${err})`);
+			return;
+		});
+});
 
 	function GetTimestamp() {
 		let now = new Date();
