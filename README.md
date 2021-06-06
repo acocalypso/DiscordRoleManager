@@ -13,7 +13,10 @@
 	- Use the URL that page generates and go to it, and you will be asked to log into your discord. You will need Admin access in order to get the bot to join that server.
 - Rename config.json.example to config.json
 - Edit config.json and fill out the required infos.
-
+- Create a Mysql Database
+- If you used DiscordRoleManager before, backup your dataBase.sqlite 
+- update to latest master 
+- copie your dataBase.sqlite file back. The Bot will migrate all users from sqlite to mysql.
 
 ```sh
 {
