@@ -9,6 +9,7 @@
 	- Check the boxes for the needed permissions
 	- Minimum requirements: manage roles and send messages
 	- Manage roles, it will only be able to manage roles that are below his role/permissions
+	- Enable PRESENCE INTENT and SERVER MEMBERS INTENT
 	- Use the URL that page generates and go to it, and you will be asked to log into your discord. You will need Admin access in order to get the bot to join that server.
 - Rename config.json.example to config.json
 - Edit config.json and fill out the required infos.
@@ -43,6 +44,13 @@
     "tele_db_port": "",
     "tele_db_user": "",
     "tele_db_pass": ""
+  },
+  "mysql_database": {
+    "mysql_host": "localhost",
+    "mysql_port": 3306,
+    "mysql_db": "rolemanager",
+    "mysql_user": "dummy",
+    "mysql_pass": "dummy"
   }
 }
 
@@ -66,16 +74,16 @@ You may want to use pm2 or systemd to run it as a service
 ```
 User commands:
 
-(prefix)check » to check the time left on your subscription
+(prefix)check <ROLE-NAME> » to check the time left on your subscription
 (prefix)map » a link to our web map
 (prefix)subscribe or (prefix)paypal » for a link to your PayPal account
 
 Admin / Mod commands:
 
 (prefix)temprole @mention <DAYS> <ROLE-NAME> » to assign a temporary roles
-(prefix)temprole add @mention <DAYS> » to add more time to a temporary role assignment
-(prefix)temprole remove @mention » to remove a temporary role assignment
-(prefix)temprole check @mention » to check the time left on a temporary role assignment
+(prefix)temprole add @mention <DAYS> <ROLE-NAME> » to add more time to a temporary role assignment
+(prefix)temprole remove @mention <ROLE-NAME> » to remove a temporary role assignment
+(prefix)temprole check @mention <ROLE-NAME> » to check the time left on a temporary role assignment
 
 full_auto_abo_telegram https://github.com/Micha854/full_auto_abo_telegram/
 (prefix)telegram @telegramuser days
