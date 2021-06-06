@@ -74,7 +74,7 @@ You may want to use pm2 or systemd to run it as a service
 ```
 User commands:
 
-(prefix)check » to check the time left on your subscription
+(prefix)check <ROLE-NAME> » to check the time left on your subscription
 (prefix)map » a link to our web map
 (prefix)subscribe or (prefix)paypal » for a link to your PayPal account
 
