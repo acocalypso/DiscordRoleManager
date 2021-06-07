@@ -1,7 +1,7 @@
 ﻿{
   "lost_role": "lost the role of **$role$** - the **temporary** access has __EXPIRED__ 😭",
   "dm_expire": "Hello $memberUsername$!\n\nYour role **$rName$** on **$guildServer$** will be removed in 5 days.\nIf you want to continue, please do another donation.\n\nThank you.",
-  "dm_lost_role": "H3llo $memberUsername$!\n\nYour role **$rName$** on **$guildServer$** has been removed.\nIf you want to continue, please do another donation.\n\nThank you.",
+  "dm_lost_role": "Hello $memberUsername$!\n\nYour role **$rName$** on **$guildServer$** has been removed.\nIf you want to continue, please do another donation.\n\nThank you.",
   "dm_access_granted": "Hello $memberUsername$!\n\nYour access expires at $finalDateDisplay$.\n\nThanks for your support.\n\nLiveMap: $map$",
   "dm_access_extended": "Hello $memberUsername$!\n\nYour access has been extended.\nIt is now valid till $dmFinalDate$.\n\nThanks for your support.",
   "paypal_title": "Click HERE to Subscribe",

@@ -1,0 +1,47 @@
+﻿{
+  "Ready": {
+    "de": "Bereit!"
+  },
+  "No one is in the DataBase": {
+    "de": "Es wurden keine Einträge in der Datenbank gefunden"
+  },
+  "[InitDB] Failed to execute role check query": {
+    "de": "[InitDB] Fehler beim Ausführen der Rollenüberprüfungsabfrage"
+  },
+  "Updated the username for ${member.id} to ${name}": {
+    "de": "Der Benutzername für ${member.id} wurde zu ${name} aktuallisiert"
+  },
+  "⚠ ${rows[rowNumber].username} has **left** the server and **lost** their role of: **${rName.name}** - their **temporary** access has __EXPIRED__ 😭": {
+    "de": "⚠ ${rows[rowNumber].username} hat den Server **verlassen** und die Rolle **${rName.name}** verloren - Der **temoräre** Zugriff ist __Ausgelaufen__ 😭"
+  },
+  "[ADMIN] [TEMPORARY-ROLE] ${rows[rowNumber].username} - ${(rows[rowNumber].userID)} has left the server and lost their role: ${rName.name} ... time EXPIRED`": {
+    "de": "[ADMIN] [TEMPORARY-ROLE] ${rows[rowNumber].username} - ${(rows[rowNumber].userID)} hat den Server verlassen und die Rolle ${rName.name} verloren... Zeit ABGELAUFEN`"
+  },
+  "⚠ ${member.user.username} has **lost** their role of: **${rName.name}** - their **temporary** access has __EXPIRED__ 😭": {
+    "de": "⚠ ${member.user.username} hat die Rolle **${rName.name}** verloren - der **temporäre** Zugriff ist __AUSGELAUFEN__ 😭"
+  },
+  "Hello ${member.user.username}!\n\nYour role **${rName.name}** on **${config.serverName}** has been removed.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: ${config.paypal.url}": {
+    "de": "Hallo ${member.user.username}!\n\nDeine Rolle **${rName.name}** auf dem Server **${config.serverName}** wurde entfernt.\nWenn du den Zugriff wieder haben möchtest, muss eine neue Spende getätigt werden.\n\nDanke.\nPaypal: ${config.paypal.url}"
+  },
+  "[ADMIN] [TEMPORARY-ROLE] ${member.user.username} - ${member.id} have lost their role: ${rName.name} ... time EXPIRED": {
+    "de": "[ADMIN] [TEMPORARY-ROLE] ${member.user.username} - ${member.id} hat die Rolle: ${rName.name} verloren ... Zeit ABGELAUFEN"
+  },
+  "**⚠ Could not remove the ${rName.name} role from ${member.user.username}!**": {
+    "de": "**⚠ Die Rolle ${rName.name} konnte nicht vom Benutzer ${member.user.username} entfernt werden!**"
+  },
+  "Failed to send a DM to user: ${member.id} - ${err}": {
+    "de": "Die Nachricht konnte nicht zugestellt werden: ${member.id} - ${err}"
+  },
+  "Hello ${member.user.username}!\n\nYour role **${rName.name}** on **${config.serverName}** will be removed at ${finalDate}.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: ${config.paypal.url}": {
+    "de": "Hallo ${member.user.username}!\n\nDeine Rolle **${rName.name}** auf dem Server **${config.serverName}** wird am ${finalDate} entfernt.\nWenn du den Zugriff behalten möchtest, muss eine neue Spende getätigt werden.\n\nDanke.\nPaypal: ${config.paypal.url}"
+  },
+  "Hello ${member.user.username}!\n\nYour role **${rName.name}** on **${config.serverName}** will be removed at ${finalDate}.\nIf you want to continue, please do another donation.\n\nThank you.": {
+    "de": "Hallo ${member.user.username}!\n\nDeine Rolle **${rName.name}** auf dem Server **${config.serverName}** wird am ${finalDate} entfernt.\nWenn du den Zugriff behalten möchtest, muss eine neue Spende getätigt werden.\n\nDanke."
+  },
+  "⚠ ${member.user.username} will lose their role of: **${rName.name}** in less than 5 days on ${finalDate}.": {
+    "de": "⚠ ${member.user.username} verliert die Rolle: **${rName.name}** in weniger als 5 Tagen am ${finalDate}."
+  },
+  "[ADMIN] [TEMPORARY-ROLE] ${member.user.username} - (${member.id}) has been notified that they will lose their role ${rName.name} in less than 5 days on ${finalDate}": {
+    "de": "[ADMIN] [TEMPORARY-ROLE] {{member.user.username}} - ({{member.id}}) wurde informiert, dass seine Rolle ${rName.name} in weniger als 5 Tage am ${finalDate} ausläuft"
+  }
+}
