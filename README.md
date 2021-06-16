@@ -1,6 +1,3 @@
-![Discord Banner 3](https://discordapp.com/api/guilds/639191866822098944/widget.png?style=banner3)
-
-
 # DiscordRoleManager
 > Manage Discord Roles the lazzyyy way
 
