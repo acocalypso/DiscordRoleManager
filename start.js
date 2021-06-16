@@ -8,7 +8,6 @@ const dateMultiplier = 86400000;
 
 // Load locale
 const language = config.language;
-const lang = require('./locale/' + language + '.json');
 
 var i18nconfig = {
 	"lang": config.language,
@@ -274,9 +273,8 @@ bot.on("messageCreate", async (message) => {
 
 	// ######################### PAYPAL/SUBSCRIBE ########################
 
-	const paypal_title = lang.paypal_title;
-	const paypal_description = lang.paypal_description;
-
+	var paypal_description = i18n.__("Thank you! \nYour support is greatly appreciated")
+	var paypal_title = i18n.__("Click HERE to Subscribe")
 	if (command === "paypal" || command === "subscribe") {
 		if (config.paypal.enabled === "yes") {
 			let embedMSG = {

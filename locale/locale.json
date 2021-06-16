@@ -133,5 +133,11 @@
   },
   "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) got removed from the database.": {
     "de": "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) wurde aus der Datenbank entfernt."
+  },
+  "Thank you! \nYour support is greatly appreciated": {
+    "de": "Vielen Dank.\n Deine unterstützung ist mir wichtig."
+  },
+  "Click HERE to Subscribe": {
+    "de": "Klicke hier um zu unterstützen"
   }
 }
