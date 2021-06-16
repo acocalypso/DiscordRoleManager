@@ -1,3 +1,6 @@
+![Discord Banner 3](https://discordapp.com/api/guilds/639191866822098944/widget.png?style=banner3)
+
+
 # DiscordRoleManager
 > Manage Discord Roles the lazzyyy way
 
@@ -100,6 +103,7 @@ Help commands:
 ```
 
 ##Contribution:
+
 You can find the local.json file in locale/local.json
 
 if you want to add another langue you just need to add a new entry in the json file like:
