@@ -614,7 +614,7 @@ bot.on("messageCreate", async (message) => {
 										startDateTime: startDateTime
 									}));
 
-									bot.getDMChannel(mentioned.id).then(dm => dm.createMessage(i18n.__("Hello {{mentionedUsername}}!\n\nYour access has been extended.\nIt is now valid till {{finalDate}}.\n\nThanks for your support", {
+									bot.getDMChannel(mentioned.id).then(dm => dm.createMessage(i18n.__("Hello {{mentionedUsername}}!\n\n🎉Your access has been extended🎉.\nIt is now valid till {{finalDate}}.\n\nThanks for your support", {
 										mentionedUsername: mentioned.username,
 										finalDate: finalDate
 									})).catch(error => {

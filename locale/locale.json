@@ -99,13 +99,13 @@
     "de": "🎉 {{mentionedUsername}} wurde die **temporäre** Rolle **{{daRole}}** erteilt, Viel Spass! Der Zugriff verfällt am: `{{finalDateDisplay}}`"
   },
   "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given {{days}} days by: {{mUserUsername}} ({{mID}}) for the role: {{daRole}}": {
-    "de": "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) hat {{days}} erhalten von: {{mUserUsername}} ({{mID}}) für die Rolle: {{daRole}}"
+    "de": "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) hat {{days}} Tag/e erhalten von: {{mUserUsername}} ({{mID}}) für die Rolle: {{daRole}}"
   },
   "✅ {{mentionedUsername}} has had time added until: `{{finalDate}}`! They were added on: `{{startDateTime}}`": {
     "de": "✅ {{mentionedUsername}} wurde bis zum: `{{finalDate}}` verlängert! Der Zugriff besteht seit: `{{startDateTime}}`"
   },
   "Hello {{mentionedUsername}}!\n\nYour access has been extended.\nIt is now valid till {{finalDate}}.\n\nThanks for your support": {
-    "de": "Hallo {{mentionedUsername}}!\n\nDein Zugriff wurde verlängert..\nDer Zugriff ist bis zum {{finalDate}} gültig.\n\nDanke für deine Unterstützung."
+    "de": "Hallo {{mentionedUsername}}!\n\n🎉Dein Zugriff wurde verlängert🎉..\nDer Zugriff ist bis zum {{finalDate}} gültig.\n\nDanke für deine Unterstützung."
   },
   "Hello {{mentionedUsername}}!\n\nYour access expires at {{finalDateDisplay}}.\n\nThanks for your support.\n\nLiveMap: {{map}}.": {
     "de": "Hallo {{mentionedUsername}}!\n\nDein Zugriff verfällt am {{finalDateDisplay}}.\n\nDanke für deine Unterstützung.\n\nLiveMap: {{map}}."
