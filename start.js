@@ -311,7 +311,9 @@ bot.on("messageCreate", async (message) => {
 					})).catch((err) => { console.log(err) });
 				}
 				if (args[0] && !args[1]) {
-					bot.createMessage(c.id, "please `@mention` a person you want me to give/remove `" + config.cmdPrefix + "telegram` to...").catch((err) => { console.log(err) });
+					bot.createMessage(c.id, i18n.__("please `@mention` a person you want me to give/remove `{{configCMDPrefix}}telegram` to...", {
+						configCMDPrefix: config.cmdPrefix
+					})).catch((err) => { console.log(err) });
 				}
 				/*if (!args[1] && mentioned) {
 					bot.createMessage(c.id, "incomplete data, please try: \n `" + config.cmdPrefix + "telegram @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "telegram check @mention`").catch((err) => { console.log(err) });

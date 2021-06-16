@@ -139,5 +139,8 @@
   },
   "Click HERE to Subscribe": {
     "de": "Klicke hier um zu unterstützen"
+  },
+  "please `@mention` a person you want me to give/remove `{{configCMDPrefix}}telegram` to...": {
+    "de": "bitte `@mention` eine Persion der du die Rolle geben/entfernen willst mit `{{configCMDPrefix}}telegram`"
   }
 }
