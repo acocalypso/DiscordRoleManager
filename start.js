@@ -186,7 +186,7 @@ bot.connect();
 				console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 1:" + `(${err})`);
 				process.exit(-1);
 			});
-	}, 15000);
+	}, 600000);
 	// 86400000 = 1day
 	// 3600000 = 1hr
 	// 60000 = 1min
