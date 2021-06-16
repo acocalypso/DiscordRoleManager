@@ -25,7 +25,7 @@
   "ownerID": "", // discord bot owner (usually the one who is using the bot)
   "serverName": "", // discord Server Name
   "serverID": "", // discord Server ID
-  "language": "", // de,en,pt
+  "language": "", // en, de
   "cmdPrefix": "?", // prefix for commands
   "adminRoleName": "", // Name of the Admin Role
   "modRoleName": "", // Name of the moderator Role
