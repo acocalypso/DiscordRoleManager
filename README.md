@@ -99,6 +99,17 @@ Help commands:
 (prefix)help mods >> display mod commands
 ```
 
+##Contribution:
+You can find the local.json file in locale/local.json
+
+if you want to add another langue you just need to add a new entry in the json file like:
+
+```
+  "Ready": {
+    "de": "Bereit!",
+    "cz": "připraven"
+  },
+```
 
 ## Additional IMPORTANT Infos:
 This is a port from https://github.com/Kneckter/DiscordRoleBot
@@ -109,3 +120,4 @@ Used libs:
 - ErisJS
 - sqlite3
 - mysql
+- i18n-nodejs

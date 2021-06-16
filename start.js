@@ -69,7 +69,10 @@ bot.connect();
 							.catch(err => {
 								console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 4: " + `(${err})`);
 							});
-						console.log(GetTimestamp() + i18n.__(`Updated the username for ${member.id} to ${name}`));
+						console.log(GetTimestamp() + i18n.__(`Updated the username for {{memberId}} to {{name}}`, {
+							memberID: member.id,
+							name: name
+						}));
 					}
 					// CHECK IF THEIR ACCESS HAS EXPIRED
 					if (daysLeft < 1) {
@@ -80,14 +83,29 @@ bot.connect();
 									console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 5:" + `(${err})`);
 									process.exit(-1);
 								});
-							bot.createMessage(config.mainChannelID, i18n.__(`⚠ ${rows[rowNumber].username} has **left** the server and **lost** their role of: **${rName.name}** - their **temporary** access has __EXPIRED__ 😭`)).catch(err => { console.error(GetTimestamp() + err); });
-							console.log(GetTimestamp() + i18n.__(`[ADMIN] [TEMPORARY-ROLE] ${rows[rowNumber].username} - ${(rows[rowNumber].userID)} has left the server and lost their role: ${rName.name} ... time EXPIRED`));
+							bot.createMessage(config.mainChannelID, i18n.__("⚠ {{rowUsername}} has **left** the server and **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭", {
+								rowUsername: rows[rowNumber].username,
+								rNameName: rName.name
+							})).catch(err => { console.error(GetTimestamp() + err); });
+							console.log(GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{rowUsername}} - {{rowUserID}} has left the server and lost their role: {{rNameName}} ... time EXPIRED", {
+								rowUsername: rows[rowNumber].username,
+								rowUserID: rows[rowNumber].userID,
+								rNameName: rName.name
+							}));
 							continue;
 						}
 						// REMOVE ROLE FROM MEMBER IN GUILD
 						member.removeRole(rName.id).then(async members => {
-							bot.createMessage(config.mainChannelID, i18n.__(`⚠ ${member.user.username} has **lost** their role of: **${rName.name}"** - their **temporary** access has __EXPIRED__ 😭`)).catch(err => { console.error(GetTimestamp() + err); });
-							bot.getDMChannel(member.user.id).then(dm => dm.createMessage(i18n.__(`Hello ${member.user.username}!\n\nYour role **${rName.name}** on **${config.serverName}** has been removed.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: ${config.paypal.url}`)).catch((err) => { console.log(err) })).catch((err) => { console.log(err) })
+							bot.createMessage(config.mainChannelID, i18n.__("⚠ {{memberUsername}} has **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭", {
+								memberUsername: member.user.username,
+								rNameName: rName.name
+							})).catch(err => { console.error(GetTimestamp() + err); });
+							bot.getDMChannel(member.user.id).then(dm => dm.createMessage(i18n.__("Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** has been removed.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: {{configPaypalUrl}}", {
+								memberUsername: member.user.username,
+								rNameName: rName.name,
+								configServerName: config.serverName,
+								configPaypalUrl: config.paypal.url
+							})).catch((err) => { console.log(err) })).catch((err) => { console.log(err) })
 
 							// REMOVE DATABASE ENTRY
 							await query(`DELETE FROM temporary_roles WHERE userID='${member.id}' AND temporaryRole='${rName.name}'`)
@@ -95,10 +113,18 @@ bot.connect();
 									console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 2:" + `(${err})`);
 									process.exit(-1);
 								});
-							console.log(GetTimestamp() + i18n.__(`[ADMIN] [TEMPORARY-ROLE] ${member.user.username} - ${member.id} have lost their role: ${rName.name} ... time EXPIRED`));
+							//console.log(GetTimestamp() + i18n.__(`[ADMIN] [TEMPORARY-ROLE] %s - %s have lost their role: %s ... time EXPIRED`, member.user.username, member.id, rName.name));
+							console.log(GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - {{memberId}} have lost their role: {{rNameName}} ... time EXPIRED", {
+								memberUsername: member.user.username,
+								memberId: member.id,
+								rNameName: rName.name
+							}));
 						}).catch(error => {
 							console.error(GetTimestamp() + error.message);
-							bot.createMessage(config.mainChannelID,i18n.__(`**⚠ Could not remove the ${rName.name} role from ${member.user.username}!**`)).catch(err => { console.error(GetTimestamp() + err); });
+							bot.createMessage(config.mainChannelID, i18n.__("**⚠ Could not remove the {{rNameName}} role from {{memberUsername}}!**", {
+								rNameName: rName.name,
+								memberUsername: member.user.username
+							})).catch(err => { console.error(GetTimestamp() + err); });
 						});
 					}
 					// CHECK IF THERE ARE ONLY HAVE 5 DAYS LEFT
@@ -108,13 +134,38 @@ bot.connect();
 						let finalDate = await formatTimeString(endDateVal);
 						// NOTIFY THE USER IN DM THAT THEY WILL EXPIRE
 						if (config.paypal.enabled == "yes") {
-							bot.getDMChannel(member.user.id).then(dm => dm.createMessage(i18n.__(`Hello ${member.user.username}!\n\nYour role **${rName.name}** on **${config.serverName}** will be removed at ${finalDate}.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: ${config.paypal.url}`)).catch((err) => { console.log(GetTimestamp() + i18n.__(`Failed to send a DM to user: ${member.id} - ${err}`)) }));
+							bot.getDMChannel(member.user.id).then(dm => dm.createMessage(i18n.__("Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** will be removed at {{finalDate}}.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: {{configPaypalUrl}}", {
+								memberUsername: member.user.username,
+								rNameName: rName.name,
+								configServerName: config.serverName,
+								finalDate: finalDate,
+								configPaypalUrl: config.paypal.url
+							})).catch((err) => {
+								console.log(GetTimestamp() + i18n.__(`Failed to send a DM to user: {{memberID}} - {{err}}`, {
+									memberID: member.id,
+									err: err
+								}))
+							}));
 						}
 						else {
-							bot.getDMChannel(member.user.id).then(dm => dm.createMessage(i18n__(`Hello ${member.user.username}!\n\nYour role **${rName.name}** on **${config.serverName}** will be removed at ${finalDate}.\nIf you want to continue, please do another donation.\n\nThank you.`)).catch((err) => { console.log(GetTimestamp() + i18n.__(`Failed to send a DM to user: ${member.id} - ${err}`)) }));
+							bot.getDMChannel(member.user.id).then(dm => dm.createMessage(i18n__(`Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** will be removed at {{finalDate}}.\nIf you want to continue, please do another donation.\n\nThank you.`, {
+								memberUsername: member.user.username,
+								rNameName: rName.name,
+								configServerName: config.serverName,
+								finalDate: finalDate,
+							})).catch((err) => {
+								console.log(GetTimestamp() + i18n.__(`Failed to send a DM to user: {{memberID}} - {{err}}`, {
+									memberID: member.id,
+									err: err
+								}))
+							}));
 						}
 						// NOTIFY THE ADMINS OF THE PENDING EXPIRY
-						bot.createMessage(config.mainChannelID, i18n.__(`⚠ ${member.user.username} will lose their role of: **${rName.name}** in less than 5 days on ${finalDate}.`)).catch(err => { console.error(GetTimestamp() + err); });
+						bot.createMessage(config.mainChannelID, i18n.__(`⚠ {{memberUsername}} will lose their role of: **{{rNameName}}** in less than 5 days on {{finalDate}}.`, {
+							memberUsername: member.user.username,
+							rNameName: rName.name,
+							finalDate: finalDate
+						})).catch(err => { console.error(GetTimestamp() + err); });
 						// UPDATE THE DB TO REMEMBER THAT THEY WERE NOTIFIED
 						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
 						await query(`UPDATE temporary_roles SET notified=1, username="${name}" WHERE userID="${member.id}" AND temporaryRole="${rName.name}"`)
@@ -122,7 +173,12 @@ bot.connect();
 								console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 3:" + `(${err})`);
 								process.exit(-1);
 							});
-						console.log(GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] ${member.user.username} - (${member.id}) has been notified that they will lose their role ${rName.name} in less than 5 days on ${finalDate}"));
+						console.log(GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - ({{memberID}}) has been notified that they will lose their role {{rNameName}} in less than 5 days on {{finalDate}}", {
+							memberUsername: member.user.username,
+							memberID: member.id,
+							rNameName: rName.name,
+							finalDate: finalDate
+						}));
 					}
 				}
 			})
@@ -170,12 +226,16 @@ bot.on("messageCreate", async (message) => {
 	let AdminR = g.roles.find(role => role.name === config.adminRoleName);
 	if (!AdminR) {
 		AdminR = { "id": "111111111111111111" };
-		console.info("[ERROR] [CONFIG] I could not find admin role: " + config.adminRoleName);
+		console.info(GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}", {
+			configAdminRoleName: config.adminRoleName
+		}));
 	}
 	let ModR = g.roles.find(role => role.name === config.modRoleName);
 	if (!ModR) {
 		ModR = { "id": "111111111111111111" };
-		console.info("[ERROR] [CONFIG] I could not find mod role: " + config.modRoleName);
+		console.info(GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find mod role: {{configModRoleName}}", {
+			configModRoleName: config.modRoleName
+		}));
 	}
 
 	// ############################################################################
@@ -194,12 +254,14 @@ bot.on("messageCreate", async (message) => {
 				bot.createMessage(c.id, cmds).catch((err) => { console.log(err) });
 			}
 			else {
-				bot.createMessage(c.id, "you are **NOT** allowed to use this command! \ntry using: `" + config.cmdPrefix + "commands`").catch((err) => { console.log(err) });
+				bot.createMessage(c.id, i18n.__("you are **NOT** allowed to use this command! \ntry using: {{configCMDPrefix}}help", {
+					configCMDPrefix: config.cmdPrefix
+				})).catch((err) => { console.log(err) });
 				return;
 			}
 		}
 		if (!args[0]) {
-			cmds = "`" + config.cmdPrefix + "check`   \\\u00BB   to check the time left on your subscription\n";
+			cmds = "`" + config.cmdPrefix + "check <Role-NAME>`   \\\u00BB   to check the time left on your subscription\n";
 			if (config.mapMain.enabled === "yes") {
 				cmds += "`" + config.cmdPrefix + "map`   \\\u00BB   a link to our web map\n"
 			}
@@ -246,7 +308,9 @@ bot.on("messageCreate", async (message) => {
 
 			if (m.roles.includes(ModR.id) || m.roles.includes(AdminR.id) || m.id === config.ownerID) {
 				if (!args[0]) {
-					bot.createMessage(c.id, "syntax:\n `" + config.cmdPrefix + "telegram @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "telegram check @mention`").catch((err) => { console.log(err) });
+					bot.createMessage(c.id, i18n.__("syntax:\n {{configCMDPrefix}}telegram @mention <DAYS> <ROLE-NAME>\n or {{configCMDPrefix}}telegram check @mention", {
+						configCMDPrefix: config.cmdPrefix
+					})).catch((err) => { console.log(err) });
 				}
 				if (args[0] && !args[1]) {
 					bot.createMessage(c.id, "please `@mention` a person you want me to give/remove `" + config.cmdPrefix + "telegram` to...").catch((err) => { console.log(err) });
@@ -394,7 +458,7 @@ bot.on("messageCreate", async (message) => {
 
 		if (m.roles.includes(ModR.id) || m.roles.includes(AdminR.id) || m.id === config.ownerID) {
 			if (!args[0]) {
-				bot.createMessage(c.id, "syntax:\n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention`\n or `" + config.cmdPrefix + "temprole check @mention`").catch((err) => { console.log(err) });
+				bot.createMessage(c.id, "syntax:\n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention <ROLE-NAME>`\n or `" + config.cmdPrefix + "temprole check @mention <ROLE-NAME>`").catch((err) => { console.log(err) });
 				return;
 			}
 			if (!mentioned) {
@@ -420,7 +484,7 @@ bot.on("messageCreate", async (message) => {
 
 				let rName = g.roles.find(rName => rName.name === daRole);
 				if (!rName) {
-					bot.createMessage(c.id, "I couldn't find such role, please check the spelling and try again.");
+					bot.createMessage(c.id, i18n.__("I couldn't find such role, please check the spelling and try again."));
 					return;
 				}
 
@@ -429,7 +493,10 @@ bot.on("messageCreate", async (message) => {
 					await query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}"`)
 						.then(async row => {
 							if (!row[0]) {
-								bot.createMessage(c.id, "⚠ [ERROR] " + mentioned.username + " is __NOT__ in the `DataBase` for the role " + daRole).catch((err) => { console.log(err) });
+								bot.createMessage(c.id, i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}", {
+									mentionedUsername: mentioned.usernamen,
+									daRole: daRole
+								})).catch((err) => { console.log(err) });
 								return;
 							}
 							let startDateVal = new Date();
@@ -439,9 +506,14 @@ bot.on("messageCreate", async (message) => {
 							endDateVal.setTime(row[0].endDate * 1000);
 							let finalDate = await formatTimeString(endDateVal);
 
-							bot.createMessage(c.id, "✅ " + mentioned.username + " will lose the role: **" + row[0].temporaryRole + "** on: `" + finalDate + "`! They were added on: `" + startDateTime + "`").catch((err) => { console.log(err) });
+							bot.createMessage(c.id, i18n.__("✅ {{mentionedUsername}} will lose the role: **{{rowTempRole}}** on: `{{finalDate}}`! They were added on: `{{startDateTime}}`", {
+								mentionedUsername: mentioned.username,
+								rowTempRole: row[0].temporaryRole,
+								finalDate: finalDate,
+								startDateTime: startDateTime
+							})).catch((err) => { console.log(err) });
 						}).catch(err => {
-							console.error(GetTimestamp() + `[InitDB] Failed to execute query 9: (${err})`);
+							console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 9:" + `(${err})`);
 							return;
 						});
 					return;
@@ -453,7 +525,10 @@ bot.on("messageCreate", async (message) => {
 					await query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}"`)
 						.then(async row => {
 							if (!row[0]) {
-								bot.createMessage(c.id, "⚠ [ERROR] " + mentioned.username + " is __NOT__ in the database for the role " + daRole).catch((err) => { console.log(err) });
+								bot.createMessage(c.id, i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}", {
+									mentionedUsername: mentioned.username,
+									daRole: daRole
+								})).catch((err) => { console.log(err) });
 								return;
 							}
 
@@ -462,16 +537,24 @@ bot.on("messageCreate", async (message) => {
 
 							await query(`DELETE FROM temporary_roles WHERE userID="${mentioned.id}"`)
 								.then(async result => {
-									console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] " + m.user.username + " (" + m.id + ")" + " removed the access from \"" + mentioned.username + "\" (" + mentioned.id + ")");
-									bot.createMessage(c.id, "⚠ " + mentioned.username + " has **lost** their role of: **" + theirRole.name + "** and has been removed from the database").catch((err) => { console.log(err) });
+									console.log(GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{m.user.username}} ({{m.id}}) removed the access from {{mentioned.username}} ({{mentioned.id}}", {
+										mUserUsername: m.user.username,
+										mID: m.id,
+										mentionedUsername: mentioned.username,
+										mentionedID: mentioned.id
+									}));
+									bot.createMessage(c.id, i18n.__("⚠ {{mentionedUsername}} has **lost** their role of: **{{theirRoleName}}** and has been removed from the database", {
+										mentionedUsername: mentioned.username,
+										theirRoleName: theirRole.name
+									})).catch((err) => { console.log(err) });
 								})
 								.catch(err => {
-									console.error(GetTimestamp() + `[InitDB] Failed to execute query 11: (${err})`);
+									console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 11:" + `(${err})`);
 									return;
 								});
 						})
 						.catch(err => {
-							console.error(GetTimestamp() + `[InitDB] Failed to execute query 10: (${err})`);
+							console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 10:" + `(${err})`);
 							return;
 						});
 					return;
@@ -480,22 +563,31 @@ bot.on("messageCreate", async (message) => {
 				// ADD TIME TO A USER
 				else if (args[0] === "add") {
 					if (!Number(args[2])) {
-						bot.createMessage(c.id, "Error: second value has to be **X** number of days, IE:\n`!" + config.cmdPrefix + "" + command + " @" + mentioned.username + " 90 " + daRole + "`").catch((err) => { console.log(err) });
+						bot.createMessage(c.id, i18n.__("Error: second value has to be **X** number of days, IE:\n `{{configCMDPrefix}}{{command}} add @{{mentionedUsername}} 90 {{daRole}}`", {
+							configCMDPrefix: config.cmdPrefix,
+							command: command,
+							mentionedUsername: mentioned.username,
+							daRole: daRole
+						})).catch((err) => { console.log(err) });
 						return;
 					}
 
 					if (args[1] && !mentioned) {
-						bot.createMessage(c.id, "please `@mention` a person you want me to add time to...").catch((err) => { console.log(err) });
+						bot.createMessage(c.id, i18n.__("please `@mention` a person you want me to add time to...")).catch((err) => { console.log(err) });
 						return;
 					}
 					if (!args[2]) {
-						bot.createMessage(c.id, "for how **many** days do you want " + mentioned.username + " to have to have this role?").catch((err) => { console.log(err) });
+						bot.createMessage(c.id, i18n.__("for how **many** days do you want {{mentionedUsername}} to have to have this role?", {
+							mentionedUsername: mentioned.username
+						})).catch((err) => { console.log(err) });
 						return;
 					}
 					await query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}"`)
 						.then(async row => {
 							if (!row[0]) {
-								bot.createMessage(c.id, "⚠ [ERROR] " + mentioned.username + " is __NOT__ in the database").catch((err) => { console.log(err) });
+								bot.createMessage(c.id, i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the database", {
+									mentionedUsername: mentioned.username
+								})).catch((err) => { console.log(err) });
 								return;
 							}
 							let startDateVal = new Date();
@@ -510,25 +602,37 @@ bot.on("messageCreate", async (message) => {
 									endDateVal.setTime(finalDate);
 									finalDate = await formatTimeString(endDateVal);
 									dmFinalDate = finalDate;
-									console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + mentioned.username + "\" (" + mentioned.id + ") was given " + days + " days by: " + m.user.username + " (" + m.id + ") for the role: " + daRole);
-									bot.createMessage(c.id, "✅ " + mentioned.username + " has had time added until: `" + finalDate + "`! They were added on: `" + startDateTime + "`");
+									console.log(GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given {{days}} days by: {{mUserUsername}} ({{mID}}) for the role: {{daRole}}", {
+										mentionedUsername: mentioned.username,
+										mentionedID: mentioned.id,
+										days: days,
+										mUserUsername: m.user.username,
+										mID: m.id,
+										daRole: daRole
+									}));
+									bot.createMessage(c.id, i18n.__("✅ {{mentionedUsername}} has had time added until: `{{finalDate}}`! They were added on: `{{startDateTime}}`", {
+										mentionedUsername: mentioned.username,
+										finalDate: finalDate,
+										startDateTime: startDateTime
+									}));
 
-									const stringValue = lang.dm_access_extended;
-									const dm_access_extend_1 = stringValue.replace(/\$memberUsername\$/gi, mentioned.username);
-									const dm_access_extend_2 = dm_access_extend_1.replace(/\$dmFinalDate\$/gi, dmFinalDate);
-
-									bot.getDMChannel(mentioned.id).then(dm => dm.createMessage(dm_access_extend_2).catch(error => {
-										console.error(GetTimestamp() + "Failed to send a DM to user: " + mentioned.id);
+									bot.getDMChannel(mentioned.id).then(dm => dm.createMessage(i18n.__("Hello {{mentionedUsername}}!\n\nYour access has been extended.\nIt is now valid till {{finalDate}}.\n\nThanks for your support", {
+										mentionedUsername: mentioned.username,
+										finalDate: finalDate
+									})).catch(error => {
+										console.error(GetTimestamp() + i18n.__("Failed to send a DM to user: {{mentionedID}}", {
+											mentionedID: mentioned.id
+										}));
 									})).catch((err) => { console.log(err) });
 
 								})
 								.catch(err => {
-									console.error(GetTimestamp() + `[InitDB] Failed to execute query 14: (${err})`);
+									console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 14:" + `(${err})`);
 									return;
 								});
 						})
 						.catch(err => {
-							console.log(GetTimestamp() + `[InitDB] Failed to execute query 13: (${err})`);
+							console.log(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 13:" + `(${err})`);
 							return;
 						});
 					return;
@@ -561,37 +665,51 @@ bot.on("messageCreate", async (message) => {
 								.then(async result => {
 									let theirRole = g.roles.find(role => role.name === daRole);
 									bot.guilds.get(config.serverID).addMemberRole(mentioned.id, theirRole.id, 'Donater').catch((err) => { console.log(err) });
-									console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + mentioned.username + "\" (" +
-										mentioned.id + ") was given the \"" + daRole + "\" role by " + m.user.username + " (" + m.id + ")");
-									bot.createMessage(c.id, "🎉 " + mentioned.username + " has been given a **temporary** role of: **" + daRole +
-										"**, enjoy! They will lose this role on: `" + finalDateDisplay + "`");
+									console.log(GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given the {{daRole}} role by {{mUserUsername}} ({{mID}})", {
+										mentionedUsername: mentioned.username,
+										mentionedID: mentioned.id,
+										daRole: daRole,
+										mUserUsername: m.user.username,
+										mID: m.id
+									}));
+									bot.createMessage(c.id, i18n.__("🎉 {{mentionedUsername}} has been given a **temporary** role of: **{{daRole}}**, enjoy! They will lose this role on: `{{finalDateDisplay}}`",{
+										mentionedUsername: mentioned.username,
+										daRole: daRole,
+										finalDateDisplay: finalDateDisplay
+									}));
 
-									const stringValue = lang.dm_access_granted;
-									const dm_granted_1 = stringValue.replace(/\$memberUsername\$/gi, mentioned.username);
-									const dm_granted_2 = dm_granted_1.replace(/\$finalDateDisplay\$/gi, finalDateDisplay);
-									const dm_granted_3 = dm_granted_2.replace(/\$map\$/gi, config.mapMain.url);
-									bot.getDMChannel(mentioned.id).then(dm => dm.createMessage(dm_granted_3).catch(error => {
-										console.error(GetTimestamp() + "Failed to send a DM to user: " + mentioned.id);
+									bot.getDMChannel(mentioned.id).then(dm => dm.createMessage(i18n.__("Hello {{mentionedUsername}}!\n\nYour access expires at {{finalDateDisplay}}.\n\nThanks for your support.\n\nLiveMap: {{map}}.", {
+										mentionedUsername: mentioned.username,
+										finalDateDisplay: finalDateDisplay,
+										map: config.mapMain.url
+									})).catch(error => {
+										console.error(GetTimestamp() + i18n.__("Failed to send a DM to user: {{mentionedID}}", {
+											mentionedID: mentioned.id
+										}));
 									})).catch((err) => { console.log(err) });
 								})
 								.catch(err => {
-									console.error(GetTimestamp() + `[InitDB] Failed to execute query 16: (${err})`);
+									console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 16:" + `(${err})`);
 									return;
 								});
 						}
 						else {
-							bot.createMessage(c.id, "This user already has the role **" + daRole + "** try using `" + config.cmdPrefix + "temprole remove @" + mentioned.username + " " + daRole + "` if you want to reset their role.");
+							bot.createMessage(c.id, i18n.__("This user already has the role **{{daRole}}** try using `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` if you want to reset their role.", {
+								daRole: daRole,
+								configCMDPrefix: config.cmdPrefix,
+								mentionedUsername: mentioned.username
+							}));
 						}
 					})
 					.catch(err => {
-						console.error(GetTimestamp() + `[InitDB] Failed to execute query 15: (${err})`);
+						console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 16:" + `(${err})`);
 						return;
 					});
 			}
 
 		}
 		else {
-			bot.createMessage(c.id, "you are **NOT** allowed to use this command!").catch((err) => { console.log(GetTimestamp() + err); });
+			bot.createMessage(c.id, i18n.__("you are **NOT** allowed to use this command!")).catch((err) => { console.log(GetTimestamp() + err); });
 		}
 	}
 
@@ -603,7 +721,9 @@ bot.on("messageCreate", async (message) => {
 		msg = message.content;
 		args = msg.split(" ").slice(1);
 		if (!args[0]) {
-			bot.createMessage(c.id,"Please enter the role you want to check like `" + config.cmdPrefix + "check Spender`");
+			bot.createMessage(c.id, i18n.__("Please enter the role you want to check like `{{configCMDPrefix}}check <ROLE-NAME>`", {
+				configCMDPrefix: config.cmdPrefix
+			}));
 			return;
 		}
 		// ROLES WITH SPACES
@@ -615,7 +735,7 @@ bot.on("messageCreate", async (message) => {
 		// CHECK ROLE EXIST
 		let rName = g.roles.find(rName => rName.name === daRole);
 		if (!rName) {
-			bot.createMessage(c.id,"I couldn't find such role, please check the spelling and try again.");
+			bot.createMessage(c.id,i18n.__("I couldn't find such role, please check the spelling and try again."));
 			return;
 		}
 
@@ -623,7 +743,10 @@ bot.on("messageCreate", async (message) => {
 		await query(`SELECT * FROM temporary_roles WHERE userID="${m.id}" AND temporaryRole="${daRole}"`)
 			.then(async row => {
 				if (!row[0]) {
-					bot.createMessage(c.id, "⚠ [ERROR] " + message.author.username + " is __NOT__ in the database for the role ").catch((err) => { console.log(err) });
+					bot.createMessage(c.id, i18n.__("⚠ [ERROR] {{mAuthorUsername}} is __NOT__ in the database for the role {{daRole}}.", {
+						mAuthorUsername: message.author.username,
+						daRole: daRole
+					})).catch((err) => { console.log(err) });
 					return;
 				}
 
@@ -634,11 +757,15 @@ bot.on("messageCreate", async (message) => {
 				endDateVal.setTime(row[0].endDate * 1000);
 				let finalDate = await formatTimeString(endDateVal);
 
-				bot.createMessage(c.id, "✅ You will lose the role: **" + row[0].temporaryRole + "** on: `" + finalDate + "`! The role was added on: `" + startDateTime + "`").catch((err) => { console.log(err) });
+				bot.createMessage(c.id, i18n.__("✅ You will lose the role: **{{rowTempRole}}** on: `{{finalDate}}`! The role was added on: `{{startDateTime}}`", {
+					rowTempRole: row[0].temporaryRole,
+					finalDate: finalDate,
+					startDateTime: startDateTime
+				})).catch((err) => { console.log(err) });
 
 			})
 			.catch(err => {
-				console.error(GetTimestamp() + `[InitDB] Failed to execute query 8: (${err})`);
+				console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 8:" + `(${err})`);
 				return;
 			});
 		return;
@@ -646,7 +773,9 @@ bot.on("messageCreate", async (message) => {
 	// ######################### MAP ###################################
 	if (command === "map") {
 		if (config.mapMain.enabled === "yes") {
-			bot.createMessage(c.id, "Our official webmap: \n<" + config.mapMain.url + ">").catch((err) => { console.error(GetTimestamp() + err); });
+			bot.createMessage(c.id, i18n.__("Our official webmap: {{configMapUrl}}", {
+				configMapUrl: config.mapMain.url
+			})).catch((err) => { console.error(GetTimestamp() + err); });
 		}
 	}
 });
@@ -669,11 +798,16 @@ bot.on('guildMemberRemove', async member => {
 				await query(`UPDATE temporary_roles SET leftServer = 1 WHERE userID="${member.id}"`)
 					.then(async result => {
 						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
-						console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + name + "\" (" + member.id + ") has left the server. All role assignments have been marked in the database.");
-						bot.createMessage(c.id,":exclamation: " + name + " has left the server.");
+						console.log(GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) has left the server. All role assignments have been marked in the database.", {
+							name: name,
+							memberID: member.id
+						}));
+						bot.createMessage(c.id, i18n.__(":exclamation: {{name}} has left the server.", {
+							name: name
+						}));
 					})
 					.catch(err => {
-						console.error(GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove 2: (${err})`);
+						console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 2:" + `(${err})`);
 						return;
 					});
 			}
@@ -681,17 +815,22 @@ bot.on('guildMemberRemove', async member => {
 				await query(`DELETE FROM temporary_roles WHERE userID="${member.id}"`)
 					.then(async result => {
 						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
-						console.log(GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + name + "\" (" + member.id + ") got removed from the database.");
-						bot.createMessage(c.id, ":exclamation: " + name + " All access removed from database.");
+						console.log(GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) got removed from the database.", {
+							name: name,
+							memberID: member.id
+						}));
+						bot.createMessage(c.id, i18n.__(":exclamation: {{name}} all access removed from database.",{
+							name: name
+						}));
 					})
 					.catch(err => {
-						console.error(GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove 2: (${err})`);
+						console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute query in guildMemberRemove") + "2:" + `(${err})`);
 						return;
 					});
 			}
 		})
 		.catch(err => {
-			console.error(GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove 1: (${err})`);
+			console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute query in guildMemberRemove") + "1:" + `(${err})`);
 			return;
 		});
 });
