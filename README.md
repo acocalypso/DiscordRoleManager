@@ -25,7 +25,7 @@
   "ownerID": "", // discord bot owner (usually the one who is using the bot)
   "serverName": "", // discord Server Name
   "serverID": "", // discord Server ID
-  "language": "", // de,en,pt
+  "language": "", // en, de
   "cmdPrefix": "?", // prefix for commands
   "adminRoleName": "", // Name of the Admin Role
   "modRoleName": "", // Name of the moderator Role
@@ -99,6 +99,18 @@ Help commands:
 (prefix)help mods >> display mod commands
 ```
 
+##Contribution:
+
+You can find the local.json file in locale/local.json
+
+if you want to add another langue you just need to add a new entry in the json file like:
+
+```
+  "Ready": {
+    "de": "Bereit!",
+    "cz": "připraven"
+  },
+```
 
 ## Additional IMPORTANT Infos:
 This is a port from https://github.com/Kneckter/DiscordRoleBot
@@ -109,3 +121,4 @@ Used libs:
 - ErisJS
 - sqlite3
 - mysql
+- i18n-nodejs
