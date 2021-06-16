@@ -104,7 +104,7 @@
   "✅ {{mentionedUsername}} has had time added until: `{{finalDate}}`! They were added on: `{{startDateTime}}`": {
     "de": "✅ {{mentionedUsername}} wurde bis zum: `{{finalDate}}` verlängert! Der Zugriff besteht seit: `{{startDateTime}}`"
   },
-  "Hello {{mentionedUsername}}!\n\nYour access has been extended.\nIt is now valid till {{finalDate}}.\n\nThanks for your support": {
+  "Hello {{mentionedUsername}}!\n\n🎉Your access has been extended🎉.\nIt is now valid till {{finalDate}}.\n\nThanks for your support": {
     "de": "Hallo {{mentionedUsername}}!\n\n🎉Dein Zugriff wurde verlängert🎉..\nDer Zugriff ist bis zum {{finalDate}} gültig.\n\nDanke für deine Unterstützung."
   },
   "Hello {{mentionedUsername}}!\n\nYour access expires at {{finalDateDisplay}}.\n\nThanks for your support.\n\nLiveMap: {{map}}.": {
