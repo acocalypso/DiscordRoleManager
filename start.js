@@ -124,56 +124,14 @@ bot.on("messageCreate", async (message) => {
 // Check for bot events other than messages
 bot.on('guildMemberRemove', async member => {
 
-	let c = message.channel;
-
 	// Used to note database entries when users leave the server.
 	let guild = member.guild.id;
 	if (guild != config.serverID) {
 		return;
 	}
-	// Check if the user had any temp roles
-	await query(`SELECT * FROM temporary_roles WHERE userID="${member.id}"`)
-		.then(async rows => {
-			// Update all entries from the database
-			if (rows[0]) {
-				await query(`UPDATE temporary_roles SET leftServer = 1 WHERE userID="${member.id}"`)
-					.then(async result => {
-						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
-						console.log(GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) has left the server. All role assignments have been marked in the database.", {
-							name: name,
-							memberID: member.id
-						}));
-						bot.createMessage(c.id, i18n.__(":exclamation: {{name}} has left the server.", {
-							name: name
-						}));
-					})
-					.catch(err => {
-						console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 2:" + `(${err})`);
-						return;
-					});
-			}
-			if (rows[0]) {
-				await query(`DELETE FROM temporary_roles WHERE userID="${member.id}"`)
-					.then(async result => {
-						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
-						console.log(GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) got removed from the database.", {
-							name: name,
-							memberID: member.id
-						}));
-						bot.createMessage(c.id, i18n.__(":exclamation: {{name}} all access removed from database.",{
-							name: name
-						}));
-					})
-					.catch(err => {
-						console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute query in guildMemberRemove") + "2:" + `(${err})`);
-						return;
-					});
-			}
-		})
-		.catch(err => {
-			console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute query in guildMemberRemove") + "1:" + `(${err})`);
-			return;
-		});
+
+	discordcommands.leftserver(bot, member);
+	
 });
 
 	function RestartBot(type) {
