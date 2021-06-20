@@ -4,3 +4,4 @@ config/config.json
 .vs/
 package-lock.json
 *.sqlite
+.env
