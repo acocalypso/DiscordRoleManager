@@ -45,7 +45,7 @@ async function InitDB() {
 						for (dbVersion; dbVersion < currVersion; dbVersion++) {
 							if (dbVersion == 0) {
 								// Setup the temp roles table
-								console.log(helperGetTimestamp() + '[InitDB] Creating the initial tables');
+								console.log(helper.GetTimestamp() + '[InitDB] Creating the initial tables');
 								await query(`CREATE TABLE IF NOT EXISTS temporary_roles (
                                         userID bigint(19) unsigned NOT NULL,
                                         temporaryRole varchar(35) NOT NULL,
@@ -183,7 +183,7 @@ async function query(sql, args) {
 		sqlConnection.query(sql, args, (error, results, fields) => {
 			if (error) {
 				if (error.code === "PROTOCOL_CONNECTION_LOST" || error.code === "PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR") {
-					console.log(GetTimestamp() + "Reconnecting to DB server...");
+					console.log(helper.GetTimestamp() + "Reconnecting to DB server...");
 					SQLConnect().then(result => query(sql, args));
 				}
 				else {
