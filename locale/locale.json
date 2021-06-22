@@ -1,143 +1,190 @@
 ﻿{
   "Ready": {
-    "de": "Bereit!"
+    "de": "Bereit!",
+    "pt": "Pronto!"
   },
   "No one is in the DataBase": {
-    "de": "Es wurden keine Einträge in der Datenbank gefunden"
+    "de": "Es wurden keine Einträge in der Datenbank gefunden",
+	  "pt": "Não encontrado na base de dados"
   },
   "[InitDB] Failed to execute role check query": {
-    "de": "[InitDB] Fehler beim Ausführen der Rollenüberprüfungsabfrage"
+    "de": "[InitDB] Fehler beim Ausführen der Rollenüberprüfungsabfrage",
+    "pt": "[InitDB] falha ao executar query de verificação de perfil"
   },
   "Updated the username for {{memberId}} to {{name}}": {
-    "de": "Der Benutzername für {{memberId}} wurde zu {{name}} aktuallisiert"
+    "de": "Der Benutzername für {{memberId}} wurde zu {{name}} aktuallisiert",
+    "pt": "O nome de utilizador de {{memberId}} foi atualizado para {{name}}"
   },
   "⚠ {{rowUsername}} has **left** the server and **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭": {
-    "de": "⚠ {{rowUsername}} hat den Server **verlassen** und die Rolle **{{rNameName}}** verloren - Der **temporäre** Zugriff ist __Ausgelaufen__ 😭"
+    "de": "⚠ {{rowUsername}} hat den Server **verlassen** und die Rolle **{{rNameName}}** verloren - Der **temporäre** Zugriff ist __Ausgelaufen__ 😭",
+    "pt": "⚠ {{rowUsername}} **saiu** do servidor e **foi removido** o perfil de: **{{rNameName}}** - o acesso **temporário** __EXPIROU__ 😭"
   },
   "[ADMIN] [TEMPORARY-ROLE] {{rowUsername}} - {{rowUserID}} has left the server and lost their role: {{rNameName}} ... time EXPIRED": {
-    "de": "[ADMIN] [TEMPORARY-ROLE] {{rowUsername}} - {{rowUserID}} hat den Server verlassen und die Rolle {{rNameName}} verloren... Zeit ABGELAUFEN`"
+    "de": "[ADMIN] [TEMPORARY-ROLE] {{rowUsername}} - {{rowUserID}} hat den Server verlassen und die Rolle {{rNameName}} verloren... Zeit ABGELAUFEN`",
+    "pt": "[ADMIN] [TEMPORARY-ROLE] {{rowUsername}} - {{rowUserID}} saiu do servidor e perdeu o perfil de: {{rNameName}} ... tempo EXPIRADO"
   },
   "⚠ {{memberUsername}} has **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭": {
-    "de": "⚠ {{memberUsername}} hat die Rolle **{{rNameName}}** verloren - der **temporäre** Zugriff ist __AUSGELAUFEN__ 😭"
+    "de": "⚠ {{memberUsername}} hat die Rolle **{{rNameName}}** verloren - der **temporäre** Zugriff ist __AUSGELAUFEN__ 😭",
+    "pt": "⚠ {{memberUsername}} **perdeu** o perfil de: **{{rNameName}}** - o **acesso temporario** __EXPIROU__ 😭"
   },
   "Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** has been removed.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: {{configPaypalUrl}}": {
-    "de": "Hallo {{memberUsername}}!\n\nDeine Rolle **{{rNameName}}** auf dem Server **{{configServerName}}** wurde entfernt.\nWenn du den Zugriff wieder haben möchtest, muss eine neue Spende getätigt werden.\n\nDanke.\nPaypal: {{configPaypalUrl}}"
+    "de": "Hallo {{memberUsername}}!\n\nDeine Rolle **{{rNameName}}** auf dem Server **{{configServerName}}** wurde entfernt.\nWenn du den Zugriff wieder haben möchtest, muss eine neue Spende getätigt werden.\n\nDanke.\nPaypal: {{configPaypalUrl}}",
+    "pt": "Olá {{memberUsername}}!\n\nO teu perfil de acesso **{{rNameName}}** em **{{configServerName}}** foi removido.\nSe pretenderes continuar, por favor renova o teu acesso.\n\nObrigado.\nPaypal: {{configPaypalUrl}}"
   },
   "[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - {{memberId}} have lost their role: {{rNameName}} ... time EXPIRED": {
-    "de": "[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - {{memberId}} hat die Rolle: {{rNameName}} verloren ... Zeit ABGELAUFEN"
+    "de": "[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - {{memberId}} hat die Rolle: {{rNameName}} verloren ... Zeit ABGELAUFEN",
+    "pt": "[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - {{memberId}} perdeu o perfil: {{rNameName}} ... tempo EXPIRADO"
   },
   "****⚠ Could not remove the {{rNameName}} role from {{memberUsername}}!**": {
-    "de": "**⚠ Die Rolle {{rNameName}} konnte nicht vom Benutzer {{memberUsername}} entfernt werden!**"
+    "de": "**⚠ Die Rolle {{rNameName}} konnte nicht vom Benutzer {{memberUsername}} entfernt werden!**",
+    "pt": "****⚠ Não foi possivel remover o perfil {{rNameName}} de {{memberUsername}}!**"
   },
   "Failed to send a DM to user: {{memberID}} - {{err}}": {
-    "de": "Die Nachricht konnte nicht zugestellt werden: {{memberID}} - {{err}}"
+    "de": "Die Nachricht konnte nicht zugestellt werden: {{memberID}} - {{err}}",
+    "pt": "Erro ao enviar mensagem privada ao utilizador. Detalhes:\n{{memberID}} - {{err}}"
   },
   "Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** will be removed at {{finalDate}}.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: {{configPaypalUrl}}": {
-    "de": "Hallo {{memberUsername}}!\n\nDeine Rolle **{{rNameName}}** auf dem Server **{{configServerName}}** wird am {{finalDate}} entfernt.\nWenn du den Zugriff behalten möchtest, muss eine neue Spende getätigt werden.\n\nDanke.\nPaypal: {{configPaypalUrl}}"
+    "de": "Hallo {{memberUsername}}!\n\nDeine Rolle **{{rNameName}}** auf dem Server **{{configServerName}}** wird am {{finalDate}} entfernt.\nWenn du den Zugriff behalten möchtest, muss eine neue Spende getätigt werden.\n\nDanke.\nPaypal: {{configPaypalUrl}}",
+    "pt": "Olá {{memberUsername}}!\n\nO teu perfil de acesso **{{rNameName}}** em **{{configServerName}}** irá expirar em {{finalDate}}.\nSe pretenderes continuar, por favor renova o teu acesso.\n\nObrigado.\nPaypal: {{configPaypalUrl}}"
   },
   "Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** will be removed at {{finalDate}}.\nIf you want to continue, please do another donation.\n\nThank you.": {
-    "de": "Hallo {{memberUsername}}!\n\nDeine Rolle **{{rNameName}}** auf dem Server **{{configServerName}}** wird am {{finalDate}} entfernt.\nWenn du den Zugriff behalten möchtest, muss eine neue Spende getätigt werden.\n\nDanke."
+    "de": "Hallo {{memberUsername}}!\n\nDeine Rolle **{{rNameName}}** auf dem Server **{{configServerName}}** wird am {{finalDate}} entfernt.\nWenn du den Zugriff behalten möchtest, muss eine neue Spende getätigt werden.\n\nDanke.",
+    "pt": "Olá {{memberUsername}}!\n\nO teu perfil de acesso **{{rNameName}}** em **{{configServerName}}** irá expirar em {{finalDate}}.\nSe pretenderes continuar, por favor renova o teu acesso.\n\nObrigado."
   },
   "⚠ {{memberUsername}} will lose their role of: **{{rNameName}}** in less than 5 days on {{finalDate}}.": {
-    "de": "⚠ {{memberUsername}} verliert die Rolle: **{{rNameName}}** in weniger als 5 Tagen am {{finalDate}}."
+    "de": "⚠ {{memberUsername}} verliert die Rolle: **{{rNameName}}** in weniger als 5 Tagen am {{finalDate}}.",
+    "pt": "⚠ {{memberUsername}} irá perder o perfil de acesso **{{rNameName}}** em menos de 5 dias. Data de expiração: {{finalDate}}."
   },
   "[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - ({{memberID}}) has been notified that they will lose their role {{rNameName}} in less than 5 days on {{finalDate}}": {
-    "de": "[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - ({{memberID}}) wurde informiert, dass seine Rolle {{rNameName}} in weniger als 5 Tage am {{finalDate}} ausläuft"
+    "de": "[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - ({{memberID}}) wurde informiert, dass seine Rolle {{rNameName}} in weniger als 5 Tage am {{finalDate}} ausläuft",
+    "pt": "[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - ({{memberID}}) foi notificado que irá perder o perfil {{rNameName}} dentro de 5 dias ou menos. Expira em {{finalDate}}"
   },
   "[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}": {
-    "de": "[ERROR] [CONFIG] Die Admin Rolle konne nicht gefunden werden: {{configAdminRoleName}}"
+    "de": "[ERROR] [CONFIG] Die Admin Rolle konne nicht gefunden werden: {{configAdminRoleName}}",
+    "pt": "[ERROR] [CONFIG] Não foi possivel encontrar perfil de admin para: {{configAdminRoleName}}"
   },
   "[ERROR] [CONFIG] I could not find mod role: {{configModRoleName}}": {
-    "de": "[ERROR] [CONFIG] Die Moderator Rolle konne nicht gefunden werden: {{configModRoleName}}"
+    "de": "[ERROR] [CONFIG] Die Moderator Rolle konne nicht gefunden werden: {{configModRoleName}}",
+    "pt": "[ERROR] [CONFIG] Não foi possivel localizar perfil de moderaor: {{configModRoleName}}"
   },
   "you are **NOT** allowed to use this command! \ntry using: {{configCMDPrefix}}help": {
-    "de": "du bist nicht berechtigt diesen Befehl zu verwenden!\nVersuche {{configCMDPrefix}}help"
+    "de": "du bist nicht berechtigt diesen Befehl zu verwenden!\nVersuche {{configCMDPrefix}}help",
+    "pt": "**NÃO ESTÁ AUTORISADO** a usar este comando! \nTente o comando: {{configCMDPrefix}}help"
   },
   "syntax:\n {{configCMDPrefix}}telegram @mention <DAYS> <ROLE-NAME>\n or {{configCMDPrefix}}telegram check @mention": {
-    "de": "syntax:\n {{configCMDPrefix}}telegram @mention <DAYS> <ROLE-NAME>\n oder {{configCMDPrefix}}telegram check @mention"
+    "de": "syntax:\n {{configCMDPrefix}}telegram @mention <DAYS> <ROLE-NAME>\n oder {{configCMDPrefix}}telegram check @mention",
+    "pt": "syntax:\n {{configCMDPrefix}}telegram @mention <DAYS> <ROLE-NAME>\n ou {{configCMDPrefix}}telegram check @mention"
   },
   "I couldn't find such role, please check the spelling and try again.": {
-    "de": "Die Rolle konnte nicht gefunden werden, bitte prüfe ob der Name richtig geschrieben ist und versuch es erneut."
+    "de": "Die Rolle konnte nicht gefunden werden, bitte prüfe ob der Name richtig geschrieben ist und versuch es erneut.",
+    "pt": "Não foi possivel encontrar o perfil indicado, por favor verifique o o nome do perfil e tente de novo."
   },
   "⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}": {
-    "de": "⚠ [ERROR] {{mentionedUsername}} ist __NICHT__ in der `Datenbank` mit der Rolle {{daRole}} vorhanden"
+    "de": "⚠ [ERROR] {{mentionedUsername}} ist __NICHT__ in der `Datenbank` mit der Rolle {{daRole}} vorhanden",
+    "pt": "⚠ [ERROR] {{mentionedUsername}} __NÃO EXISTE__ na `base de dados` para o perfil {{daRole}}"
   },
   "⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the database": {
-    "de": "⚠ [ERROR] {{mentionedUsername}} ist __NICHT__ in der Datenbank"
+    "de": "⚠ [ERROR] {{mentionedUsername}} ist __NICHT__ in der Datenbank",
+    "pt": "⚠ [ERROR] {{mentionedUsername}} is __NÃO EXISTE__ na base de dados"
   },
   "✅ {{mentionedUsername}} will lose the role: **{{rowTempRole}}** on: `{{finalDate}}`! They were added on: `{{startDateTime}}`": {
-    "de": "✅ {{mentionedUsername}} verliert die Rolle: **{{rowTempRole}}** am: `{{finalDate}}`! Diese wurde am `{{startDateTime}}` hinzugefügt."
+    "de": "✅ {{mentionedUsername}} verliert die Rolle: **{{rowTempRole}}** am: `{{finalDate}}`! Diese wurde am `{{startDateTime}}` hinzugefügt.",
+    "pt": "✅ {{mentionedUsername}} irá perder o perfil **{{rowTempRole}}** em: `{{finalDate}}`! Foi adicionado em: `{{startDateTime}}`"
   },
   "[ADMIN] [TEMPORARY-ROLE] {{m.user.username}} ({{m.id}}) removed the access from {{mentioned.username}} ({{mentioned.id}}": {
-    "de": "[ADMIN] [TEMPORARY-ROLE] {{m.user.username}} ({{m.id}}) hat die Rolle von {{mentioned.username}} ({{mentioned.id}} entfernt"
+    "de": "[ADMIN] [TEMPORARY-ROLE] {{m.user.username}} ({{m.id}}) hat die Rolle von {{mentioned.username}} ({{mentioned.id}} entfernt",
+    "pt": "[ADMIN] [TEMPORARY-ROLE] {{m.user.username}} ({{m.id}}) removeu o acesso de {{mentioned.username}} ({{mentioned.id}}"
   },
   "[InitDB] Failed to execute query in guildMemberRemove": {
-    "de": "[InitDB] Fehler beim Ausführen der Abfrage in guildMemberRemove"
+    "de": "[InitDB] Fehler beim Ausführen der Abfrage in guildMemberRemove",
+    "pt": "[InitDB] Falha ao executar query em guildMemberRemove"
   },
   "⚠ {{mentionedUsername}} has **lost** their role of: **{{theirRoleName}}** and has been removed from the database": {
-    "de": "⚠ {{mentionedUsername}} hat die Rolle **{{theirRoleName}}** **verloren** und wurde aus der Datenbank entfernt"
+    "de": "⚠ {{mentionedUsername}} hat die Rolle **{{theirRoleName}}** **verloren** und wurde aus der Datenbank entfernt",
+    "pt": "⚠ {{mentionedUsername}} **perdeu** o perfil de: **{{theirRoleName}}** e foi removido da base de dados"
   },
   "Error: second value has to be **X** number of days, IE:\n `{{configCMDPrefix}}{{command}} add @{{mentionedUsername}} 90 {{daRole}}`": {
-    "de": "Fehler: der zweite Wert muss Anzahl **X** an Tagen sein, z.B.:\n `{{configCMDPrefix}}{{command}} add @{{mentionedUsername}} 90 {{daRole}}`"
+    "de": "Fehler: der zweite Wert muss Anzahl **X** an Tagen sein, z.B.:\n `{{configCMDPrefix}}{{command}} add @{{mentionedUsername}} 90 {{daRole}}`",
+    "pt": "Erro: O segundo valor tem de ser **X** nº de dias, Exemplo:\n `{{configCMDPrefix}}{{command}} add @{{mentionedUsername}} 90 {{daRole}}`"
   },
   "please `@mention` a person you want me to add time to...": {
-    "de": "bitte markiere eine person mit `@mention` um den Zugriff zu verlängern..."
+    "de": "bitte markiere eine person mit `@mention` um den Zugriff zu verlängern...",
+    "pt": "Por favor `@mention` o utilizador a quem se pretende adicionar dias..."
   },
   "for how **many** days do you want {{mentionedUsername}} to have to have this role?": {
-    "de": "für wie viele Tage soll {{mentionedUsername}} die Rolle haben?"
+    "de": "für wie viele Tage soll {{mentionedUsername}} die Rolle haben?",
+    "pt": "Quantos dias pretendes que {{mentionedUsername}} tenha este perfil?"
   },
   "This user already has the role **{{daRole}}** try using `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` if you want to reset their role.": {
-    "de": "Der Benutzer hat bereits die Rolle **{{daRole}}** versuche `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` wenn du die Rolle entfernen willst."
+    "de": "Der Benutzer hat bereits die Rolle **{{daRole}}** versuche `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` wenn du die Rolle entfernen willst.",
+    "pt": "Este utilizador já tem o perfil **{{daRole}}**. Tenta usar `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` se pretenderes fazer o reset do perfil."
   },
   "Failed to send a DM to user: {{mentionedID}}": {
-    "de": "Die Nachricht konnte nicht zugestellt werden: {{mentionedID}}"
+    "de": "Die Nachricht konnte nicht zugestellt werden: {{mentionedID}}",
+    "pt": "Falha ao enviar PM ao utilizador: {{mentionedID}}"
   },
   "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given the {{daRole}} role by {{mUserUsername}} ({{mID}})": {
-    "de": "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) wurde die Rolle {{daRole}} von {{mUserUsername}} ({{mID}}) gegeben"
+    "de": "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) wurde die Rolle {{daRole}} von {{mUserUsername}} ({{mID}}) gegeben",
+    "pt": "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) recebeu o perfil {{daRole}}. Atribuido por: {{mUserUsername}} ({{mID}})"
   },
   "🎉 {{mentionedUsername}} has been given a **temporary** role of: **{{daRole}}**, enjoy! They will lose this role on: `{{finalDateDisplay}}`": {
-    "de": "🎉 {{mentionedUsername}} wurde die **temporäre** Rolle **{{daRole}}** erteilt, Viel Spass! Der Zugriff verfällt am: `{{finalDateDisplay}}`"
+    "de": "🎉 {{mentionedUsername}} wurde die **temporäre** Rolle **{{daRole}}** erteilt, Viel Spass! Der Zugriff verfällt am: `{{finalDateDisplay}}`",
+    "pt": "🎉 {{mentionedUsername}} recebeu o pefil **temporário**: **{{daRole}}** ! Este perfil irá expirar em: `{{finalDateDisplay}}`"
   },
   "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given {{days}} days by: {{mUserUsername}} ({{mID}}) for the role: {{daRole}}": {
-    "de": "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) hat {{days}} Tag/e erhalten von: {{mUserUsername}} ({{mID}}) für die Rolle: {{daRole}}"
+    "de": "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) hat {{days}} Tag/e erhalten von: {{mUserUsername}} ({{mID}}) für die Rolle: {{daRole}}",
+    "pt": "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) recebeu {{days}} dias por: {{mUserUsername}} ({{mID}}) para o perfil: {{daRole}}"
   },
   "✅ {{mentionedUsername}} has had time added until: `{{finalDate}}`! They were added on: `{{startDateTime}}`": {
-    "de": "✅ {{mentionedUsername}} wurde bis zum: `{{finalDate}}` verlängert! Der Zugriff besteht seit: `{{startDateTime}}`"
+    "de": "✅ {{mentionedUsername}} wurde bis zum: `{{finalDate}}` verlängert! Der Zugriff besteht seit: `{{startDateTime}}`",
+    "pt": "✅ {{mentionedUsername}} recebeu uma extensão até: `{{finalDate}}`! Foi adicionado em: `{{startDateTime}}`"
   },
   "Hello {{mentionedUsername}}!\n\n🎉Your access has been extended🎉.\nIt is now valid till {{finalDate}}.\n\nThanks for your support": {
-    "de": "Hallo {{mentionedUsername}}!\n\n🎉Dein Zugriff wurde verlängert🎉..\nDer Zugriff ist bis zum {{finalDate}} gültig.\n\nDanke für deine Unterstützung."
+    "de": "Hallo {{mentionedUsername}}!\n\n🎉Dein Zugriff wurde verlängert🎉..\nDer Zugriff ist bis zum {{finalDate}} gültig.\n\nDanke für deine Unterstützung.",
+    "pt": "Olá {{mentionedUsername}}!\n\nA validade do teu perfil de acesso foi extendida.\nA nova data de expiração é {{finalDate}}.\n\nObrigado pelo teu apoio!"
   },
   "Hello {{mentionedUsername}}!\n\nYour access expires at {{finalDateDisplay}}.\n\nThanks for your support.\n\nLiveMap: {{map}}.": {
-    "de": "Hallo {{mentionedUsername}}!\n\nDein Zugriff verfällt am {{finalDateDisplay}}.\n\nDanke für deine Unterstützung.\n\nLiveMap: {{map}}."
+    "de": "Hallo {{mentionedUsername}}!\n\nDein Zugriff verfällt am {{finalDateDisplay}}.\n\nDanke für deine Unterstützung.\n\nLiveMap: {{map}}.",
+    "pt": "Olá {{mentionedUsername}}!\n\nO teu acesso expira em {{finalDateDisplay}}.\n\nObrigado pelo teu apoio.\n\nLiveMap: {{map}}."
   },
   "Please enter the role you want to check like `{{configCMDPrefix}}check <ROLE-NAME>`": {
-    "de": "Bitte gib die Rolle an die du prüfen willst: `{{configCMDPrefix}}check <ROLE-NAME>`"
+    "de": "Bitte gib die Rolle an die du prüfen willst: `{{configCMDPrefix}}check <ROLE-NAME>`",
+    "pt": "Por favor introduz o nome do perfil que queres verificar. Exemplo: `{{configCMDPrefix}}check <ROLE-NAME>`"
   },
   "⚠ [ERROR] {{mAuthorUsername}} is __NOT__ in the database for the role {{daRole}}.": {
-    "de": "⚠ [FEHLER] {{mAuthorUsername}} ist __NICHT__ in der Datenbank mit der Rolle {{daRole}}."
+    "de": "⚠ [FEHLER] {{mAuthorUsername}} ist __NICHT__ in der Datenbank mit der Rolle {{daRole}}.",
+    "pt": "⚠ [ERROR] {{mAuthorUsername}} __NÃO EXISTE__ na base de dados para o perfil {{daRole}}."
   },
   "✅ You will lose the role: **{{rowTempRole}}** on: `{{finalDate}}`! The role was added on: `{{startDateTime}}`": {
-    "de": "✅ Dein Rolle: **{{rowTempRole}}** verfällt am: `{{finalDate}}`! Der Zugriff besteht seit: `{{startDateTime}}`"
+    "de": "✅ Dein Rolle: **{{rowTempRole}}** verfällt am: `{{finalDate}}`! Der Zugriff besteht seit: `{{startDateTime}}`",
+    "pt": "✅ O teu perfil de acesso **{{rowTempRole}}** irá expirar em: `{{finalDate}}`! O perfil foi atribuido em: `{{startDateTime}}`"
   },
   "Our official webmap: {{configMapUrl}}": {
-    "de": "Linke zur Livemap: {{configMapUrl}}"
+    "de": "Linke zur Livemap: {{configMapUrl}}",
+    "pt": "O nosso mapa online: {{configMapUrl}}"
   },
   ":exclamation: {{name}} has left the server.": {
-    "de": ":exclamation: {{name}} hat den Server verlassen."
+    "de": ":exclamation: {{name}} hat den Server verlassen.",
+    "pt": ":exclamation: {{name}} saiu do servidor."
   },
   "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) has left the server. All role assignments have been marked in the database": {
-    "de": "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) hat den Server verlassen. Alle Rollen werden in der Datenbank markiert"
+    "de": "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) hat den Server verlassen. Alle Rollen werden in der Datenbank markiert",
+    "pt": "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) saiu do servidor. Todas as astribuições de perfil foram marcadas na base de dados"
   },
   ":exclamation: {{name}} all access removed from database.": {
-    "de": ":exclamation: {{name}} alle Zugriffe aus der Datenbank wurden entfernt."
+    "de": ":exclamation: {{name}} alle Zugriffe aus der Datenbank wurden entfernt.",
+    "pt": ":exclamation: {{name}} todo o acesso foi removido da base de dados."
   },
   "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) got removed from the database.": {
-    "de": "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) wurde aus der Datenbank entfernt."
+    "de": "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) wurde aus der Datenbank entfernt.",
+    "pt": "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) foi removido da base de dados."
   },
   "Thank you! \nYour support is greatly appreciated": {
-    "de": "Vielen Dank.\n Deine unterstützung ist mir wichtig."
+    "de": "Vielen Dank.\n Deine unterstützung ist mir wichtig.",
+    "pt": "Obrigado! \nAgradecemos o teu apoio"
   },
   "Click HERE to Subscribe": {
-    "de": "Klicke hier um zu unterstützen"
+    "de": "Klicke hier um zu unterstützen",
+    "pt": "Clica AQUI para subscrever"
   }
 }
