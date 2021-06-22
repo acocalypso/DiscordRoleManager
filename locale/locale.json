@@ -5,7 +5,7 @@
   },
   "No one is in the DataBase": {
     "de": "Es wurden keine Einträge in der Datenbank gefunden",
-	  "pt": "Não encontrado na base de dados"
+    "pt": "Não encontrado na base de dados"
   },
   "[InitDB] Failed to execute role check query": {
     "de": "[InitDB] Fehler beim Ausführen der Rollenüberprüfungsabfrage",
