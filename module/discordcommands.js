@@ -1,6 +1,6 @@
 ﻿const config = require('./../config/config.json');
 const dateMultiplier = 86400000;
-const database = require('./database/database');
+const database = require('./database/database_discord');
 const helper = require('./helper');
 
 var i18nconfig = {

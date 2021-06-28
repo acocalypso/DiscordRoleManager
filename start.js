@@ -2,7 +2,8 @@
 const config = require('./config/config.json');
 const dateMultiplier = 86400000;
 const web = require('./module/backend.js');
-const database = require('./module/database/database');
+const database_discord = require('./module/database/database_discord');
+const database_telegram = require('./module/database/database_telegram');
 const helper = require('./module/helper');
 const routine = require('./module/routine');
 const discordcommands = require('./module/discordcommands');
@@ -26,8 +27,8 @@ var bot = new Eris(config.token, {
 
 bot.on('ready', () => {
 	console.log(i18n.__(`Ready`));
-	database.SQLConnect().then(x => {
-		database.InitDB();
+	database_discord.SQLConnect().then(x => {
+		database_discord.InitDB();
 	}).catch(err => { console.log(helper.GetTimestamp() + err); })
 });
 
@@ -101,6 +102,10 @@ bot.on("messageCreate", async (message) => {
 	
 	if (command.startsWith("temprole") || command === "tr" || command === "trole") {
 		discordcommands.temprole(message, command, args, bot);
+	}
+
+	if (command.startsWith("telegram") || command === "tg") {
+		telegramcommands.telegram(message, command, args, bot);
 	}
 
 	if (command === "paypal" || command === "subscribe") {

@@ -20,7 +20,7 @@ function SQLConnect() {
 			if (err) {
 				return reject;
 			}
-			console.log(helper.GetTimestamp() + "SQL connection etablished!");
+			console.log(helper.GetTimestamp() + "SQL connection etablished! - DiscordDB");
 			resolve(true);
 		});
 	});

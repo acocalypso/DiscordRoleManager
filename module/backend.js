@@ -14,7 +14,8 @@ function website() {
 		cookie: {
 			maxAge: 60000 * 60 *24
 		},
-		saveUninitialized: false
+		saveUninitialized: false,
+		resave: false
 	}));
 
 	backend.use(passport.initialize());
