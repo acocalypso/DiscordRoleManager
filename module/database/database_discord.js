@@ -144,7 +144,7 @@ async function InitDB() {
 										console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}a: (${err})`);
 										process.exit(-1);
 									});
-								console.log(GetTimestamp() + '[InitDB] Migration #3 complete.');
+								console.log(helper.GetTimestamp() + '[InitDB] Migration #3 complete.');
 							}
 							else if (dbVersion == 3) {
 								// Wait 30 seconds and let user know we are about to migrate the database and for them to make a backup until we handle backups and rollbacks.

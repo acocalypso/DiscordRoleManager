@@ -1,7 +1,7 @@
 {
   "token": "",
-  "botID": "",
-  "botSecret": "",
+  "clientID": "",
+  "clientSecret": "",
   "ownerID": "",
   "serverName": "",
   "serverID": "",
