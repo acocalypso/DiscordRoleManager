@@ -8,7 +8,7 @@ const helper = require('./module/helper');
 const routine = require('./module/routine');
 const discordcommands = require('./module/discordcommands');
 
-if (config.webinterface === "enabled") {
+if (config.webinterface.disabled === "no") {
 	web.website();
 }
 

@@ -1,7 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const backend = express();
-const PORT = process.env.PORT || 9900;
+const config = require('../config/config.json')
+const PORT = config.port || 9900;
 const authRoute = require('./routes/auth');
 const session = require('express-session');
 const passport = require('passport');
@@ -10,7 +11,7 @@ const discordStrategy = require('./strategies/discordstrategie');
 function website() {
 
 	backend.use(session({
-		secret: 'asdfasdfasdf',
+		secret: config.secret,
 		cookie: {
 			maxAge: 60000 * 60 *24
 		},

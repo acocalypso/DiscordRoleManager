@@ -1,6 +1,7 @@
 {
   "token": "",
   "botID": "",
+  "botSecret": "",
   "ownerID": "",
   "serverName": "",
   "serverID": "",
@@ -9,7 +10,12 @@
   "adminRoleName": "",
   "modRoleName": "",
   "debug": "no",
-  "webinterface": "disabled",
+  "webinterface": {
+    "disabled": "yes",
+    "clientRedirect": "/auth/redirect",
+    "backendPort": 9000,
+    "backendSecret": "secret"
+  },
   "mapMain": {
     "enabled": "yes",
     "url": "https://yourmap.com"

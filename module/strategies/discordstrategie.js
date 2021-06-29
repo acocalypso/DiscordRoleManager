@@ -1,10 +1,11 @@
 const DiscordStrategy = require('passport-discord').Strategy;
 const passport = require('passport');
+const config = require('../../config/config');
 
 passport.use(new DiscordStrategy({
-    clientID: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: process.env.CLIENT_REDIRECT,
+    clientID: config.botID,
+    clientSecret: config.botSecret,
+    callbackURL: config.clientRedirect,
     scope: ['identify', 'guilds']
 }, (accessToken, refreshToken, profile, done) => {
     console.log(profile.username);
