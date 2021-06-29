@@ -21,7 +21,7 @@
   },
   "mainChannelID": "",
   "telegram": {
-    "tele_enabled": "yes",
+    "tele_enabled": "no",
     "tele_db_host": "",
     "tele_db_name": "",
     "tele_db_port": "",
