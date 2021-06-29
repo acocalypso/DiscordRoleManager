@@ -6,25 +6,36 @@ const sql = new sqlite3.Database('./../../dataBase.sqlite');
 const wait = async ms => new Promise(done => setTimeout(done, ms));
 
 
-function SQLConnect() {
-	return new Promise(function (resolve, reject) {
-		sqlConnection = mysql.createConnection({
-			host: config.mysql_database.mysql_host,
-			database: config.mysql_database.mysql_db,
-			user: config.mysql_database.mysql_user,
-			port: config.mysql_database.mysql_port,
-			password: config.mysql_database.mysql_pass,
-			supportBigNumbers: true
-		});
-		sqlConnection.connect(function (err) {
-			if (err) {
-				return reject;
-			}
-			console.log(helper.GetTimestamp() + "SQL connection etablished! - DiscordDB");
-			resolve(true);
-		});
-	});
-}
+
+sqlConnectionDiscord = mysql.createPool({
+	host: config.mysql_database.mysql_host,
+	database: config.mysql_database.mysql_db,
+	user: config.mysql_database.mysql_user,
+	port: config.mysql_database.mysql_port,
+	password: config.mysql_database.mysql_pass,
+	supportBigNumbers: true
+});
+
+
+// Ping database to check for common exception errors.
+sqlConnectionDiscord.getConnection((err, connection) => {
+	if (err) {
+		if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+			console.error('Database connection was closed.')
+		}
+		if (err.code === 'ER_CON_COUNT_ERROR') {
+			console.error('Database has too many connections.')
+		}
+		if (err.code === 'ECONNREFUSED') {
+			console.error('Database connection was refused.')
+		}
+	}
+
+	if (connection) connection.release()
+
+	return
+});
+
 
 async function InitDB() {
 	// Create MySQL tabels
@@ -180,11 +191,10 @@ async function InitDB() {
 
 async function query(sql, args) {
 	return new Promise((resolve, reject) => {
-		sqlConnection.query(sql, args, (error, results, fields) => {
+		sqlConnectionDiscord.query(sql, args, (error, results, fields) => {
 			if (error) {
 				if (error.code === "PROTOCOL_CONNECTION_LOST" || error.code === "PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR") {
 					console.log(helper.GetTimestamp() + "Reconnecting to DB server...");
-					SQLConnect().then(result => query(sql, args));
 				}
 				else {
 					return reject(error);
@@ -194,7 +204,5 @@ async function query(sql, args) {
 		});
 	});
 }
-
-exports.SQLConnect = SQLConnect;
 exports.InitDB = InitDB;
 exports.query = query;

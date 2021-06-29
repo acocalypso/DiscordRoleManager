@@ -9,7 +9,7 @@
   "adminRoleName": "",
   "modRoleName": "",
   "debug": "no",
-  "webinterface": "enabled",
+  "webinterface": "disabled",
   "mapMain": {
     "enabled": "yes",
     "url": "https://yourmap.com"

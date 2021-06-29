@@ -1,6 +1,6 @@
 ﻿const config = require('./../config/config.json');
 const dateMultiplier = 86400000;
-const database = require('./database/database_discord');
+const sqlConnectionDiscord = require('./database/database_discord');
 const helper = require('./helper');
 
 var i18nconfig = {
@@ -81,7 +81,7 @@ async function temprole(message, command, args, bot) {
 
 			// CHECK DATABASE FOR ROLES
 			if (args[0] === "check") {
-				await database.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}"`)
+				await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}"`)
 					.then(async row => {
 						if (!row[0]) {
 							bot.createMessage(c.id, i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}", {
@@ -113,7 +113,7 @@ async function temprole(message, command, args, bot) {
 			// REMOVE MEMBER FROM DATABASE
 			else if (args[0] === "remove") {
 
-				await database.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}"`)
+				await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}"`)
 					.then(async row => {
 						if (!row[0]) {
 							bot.createMessage(c.id, i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}", {
@@ -126,7 +126,7 @@ async function temprole(message, command, args, bot) {
 						let theirRole = g.roles.find(theirRole => theirRole.name === row[0].temporaryRole);
 						bot.guilds.get(config.serverID).removeMemberRole(mentioned.id, theirRole.id, 'Donation Expired').catch((err) => { console.log(err) });
 
-						await database.query(`DELETE FROM temporary_roles WHERE userID="${mentioned.id}"`)
+						await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${mentioned.id}"`)
 							.then(async result => {
 								console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mUserUsername}} ({{mID}}) removed the access from {{mentionedUsername}} ({{mentionedID}}", {
 									mUserUsername: m.user.username,
@@ -173,7 +173,7 @@ async function temprole(message, command, args, bot) {
 					})).catch((err) => { console.log(err) });
 					return;
 				}
-				await database.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}"`)
+				await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}"`)
 					.then(async row => {
 						if (!row[0]) {
 							bot.createMessage(c.id, i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the database", {
@@ -187,7 +187,7 @@ async function temprole(message, command, args, bot) {
 						let finalDate = Number(row[0].endDate * 1000) + Number(days * dateMultiplier);
 
 						let name = mentioned.username.replace(/[^a-zA-Z0-9]/g, '');
-						await database.query(`UPDATE temporary_roles SET endDate="${Math.round(finalDate / 1000)}", notified=0, username="${name}" WHERE userID="${mentioned.id}" AND temporaryRole="${daRole}"`)
+						await sqlConnectionDiscord.query(`UPDATE temporary_roles SET endDate="${Math.round(finalDate / 1000)}", notified=0, username="${name}" WHERE userID="${mentioned.id}" AND temporaryRole="${daRole}"`)
 							.then(async result => {
 								let endDateVal = new Date();
 								endDateVal.setTime(finalDate);
@@ -235,7 +235,7 @@ async function temprole(message, command, args, bot) {
 			}
 
 			// ADD MEMBER TO DATASE, AND ADD THE ROLE TO MEMBER
-			await database.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND temporaryRole="${daRole}"`)
+			await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND temporaryRole="${daRole}"`)
 				.then(async row => {
 					mentioned = message.mentions[0];
 					if (!row[0]) {
@@ -252,7 +252,7 @@ async function temprole(message, command, args, bot) {
 							+ m.id
 							+ ', 0' + ',\''
 							+ name + '\', 0';
-						await database.query(`INSERT INTO temporary_roles VALUES(${values});`)
+						await sqlConnectionDiscord.query(`INSERT INTO temporary_roles VALUES(${values});`)
 							.then(async result => {
 								let theirRole = g.roles.find(role => role.name === daRole);
 								bot.guilds.get(config.serverID).addMemberRole(mentioned.id, theirRole.id, 'Donater').catch((err) => { console.log(err) });
@@ -423,7 +423,7 @@ async function check(message, args, bot) {
 	}
 
 	// CHECK DATABASE FOR ROLES
-	await database.query(`SELECT * FROM temporary_roles WHERE userID="${m.id}" AND temporaryRole="${daRole}"`)
+	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${m.id}" AND temporaryRole="${daRole}"`)
 		.then(async row => {
 			if (!row[0]) {
 				bot.createMessage(c.id, i18n.__("⚠ [ERROR] {{mAuthorUsername}} is __NOT__ in the database for the role {{daRole}}.", {
@@ -473,11 +473,11 @@ async function leftserver(bot, member) {
 
 	let c = message.channel;
 	// Check if the user had any temp roles
-	await database.query(`SELECT * FROM temporary_roles WHERE userID="${member.id}"`)
+	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${member.id}"`)
 		.then(async rows => {
 			// Update all entries from the database
 			if (rows[0]) {
-				await database.query(`UPDATE temporary_roles SET leftServer = 1 WHERE userID="${member.id}"`)
+				await sqlConnectionDiscord.query(`UPDATE temporary_roles SET leftServer = 1 WHERE userID="${member.id}"`)
 					.then(async result => {
 						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
 						console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) has left the server. All role assignments have been marked in the database.", {
@@ -494,7 +494,7 @@ async function leftserver(bot, member) {
 					});
 			}
 			if (rows[0]) {
-				await database.query(`DELETE FROM temporary_roles WHERE userID="${member.id}"`)
+				await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${member.id}"`)
 					.then(async result => {
 						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
 						console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) got removed from the database.", {

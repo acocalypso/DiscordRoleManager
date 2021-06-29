@@ -2,8 +2,8 @@
 const config = require('./config/config.json');
 const dateMultiplier = 86400000;
 const web = require('./module/backend.js');
-const database_discord = require('./module/database/database_discord');
-const database_telegram = require('./module/database/database_telegram');
+const sqlConnectionDiscord = require('./module/database/database_discord');
+//const database_telegram = require('./module/database/database_telegram');
 const helper = require('./module/helper');
 const routine = require('./module/routine');
 const discordcommands = require('./module/discordcommands');
@@ -27,9 +27,7 @@ var bot = new Eris(config.token, {
 
 bot.on('ready', () => {
 	console.log(i18n.__(`Ready`));
-	database_discord.SQLConnect().then(x => {
-		database_discord.InitDB();
-	}).catch(err => { console.log(helper.GetTimestamp() + err); })
+	sqlConnectionDiscord.InitDB();
 });
 
 
