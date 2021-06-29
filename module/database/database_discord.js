@@ -1,13 +1,10 @@
 const mysql = require('mysql');
 const config = require('../../config/config');
 const helper = require('../helper');
-const sqlite3 = require('sqlite3');
+const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
-
-const sql = new sqlite3.Database('./database.sqlite');
 const wait = async ms => new Promise(done => setTimeout(done, ms));
 
-console.log(dbPath);
 
 sqlConnectionDiscord = mysql.createPool({
 	host: config.mysql_database.mysql_host,
@@ -38,6 +35,18 @@ sqlConnectionDiscord.getConnection((err, connection) => {
 	return
 });
 
+const openDBPromise = new Promise(
+	(resolve, reject) => {
+		const sql = new sqlite3.Database('./database.sqlite', sqlite3.OPEN_READONLY, err => {
+			if (err) {
+				reject(err);
+			}
+
+			else resolve(sql);
+		});
+		return sql;
+	}
+).catch((err) => { console.log(err) });;
 
 async function InitDB() {
 	// Create MySQL tabels
@@ -71,27 +80,33 @@ async function InitDB() {
 										process.exit(-1);
 									});
 
-								// Migrate the old sqlite entries into the table
-								sql.all(`SELECT * FROM temporary_roles`, (err, rows) => {
-									if (err) {
-										console.error(helper.GetTimestamp() + err.message);
-									}
-									else if (rows) {
-										for (rowNumber = 0; rowNumber < rows.length; rowNumber++) {
-											let values = rows[rowNumber].userID + ',\''
-												+ rows[rowNumber].temporaryRole + '\','
-												+ Math.round(rows[rowNumber].startDate / 1000) + ','
-												+ Math.round(rows[rowNumber].endDate / 1000) + ','
-												+ rows[rowNumber].addedBy + ','
-												+ rows[rowNumber].notified;
-											query(`INSERT INTO temporary_roles VALUES(${values});`)
-												.catch(err => {
-													console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}c: (${err})`);
-													process.exit(-1);
-												});
+								try {
+									sql = await openDBPromise;
+									// Migrate the old sqlite entries into the table
+									sql.all(`SELECT * FROM temporary_roles`, (err, rows) => {
+										if (err) {
+											console.error(helper.GetTimestamp() + err.message);
 										}
-									}
-								});
+										else if (rows) {
+											for (rowNumber = 0; rowNumber < rows.length; rowNumber++) {
+												let values = rows[rowNumber].userID + ',\''
+													+ rows[rowNumber].temporaryRole + '\','
+													+ Math.round(rows[rowNumber].startDate / 1000) + ','
+													+ Math.round(rows[rowNumber].endDate / 1000) + ','
+													+ rows[rowNumber].addedBy + ','
+													+ rows[rowNumber].notified;
+												query(`INSERT INTO temporary_roles VALUES(${values});`)
+													.catch(err => {
+														console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}c: (${err})`);
+														process.exit(-1);
+													});
+											}
+										}
+									});
+								} catch (err) {
+									return 'SQLITE sucks... How the fuck can I handle that shit...'
+								}
+																
 								await query(`INSERT INTO metadata (\`key\`, \`value\`) VALUES("DB_VERSION", ${dbVersion + 1}) ON DUPLICATE KEY UPDATE \`value\` = ${dbVersion + 1};`)
 									.catch(err => {
 										console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}a: (${err})`);
