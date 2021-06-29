@@ -3,7 +3,7 @@ const config = require('../../config/config');
 const helper = require('../helper');
 const sqlite3 = require('sqlite3');
 const path = require('path');
-const dbpath = path.resolve(__dirname, 'database.sqlite');
+const dbPath = path.resolve(__dirname, 'database.sqlite');
 const sql = new sqlite3.Database(dbPath);
 const wait = async ms => new Promise(done => setTimeout(done, ms));
 
