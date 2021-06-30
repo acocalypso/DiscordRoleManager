@@ -4,7 +4,7 @@ const helper = require('../helper');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const wait = async ms => new Promise(done => setTimeout(done, ms));
-const sql = new sqlite3.Database('../../dataBase.sqlite').verbose();
+const sql = new sqlite3.Database('../../dataBase.sqlite');
 
 sqlConnectionDiscord = mysql.createPool({
 	host: config.mysql_database.mysql_host,
