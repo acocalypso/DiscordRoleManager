@@ -4,7 +4,7 @@ const helper = require('../helper');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const wait = async ms => new Promise(done => setTimeout(done, ms));
-
+const sql = new sqlite3.Database('./database.sqlite');
 
 sqlConnectionDiscord = mysql.createPool({
 	host: config.mysql_database.mysql_host,
@@ -35,18 +35,6 @@ sqlConnectionDiscord.getConnection((err, connection) => {
 	return
 });
 
-const openDBPromise = new Promise(
-	(resolve, reject) => {
-		const sql = new sqlite3.Database('./database.sqlite', sqlite3.OPEN_READONLY, err => {
-			if (err) {
-				reject(err);
-			}
-
-			else resolve(sql);
-		});
-		return sql;
-	}
-).catch((err) => { console.log(err) });;
 
 async function InitDB() {
 	// Create MySQL tabels
@@ -80,8 +68,6 @@ async function InitDB() {
 										process.exit(-1);
 									});
 
-								try {
-									sql = await openDBPromise;
 									// Migrate the old sqlite entries into the table
 									sql.all(`SELECT * FROM temporary_roles`, (err, rows) => {
 										if (err) {
@@ -102,11 +88,7 @@ async function InitDB() {
 													});
 											}
 										}
-									});
-								} catch (err) {
-									return 'SQLITE sucks... How the fuck can I handle that shit...'
-								}
-																
+									});																
 								await query(`INSERT INTO metadata (\`key\`, \`value\`) VALUES("DB_VERSION", ${dbVersion + 1}) ON DUPLICATE KEY UPDATE \`value\` = ${dbVersion + 1};`)
 									.catch(err => {
 										console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}a: (${err})`);
