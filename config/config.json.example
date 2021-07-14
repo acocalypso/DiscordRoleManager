@@ -1,6 +1,7 @@
 {
   "token": "",
-  "botID": "",
+  "clientID": "",
+  "clientSecret": "",
   "ownerID": "",
   "serverName": "",
   "serverID": "",
@@ -8,7 +9,17 @@
   "cmdPrefix": "?",
   "adminRoleName": "",
   "modRoleName": "",
+  "migrateSQLITE": {
+    "migrate": true,
+    "path": ""
+  },
   "debug": "no",
+  "webinterface": {
+    "disabled": "yes",
+    "clientRedirect": "/auth/redirect",
+    "backendPort": 9000,
+    "backendSecret": "secret"
+  },
   "mapMain": {
     "enabled": "yes",
     "url": "https://yourmap.com"
@@ -20,7 +31,7 @@
   },
   "mainChannelID": "",
   "telegram": {
-    "tele_enabled": "yes",
+    "tele_enabled": "no",
     "tele_db_host": "",
     "tele_db_name": "",
     "tele_db_port": "",
