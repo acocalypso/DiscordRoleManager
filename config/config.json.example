@@ -9,6 +9,10 @@
   "cmdPrefix": "?",
   "adminRoleName": "",
   "modRoleName": "",
+  "migrateSQLITE": {
+    "migrate": true,
+    "path": ""
+  },
   "debug": "no",
   "webinterface": {
     "disabled": "yes",
