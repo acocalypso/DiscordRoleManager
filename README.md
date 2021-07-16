@@ -119,7 +119,7 @@ if you want to add another langue you just need to add a new entry in the json f
 ## Additional IMPORTANT Infos:
 This is a port from https://github.com/Kneckter/DiscordRoleBot
 
-Many thanks to him for his original (no longer supported) version.
+Many thanks to him for his original version.
 
 Used libs:
 - ErisJS
