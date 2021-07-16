@@ -101,7 +101,7 @@ Help commands:
 
 ##Grafana 8.x Support
 
-![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
+![alt text](https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/backend/grafana_donators.PNG)
 
 ##Contribution:
 
