@@ -99,11 +99,11 @@ Help commands:
 (prefix)help mods >> display mod commands
 ```
 
-##Grafana 8.x Support
+## Grafana 8.x Support
 
 ![alt text](https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/backend/grafana_donators.PNG)
 
-##Contribution:
+## Contribution:
 
 You can find the local.json file in locale/local.json
 
