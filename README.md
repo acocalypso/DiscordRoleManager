@@ -99,6 +99,10 @@ Help commands:
 (prefix)help mods >> display mod commands
 ```
 
+##Grafana 8.x Support
+
+![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
+
 ##Contribution:
 
 You can find the local.json file in locale/local.json
