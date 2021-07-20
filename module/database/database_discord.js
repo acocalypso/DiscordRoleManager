@@ -6,6 +6,10 @@ const db = require('better-sqlite3')(config.migrateSQLITE.path);
 const wait = async ms => new Promise(done => setTimeout(done, ms));
 
 sqlConnectionDiscord = mysql.createPool({
+	connectionLimit: 1000,
+	connectTimeout: 60 * 60 * 1000,
+	acquireTimeout: 60 * 60 * 1000,
+	timeout: 60 * 60 * 1000,
 	host: config.mysql_database.mysql_host,
 	database: config.mysql_database.mysql_db,
 	user: config.mysql_database.mysql_user,
