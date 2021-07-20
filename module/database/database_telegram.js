@@ -1,8 +1,6 @@
 const mysql = require('mysql');
 const config = require('../../config/config');
 const helper = require('../helper');
-const sqlite3 = require('sqlite3');
-const sql = new sqlite3.Database('./../../dataBase.sqlite');
 const wait = async ms => new Promise(done => setTimeout(done, ms));
 
 
@@ -26,7 +24,7 @@ function SQLConnect() {
 	});
 }
 
-async function query(sql, args) {
+/*async function query(sql, args) {
 	return new Promise((resolve, reject) => {
 		sqlConnection.query(sql, args, (error, results, fields) => {
 			if (error) {
@@ -42,6 +40,6 @@ async function query(sql, args) {
 		});
 	});
 }
-
-exports.SQLConnect = SQLConnect;
 exports.query = query;
+*/
+exports.SQLConnect = SQLConnect;
