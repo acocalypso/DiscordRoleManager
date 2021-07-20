@@ -40,7 +40,7 @@ bot.connect();
 setInterval(async function () {
 	routine.housekeeping(bot);
 		
-	}, 15000);
+	}, 120000);
 	// 86400000 = 1day
 	// 3600000 = 1hr
 	// 60000 = 1min

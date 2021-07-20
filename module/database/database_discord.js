@@ -1,8 +1,8 @@
 const mysql = require('mysql');
 const config = require('../../config/config');
 const helper = require('../helper');
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
+//const sqlite3 = require('sqlite3').verbose();
+const db = require('better-sqlite3')(config.migrateSQLITE.path);
 const wait = async ms => new Promise(done => setTimeout(done, ms));
 
 sqlConnectionDiscord = mysql.createPool({
@@ -66,21 +66,19 @@ async function InitDB() {
 										console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}b: (${err})`);
 										process.exit(-1);
 									});
-								if (config.migrateSQLITE === true) {
-									const sql = new sqlite3.Database(config.migrateSQLITE.path);
+								if (config.migrateSQLITE.migrate === true) {
 									// Migrate the old sqlite entries into the table
-									sql.all(`SELECT * FROM temporary_roles`, (err, rows) => {
-										if (err) {
+									const rows = db.prepare('SELECT * FROM temporary_roles').all();
+									if (rows.length == 0)
 											console.error(helper.GetTimestamp() + err.message);
-										}
 										else if (rows) {
-											for (rowNumber = 0; rowNumber < rows.length; rowNumber++) {
+										for (rowNumber = 0; rowNumber < rows.length; rowNumber++) {
 												let values = rows[rowNumber].userID + ',\''
 													+ rows[rowNumber].temporaryRole + '\','
 													+ Math.round(rows[rowNumber].startDate / 1000) + ','
 													+ Math.round(rows[rowNumber].endDate / 1000) + ','
 													+ rows[rowNumber].addedBy + ','
-													+ rows[rowNumber].notified;
+												+ rows[rowNumber].notified;
 												query(`INSERT INTO temporary_roles VALUES(${values});`)
 													.catch(err => {
 														console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}c: (${err})`);
@@ -88,7 +86,6 @@ async function InitDB() {
 													});
 											}
 										}
-									});
 								}
 									
 
