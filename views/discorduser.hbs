@@ -1,7 +1,6 @@
 <table class="table table-bordered">
     <thead class="thead-dark">
         <tr>
-            <th scope="col">#</th>
             <th scope="col">UserID</th>
             <th scope="col">Username</th>
             <th scope="col">Role</th>
@@ -12,8 +11,7 @@
     <tbody>
         {{#each rows}}
         <tr>
-            <th scope="row">1</th>
-            <td>{{this.userID}}</td>
+            <th scope="row">{{this.userID}}</th>
             <td>{{this.username}}</td>
             <td>{{this.temporary_role}}</td>
             <td>{{this.endDate}}</td>
