@@ -1,30 +1,27 @@
-require('dotenv').config();
 const express = require('express');
 const backend = express();
 const config = require('../config/config.json')
 const PORT = config.port || 9900;
-const authRoute = require('./routes/auth');
 const session = require('express-session');
-const passport = require('passport');
-const discordStrategy = require('./strategies/discordstrategie');
+const exphbs = require('express-handlebars');
+const bodyParser = require('body-parser');
+const database_discord = require('./database/database_discord');
+const routes = require('../webserver/routes/user');
+
 
 function website() {
 
-	backend.use(session({
-		secret: config.secret,
-		cookie: {
-			maxAge: 60000 * 60 *24
-		},
-		saveUninitialized: false,
-		resave: false
-	}));
+	backend.use(bodyParser.urlencoded({ extended: false }));
+	backend.use(bodyParser.json());
+	//Static Files
+	backend.use(express.static('../public'));
 
-	backend.use(passport.initialize());
-	backend.use(passport.session());
+	//Template Engine
+	backend.engine('hbs', exphbs({ extname: '.hbs' }));
+	backend.set('view engine', 'hbs');
 
-	backend.use('/auth', authRoute);
-
-
+	backend.use('/', routes);
+	
 	backend.listen(PORT, () => {
 		console.log(`Now listening to requests on Port ${PORT}`)
 	});

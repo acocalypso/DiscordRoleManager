@@ -206,6 +206,7 @@ async function query(sql, args) {
 			return resolve(results);
 		});
 	});
+	connection.release();
 }
 exports.InitDB = InitDB;
 exports.query = query;
