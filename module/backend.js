@@ -1,7 +1,7 @@
 const express = require('express');
 const backend = express();
 const config = require('../config/config.json')
-const PORT = config.port || 9900;
+const PORT = config.webinterface.backendPort || 9900;
 const session = require('express-session');
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');

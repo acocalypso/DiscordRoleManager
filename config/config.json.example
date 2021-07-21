@@ -16,9 +16,7 @@
   "debug": "no",
   "webinterface": {
     "disabled": "yes",
-    "clientRedirect": "/auth/redirect",
-    "backendPort": 9000,
-    "backendSecret": "secret"
+    "backendPort": 9000
   },
   "mapMain": {
     "enabled": "yes",
