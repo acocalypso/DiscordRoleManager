@@ -54,3 +54,18 @@ exports.createDiscordUser = (req, res) => {
 		});;
 
 }
+
+exports.edit = (req, res) => {
+
+	database_discord.query('SELECT * FROM temporary_roles WHERE userID = ?', [req.params.id])
+		.then(async rows => {
+			if (!rows[0]) {
+				console.info(helper.GetTimestamp() + "[EditUser] User not found");
+				return;
+			}
+			else {
+				res.render('editUser', {rows});
+			}
+		});
+
+}

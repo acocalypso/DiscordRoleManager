@@ -7,4 +7,7 @@ router.get('/discorduser', userController.view);
 router.post('/discorduser', userController.find);
 router.get('/addDiscordUser', userController.createDiscordForm);
 router.post('/addDiscordUser', userController.createDiscordUser);
+router.get('/edituser/:id', userController.edit);
+
+
 module.exports = router;
