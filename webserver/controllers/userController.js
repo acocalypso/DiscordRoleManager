@@ -1,3 +1,4 @@
+const { User } = require('eris');
 const database_discord = require('../../module/database/database_discord');
 const helper = require('../../module/helper');
 
@@ -23,14 +24,33 @@ exports.home = (req, res) => {
 exports.find = (req, res) => {
 
 	let searchTerm = req.body.search;
-	console.log(searchTerm);
 
-	database_discord.query('SELECT * FROM temporary_roles WHERE username like ?',['%' + searchTerm + '%'])
+	database_discord.query('SELECT * FROM temporary_roles WHERE username like ?', ['%' + searchTerm + '%'])
 		.then(async rows => {
 			if (!rows[0]) {
-				console.info(helper.GetTimestamp() + i18n.__("No one is in the DataBase"));
+				console.info(helper.GetTimestamp() + "No one is in the DataBase");
 				return;
-			} 
+			}
+			else {
+				res.render('discorduser', { rows });
+			}
 		});
+}
+
+exports.createDiscordForm = (req, res) => {
+	res.render('addDiscordUser');
+}
+
+exports.createDiscordUser = (req, res) => {
+	const { d_username, d_userid, d_role, flexRadioDiscord, flexRadioTelegram } = req.body;
+	database_discord.query('INSERT INTO temporary_roles SET userID = ?, temporaryRole = ?, startDate = 0, endDate = 0, addedBy = 0, notified = 0, username = ?, leftServer = 0', [d_userid, d_role, d_username])
+		.then(async result => {
+			res.render('discorduser');
+			console.log("Saved new User into Database")
+		}).catch(err => {
+			console.error(helper.GetTimestamp() + "[ManualDBEntry] Failed to execute query" + `(${err})`);
+			res.render('discorduser');
+			return;
+		});;
 
 }

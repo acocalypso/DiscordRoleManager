@@ -1,0 +1,35 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">New User</li>
+  </ol>
+</nav>
+
+<form class="row g-3 needs-validation" method="POST" action="/adduser">
+
+<div class="form-floating mb-3">
+  <input type="text" class="form-control" id="floatingInput" placeholder="Discord Username" name="d_username" required>
+  <label for="floatingInput">Discord Username</label>
+    <div class="valid-feedback">
+      Looks good!
+    </div>
+</div>
+<div class="form-floating">
+  <input type="number" class="form-control" id="floatingInput" placeholder="Discord Userid" name="d_userid" required>
+  <label for="floatingInput">Discord Userid</label>
+<div class="valid-feedback">
+      Looks good!
+</div>
+</div>
+<div class="form-floating mb-3">
+  <input type="text" class="form-control" id="floatingInput" placeholder="Discord Role" name="d_role" required>
+  <label for="floatingInput">Discord Role</label>
+    <div class="valid-feedback">
+      Looks good!
+    </div>
+</div>
+
+ <div class="form-floating d-grid">
+     <button class="btn btn-primary" type="submit">Save</button>
+</div>
+</form>
