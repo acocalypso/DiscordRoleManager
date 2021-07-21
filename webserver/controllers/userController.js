@@ -19,3 +19,18 @@ exports.home = (req, res) => {
 	res.render('home');
 
 }
+
+exports.find = (req, res) => {
+
+	let searchTerm = req.body.search;
+	console.log(searchTerm);
+
+	database_discord.query('SELECT * FROM temporary_roles WHERE username like ?',['%' + searchTerm + '%'])
+		.then(async rows => {
+			if (!rows[0]) {
+				console.info(helper.GetTimestamp() + i18n.__("No one is in the DataBase"));
+				return;
+			} 
+		});
+
+}
