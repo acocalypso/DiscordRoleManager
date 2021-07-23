@@ -16,7 +16,10 @@
   "debug": "no",
   "webinterface": {
     "disabled": "yes",
-    "backendPort": 9000
+    "backendPort": 9000,
+    "username": "admin",
+    "password": "SuperSecretPW",
+    "secret": "ThisShouldBeChanged"
   },
   "mapMain": {
     "enabled": "yes",

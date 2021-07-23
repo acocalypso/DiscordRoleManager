@@ -24,7 +24,7 @@
             <td>{{this.endDate}}</td>
             <td class="text-end">
                 <a href="/editUser/{{this.userID}}" type="button" class="btn btn-light btn-small"><i class="bi bi-pencil"></i>Edit</a>
-                <a href="#" type="button" class="btn btn-light btn-small"><i class="bi bi-person-x"></i>Delete</a>
+                <button type="button" class="btn btn-small btn-danger" data-toggle="popover" title="Delete User" data-content="Do you really want to delete this user?">Delete User</button>
             </td>
         </tr>
         {{/each}}

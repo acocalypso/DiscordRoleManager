@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 function GetTimestamp() {
 	let now = new Date();
 
@@ -24,5 +26,13 @@ async function formatTimeString(date) {
 	});
 }
 
+async function encryptPassword(password) {
+	
+	const saltRounds = 10;
+	const encPW = await bcrypt.hash(password, saltRounds);
+	return encPW;
+}
+
+exports.encryptPassword = encryptPassword;
 exports.GetTimestamp = GetTimestamp;
 exports.formatTimeString = formatTimeString;

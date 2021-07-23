@@ -41,7 +41,7 @@ sqlConnectionDiscord.getConnection((err, connection) => {
 
 async function InitDB() {
 	// Create MySQL tabels
-	let currVersion = 5;
+	let currVersion = 6;
 	let dbVersion = 0;
 	await query(`CREATE TABLE IF NOT EXISTS metadata (
                         \`key\` VARCHAR(50) PRIMARY KEY NOT NULL,
@@ -173,6 +173,42 @@ async function InitDB() {
 								await query(`INSERT INTO metadata (\`key\`, \`value\`) VALUES("DB_VERSION", ${dbVersion + 1}) ON DUPLICATE KEY UPDATE \`value\` = ${dbVersion + 1};`)
 									.catch(err => {
 										console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}a: (${err})`);
+										process.exit(-1);
+									});
+								console.log(helper.GetTimestamp() + '[InitDB] Migration #5 complete.');
+							}
+							else if (dbVersion == 5) {
+								// Wait 30 seconds and let user know we are about to migrate the database and for them to make a backup until we handle backups and rollbacks.
+								console.log(helper.GetTimestamp() + '[InitDB] MIGRATION IS ABOUT TO START IN 30 SECONDS, PLEASE MAKE SURE YOU HAVE A BACKUP!!!');
+								await wait(30 * 1000);
+
+								await query(`CREATE TABLE IF NOT EXISTS login (
+                                        id int(11) NOT NULL,
+                                        username varchar(50) NOT NULL,
+                                        password varchar(255) NOT NULL)`)
+									.catch(err => {
+										console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}a: (${err})`);
+										process.exit(-1);
+									});
+								await query(`ALTER TABLE login ADD PRIMARY KEY (id)`)
+									.catch(err => {
+										console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}b: (${err})`);
+										process.exit(-1);
+									});
+								await query(`ALTER TABLE login MODIFY id int(11) NOT NULL AUTO_INCREMENT`)
+									.catch(err => {
+										console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}c: (${err})`);
+										process.exit(-1);
+									});
+								const encPW = await helper.encryptPassword(config.webinterface.password);
+								await query(`INSERT INTO login (\`username\`,\`password\`) VALUES ('${config.webinterface.username}','${encPW}')`)
+									.catch(err => {
+										console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}d: (${err})`);
+										process.exit(-1);
+									});
+								await query(`INSERT INTO metadata (\`key\`, \`value\`) VALUES("DB_VERSION", ${dbVersion + 1}) ON DUPLICATE KEY UPDATE \`value\` = ${dbVersion + 1};`)
+									.catch(err => {
+										console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}e: (${err})`);
 										process.exit(-1);
 									});
 								console.log(helper.GetTimestamp() + '[InitDB] Migration #5 complete.');

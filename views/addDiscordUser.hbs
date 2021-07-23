@@ -5,6 +5,14 @@
   </ol>
 </nav>
 
-<form class="row g-3 needs-validation" method="POST" action="/addDiscordUser">
+{{#if alert}}
+<div class="alert alert-success alert-dismissible fade shadow" role="alert">
+    {{alert}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{{/if}}
+
+
+<form class="row g-3 needs-validation" method="POST" action="/addDiscordUser" novalidate>
 {{> userForm}}
 </form>
