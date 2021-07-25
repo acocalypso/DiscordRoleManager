@@ -3,7 +3,7 @@ const helper = require('../../module/helper');
 const bcrypt = require('bcrypt');
 
 exports.view = (req, res) => {
-	database_discord.query(`SELECT * FROM temporary_roles`)
+	database_discord.query(`SELECT UserID, username, temporaryRole, FROM_UNIXTIME(endDate) as endDate FROM temporary_roles`)
 		.then(async rows => {
 			if (!rows[0]) {
 				console.info(helper.GetTimestamp() + "No one is in the DataBase");
@@ -23,13 +23,14 @@ exports.find = (req, res) => {
 
 	let searchTerm = req.body.search;
 
-	database_discord.query('SELECT * FROM temporary_roles WHERE username like ?', ['%' + searchTerm + '%'])
+	database_discord.query('SELECT UserID, username, temporaryRole, FROM_UNIXTIME(endDate) as endDate FROM temporary_roles WHERE username like ?', ['%' + searchTerm + '%'])
 		.then(async rows => {
 			if (!rows[0]) {
 				console.info(helper.GetTimestamp() + "No one is in the DataBase");
 				return;
 			}
 			else {
+
 				res.render('discorduser', { rows });
 			}
 		});
@@ -55,7 +56,7 @@ exports.createDiscordUser = (req, res) => {
 
 exports.edit = (req, res) => {
 
-	database_discord.query('SELECT * FROM temporary_roles WHERE userID = ?', [req.params.id])
+	database_discord.query('SELECT UserID, username, temporaryRole, FROM_UNIXTIME(endDate) FROM temporary_roles WHERE userID = ?', [req.params.id])
 		.then(async rows => {
 			if (!rows[0]) {
 				console.info(helper.GetTimestamp() + "[EditUser] User not found");
