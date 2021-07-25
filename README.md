@@ -20,28 +20,40 @@
 
 ```sh
 {
-  "token": "", // your bot token
-  "botID": "", // your bot id
-  "ownerID": "", // discord bot owner (usually the one who is using the bot)
-  "serverName": "", // discord Server Name
-  "serverID": "", // discord Server ID
-  "language": "", // en, de
-  "cmdPrefix": "?", // prefix for commands
-  "adminRoleName": "", // Name of the Admin Role
-  "modRoleName": "", // Name of the moderator Role
-  "debug": "no",
+  "token": "", // Bot token
+  "clientID": "", // bot client id
+  "clientSecret": "", //bot client secret
+  "ownerID": "", // Your discord id
+  "serverName": "", // Your Server name
+  "serverID": "", // Your Server ID
+  "language": "", // en, de, pt
+  "cmdPrefix": "?", // choose your command prefix
+  "adminRoleName": "", // what is the admin role name
+  "modRoleName": "", // what is the mod role name
+  "migrateSQLITE": {
+    "migrate": true, // do you want to migrate your user from sqlite?
+    "path": "" // path to your sqlite file
+  },
+  "debug": "no", // enable / disable debug infos
+  "webinterface": {
+    "disabled": "yes", //enable webinterface
+    "backendPort": 9000, // interface port
+    "username": "admin", // your login username - This can be removed afterwards
+    "password": "SuperSecretPW", // your login password - This can be removed afterwards
+    "secret": "ThisShouldBeChanged" // session secret
+  },
   "mapMain": {
-    "enabled": "yes", // yes or no
-    "url": "https://yourmap.com" // link to your site / map
+    "enabled": "yes", // enable link to your map
+    "url": "https://yourmap.com" // your map link
   },
   "paypal": {
-    "enabled": "yes", // yes or no
-    "url": "https://www.paypal.me/xyz", // URL to your paypal donation site
+    "enabled": "yes", // enable paypal link
+    "url": "https://www.paypal.me/xyz", // your paypal url
     "img": "https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/master/paypal_icon.jpg"
   },
-  "mainChannelID": "", //channel where admin / mod infos are posted
-  "telegram": {		// Support for https://github.com/Micha854/full_auto_abo_telegram/ usermanagement.
-    "tele_enabled": "yes",
+  "mainChannelID": "", // channel where the bot will listen to your commands
+  "telegram": {
+    "tele_enabled": "no", // use telegram 
     "tele_db_host": "",
     "tele_db_name": "",
     "tele_db_port": "",
@@ -49,16 +61,18 @@
     "tele_db_pass": ""
   },
   "mysql_database": {
-    "mysql_host": "localhost",
-    "mysql_port": 3306,
-    "mysql_db": "rolemanager",
-    "mysql_user": "dummy",
-    "mysql_pass": "dummy"
+    "mysql_host": "localhost", // your mysql host
+    "mysql_port": 3306, // mysql port
+    "mysql_db": "rolemanager", // mysql database for rolemanager
+    "mysql_user": "dummy", // mysql username
+    "mysql_pass": "dummy" // mysql password
   }
 }
 
 ```
 Install node dependecies
+
+Install NodeJS version 14.x!
 
 ```
 npm install
@@ -120,9 +134,3 @@ if you want to add another langue you just need to add a new entry in the json f
 This is a port from https://github.com/Kneckter/DiscordRoleBot
 
 Many thanks to him for his original version.
-
-Used libs:
-- ErisJS
-- sqlite3
-- mysql
-- i18n-nodejs

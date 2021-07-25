@@ -1,8 +1,6 @@
 const mysql = require('mysql');
 const config = require('../../config/config');
 const helper = require('../helper');
-//const sqlite3 = require('sqlite3').verbose();
-const db = require('better-sqlite3')(config.migrateSQLITE.path);
 const wait = async ms => new Promise(done => setTimeout(done, ms));
 
 sqlConnectionDiscord = mysql.createPool({
@@ -71,6 +69,7 @@ async function InitDB() {
 										process.exit(-1);
 									});
 								if (config.migrateSQLITE.migrate === true) {
+									const db = require('better-sqlite3')(config.migrateSQLITE.path);
 									// Migrate the old sqlite entries into the table
 									const rows = db.prepare('SELECT * FROM temporary_roles').all();
 									if (rows.length == 0)
