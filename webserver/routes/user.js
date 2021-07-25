@@ -6,7 +6,6 @@ router.get('/', userController.login);
 router.post('/auth', userController.auth);
 router.get('/home', userController.home);
 router.get('/discorduser', userController.view);
-router.post('/discorduser', userController.find);
 router.get('/addDiscordUser', userController.createDiscordForm);
 router.post('/addDiscordUser', userController.createDiscordUser);
 router.get('/editUser/:id', userController.edit);
