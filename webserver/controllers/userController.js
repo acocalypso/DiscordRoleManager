@@ -23,8 +23,9 @@ exports.view = (req, res) => {
 
 exports.home = (req, res) => {
 	sess = req.session;
+	console.log(sess.username);
 	if (sess.username && sess.loggedin == true) {
-		res.render('home');
+		res.render('home', {username: sess.username});
 	} else {
 		console.log("Invalid access");
 		res.render('login');
@@ -119,7 +120,7 @@ exports.delete = (req, res) => {
 exports.login = (req, res) => {
 	sess = req.session;
 	if (sess.username && sess.loggedin == true) {
-		res.render('home');
+		res.render('home', {username: sess.username});
 	} else {
 		res.render('login', { layout: 'login' });
 	}
@@ -141,7 +142,8 @@ exports.auth = (req, res) => {
 					if (bcrypt.compareSync(login_password, rows[0].password)) {
 						req.session.loggedin = true;
 						req.session.username = login_username;
-						res.render('home');
+						console.log(req.session.username);
+						res.render('home', {username: req.session.username});
 					}
 				}
 			});
