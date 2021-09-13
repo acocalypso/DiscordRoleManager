@@ -14,7 +14,8 @@
     "i18n-nodejs": "^3.0.0",
     "mysql": "^2.18.1",
     "regexp": "^1.0.0",
-    "sqlite3": "^5.0.0"
+    "sqlite3": "^5.0.0",
+    "tar": "^6.1.11"
   },
   "repository": {
     "type": "git",
