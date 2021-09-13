@@ -9,7 +9,7 @@
   "author": "AcoVanConis",
   "license": "ISC",
   "dependencies": {
-    "eris": "^0.14.0",
+    "eris": "^0.15.1",
     "fs": "0.0.1-security",
     "i18n-nodejs": "^3.0.0",
     "mysql": "^2.18.1",
