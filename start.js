@@ -172,6 +172,10 @@ bot.on('guildMemberRemove', async member => {
 			}
 		});
 
+		socket.on('error', function (exec) {
+			console.error(helper.GetTimestamp() + 'Exception occured: %s - ignored', exec);
+		});
+
 		bot.on('disconnect', (error) => {
 			console.log(helper.GetTimestamp() + "Disconnected from Discord. %s ", error);
 			bot.connect();
