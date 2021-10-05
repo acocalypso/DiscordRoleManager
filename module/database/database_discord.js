@@ -13,7 +13,8 @@ sqlConnectionDiscord = mysql.createPool({
 	user: config.mysql_database.mysql_user,
 	port: config.mysql_database.mysql_port,
 	password: config.mysql_database.mysql_pass,
-	supportBigNumbers: true
+	supportBigNumbers: true,
+	timezone: 'Europe/Berlin'
 });
 
 

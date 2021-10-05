@@ -21,6 +21,25 @@ exports.view = (req, res) => {
 	}
 }
 
+exports.soonToExpire = (req, res) => {
+	ssess = req.session;
+	if (sess.username && sess.loggedin == true) {
+		database_discord.query(`SELECT UserID, username, temporaryRole, FROM_UNIXTIME(endDate,"%d.%m.%Y %H:%i:%S") as endDate FROM temporary_roles where notified = 1 ORDER BY endDate asc`)
+			.then(async rows => {
+				if (!rows[0]) {
+					console.info(helper.GetTimestamp() + "No one is in the DataBase");
+					return;
+				} else {
+
+					res.render('home', { rows });
+				}
+			});
+	} else {
+		console.log("Invalid access");
+		res.render('login');
+	}
+}
+
 exports.home = (req, res) => {
 	sess = req.session;
 	console.log(sess.username);
@@ -66,7 +85,7 @@ exports.edit = (req, res) => {
 	sess = req.session;
 	if (sess.username && sess.loggedin == true) {
 
-		database_discord.query('SELECT UserID, username, temporaryRole, FROM_UNIXTIME(endDate) as endDate FROM temporary_roles WHERE UserID = ?', [req.params.id])
+		database_discord.query('SELECT UserID, username, temporaryRole, FROM_UNIXTIME(endDate,"%d.%m.%Y %H:%i:%S") as endDate FROM temporary_roles WHERE UserID = ?', [req.params.id])
 			.then(async rows => {
 				if (!rows[0]) {
 					console.info(helper.GetTimestamp() + "[EditUser] User not found");
