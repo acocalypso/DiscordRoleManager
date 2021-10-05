@@ -21,30 +21,22 @@ exports.view = (req, res) => {
 	}
 }
 
-exports.soonToExpire = (req, res) => {
-	ssess = req.session;
+
+exports.home = (req, res) => {
+	sess = req.session;
+	console.log(sess.username);
+
 	if (sess.username && sess.loggedin == true) {
+
 		database_discord.query(`SELECT UserID, username, temporaryRole, FROM_UNIXTIME(endDate,"%d.%m.%Y %H:%i:%S") as endDate FROM temporary_roles where notified = 1 ORDER BY endDate asc`)
 			.then(async rows => {
 				if (!rows[0]) {
 					console.info(helper.GetTimestamp() + "No one is in the DataBase");
 					return;
 				} else {
-
-					res.render('home', { rows });
+					res.render('home', { rows,username: sess.username });
 				}
-			});
-	} else {
-		console.log("Invalid access");
-		res.render('login');
-	}
-}
-
-exports.home = (req, res) => {
-	sess = req.session;
-	console.log(sess.username);
-	if (sess.username && sess.loggedin == true) {
-		res.render('home', {username: sess.username});
+				});
 	} else {
 		console.log("Invalid access");
 		res.render('login');
