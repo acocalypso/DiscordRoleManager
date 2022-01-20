@@ -687,7 +687,7 @@ bot.on("messageCreate", async (message) => {
 									})).catch((err) => { console.log(err) });
 								})
 								.catch(err => {
-									console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 16:" + `(${err})`);
+									console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query while inserting to db") + " 15:" + `(${err})`);
 									return;
 								});
 						}
@@ -700,7 +700,7 @@ bot.on("messageCreate", async (message) => {
 						}
 					})
 					.catch(err => {
-						console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 16:" + `(${err})`);
+						console.error(GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query while inserting") + " 16:" + `(${err})`);
 						return;
 					});
 			}
