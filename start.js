@@ -3,7 +3,6 @@ const config = require('./config/config.json');
 const dateMultiplier = 86400000;
 const web = require('./module/backend.js');
 const sqlConnectionDiscord = require('./module/database/database_discord');
-//const database_telegram = require('./module/database/database_telegram');
 const helper = require('./module/helper');
 const routine = require('./module/routine');
 const discordcommands = require('./module/discordcommands');

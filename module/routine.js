@@ -1,5 +1,4 @@
 ﻿const database_discord = require('./database/database_discord');
-const database_telegram = require('./database/database_telegram');
 const helper = require('./helper');
 const config = require('./../config/config');
 
