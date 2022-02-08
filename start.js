@@ -6,6 +6,7 @@ const sqlConnectionDiscord = require('./module/database/database_discord');
 const helper = require('./module/helper');
 const routine = require('./module/routine');
 const discordcommands = require('./module/discordcommands');
+const log = require('log-to-file');
 
 if (config.webinterface.disabled === "no") {
 	web.website();
@@ -25,6 +26,7 @@ var bot = new Eris(config.token, {
 });
 
 bot.on('ready', () => {
+	log('Bot started', 'info.log');
 	console.log(i18n.__(`Ready`));
 	sqlConnectionDiscord.InitDB();
 });

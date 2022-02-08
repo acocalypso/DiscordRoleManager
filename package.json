@@ -21,6 +21,7 @@
     "fetch": "^1.1.0",
     "fs": "0.0.1-security",
     "i18n-nodejs": "^3.0.0",
+    "log-to-file": "^3.0.0",
     "mysql": "^2.18.1",
     "node": "^16.5.0",
     "nodemon": "^2.0.7",
