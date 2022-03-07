@@ -79,6 +79,9 @@ bot.on("messageCreate", async (message) => {
 	let AdminR = g.roles.cache.find(role => role.name.toLowerCase() === config.adminRoleName.toLowerCase());
 	if (!AdminR) {
 		AdminR = { "id": "111111111111111111" };
+		log(i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}", {
+			configAdminRoleName: config.adminRoleName
+		}), 'info.log');
 		console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}", {
 			configAdminRoleName: config.adminRoleName
 		}));
@@ -86,6 +89,9 @@ bot.on("messageCreate", async (message) => {
 	let ModR = g.roles.cache.find(role => role.name.toLowerCase() === config.modRoleName.toLowerCase());
 	if (!ModR) {
 		ModR = { "id": "111111111111111111" };
+		log(i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configModRoleName}}", {
+			configModRoleName: config.modRoleName
+		}), 'info.log');
 		console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find mod role: {{configModRoleName}}", {
 			configModRoleName: config.modRoleName
 		}));
@@ -135,6 +141,7 @@ bot.on('guildMemberRemove', async member => {
 	function RestartBot(type) {
 		if (type == 'manual') { process.exit(1); }
 		else {
+			log(i18n.__("Unexpected error, bot stopping.", 'error.log'));
 			console.error(helper.GetTimestamp() + "Unexpected error, bot stopping.");
 			process.exit(1);
 		}
@@ -145,6 +152,7 @@ bot.on('guildMemberRemove', async member => {
 	if (!config.debug == "yes") {
 		bot.on('error', function (err) {
 			if (typeof err == 'object') {
+				log('Uncaught error: ' + err, 'error.log');
 				console.error(helper.GetTimestamp() + 'Uncaught error: ' + err);
 			}
 			RestartBot();
@@ -152,26 +160,30 @@ bot.on('guildMemberRemove', async member => {
 		});
 
 		process.on('unhandledRejection', (reason, p) => {
+			log('Unhandled Rejection at Promise: ', p, 'error.log');
 			console.error(helper.GetTimestamp() + 'Unhandled Rejection at Promise: ', p);
 		});
 
 		process.on('uncaughtException', err => {
 			if (err.code === "PROTOCOL_CONNECTION_LOST" || err.code === "ECONNRESET") {
+				log("Lost connection to the DB server. Waiting for activity before reconnecting...", 'error.log');
 				console.log(helper.GetTimestamp() + "Lost connection to the DB server. Waiting for activity before reconnecting...");
 				return;
 			}
 			else {
-				console.error(helper.GetTimestamp() + 'Uncaught Exception thrown');
-				console.error(helper.GetTimestamp() + err);
+				log("Uncaught Exception thrown: " + err, 'error.log');
+				console.error(helper.GetTimestamp() + 'Uncaught Exception thrown: ' + err);
 				process.exit(1);
 			}
 		});
 
 		socket.on('error', function (exec) {
+			log("Exception occured: " + exec, 'error.log')
 			console.error(helper.GetTimestamp() + 'Exception occured: %s - ignored', exec);
 		});
 
 		bot.on('disconnect', (error) => {
+			log("Disconnected from Discord: " + error, 'error.log');
 			console.log(helper.GetTimestamp() + "Disconnected from Discord. %s ", error);
 			bot.connect();
 		});
