@@ -5,6 +5,7 @@
   "ownerID": "", // Your discord id
   "serverName": "", // Your Server name
   "serverID": "", // Your Server ID
+  "mainChannelID": "", //Your main channel for information
   "language": "", // en, de, pt
   "cmdPrefix": "?", // choose your command prefix
   "adminRoleName": "", // what is the admin role name
