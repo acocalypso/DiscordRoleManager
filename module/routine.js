@@ -1,6 +1,7 @@
-﻿const database_discord = require('./database/database_discord');
+﻿const sqlConnectionDiscord = require('./database/database_discord');
 const helper = require('./helper');
 const config = require('./../config/config');
+const discordcommands = require('./discordcommands');
 
 
 var i18nconfig = {
@@ -19,7 +20,7 @@ async function housekeeping(bot) {
 	let dbTime = 0;
 	let daysLeft = 0;
 	let notify = 0;
-	await database_discord.query(`SELECT * FROM temporary_roles`)
+	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles`)
 		.then(async rows => {
 			if (!rows[0]) {
 				console.info(helper.GetTimestamp() + i18n.__("No one is in the DataBase"));
@@ -30,8 +31,8 @@ async function housekeeping(bot) {
 				notify = rows[rowNumber].notified;
 				daysLeft = dbTime - timeNow;
 				let leftServer = rows[rowNumber].leftServer;
-				let rName = await bot.guilds.get(config.serverID).roles.find(rName => rName.name === rows[rowNumber].temporaryRole);
-				let member = await bot.guilds.get(config.serverID).members.get(rows[rowNumber].userID);
+				let rName = bot.guilds.cache.get(config.serverID).roles.cache.find(rName => rName.name.toLowerCase() === rows[rowNumber].temporaryRole.toLowerCase());
+				var member = await discordcommands.getMember(bot,rows[rowNumber].userID)
 
 				// Check if we pulled the member's information correctly or if they left the server.
 				if (!member && !leftServer) {
@@ -40,7 +41,7 @@ async function housekeeping(bot) {
 				// Update usernames for legacy data
 				if (!rows[rowNumber].username && !leftServer) {
 					let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
-					await database_discord.query(`UPDATE temporary_roles SET username="${name}" WHERE userID="${member.id}"`)
+					await sqlConnectionDiscord.query(`UPDATE temporary_roles SET username="${name}" WHERE userID="${member.id}"`)
 						.catch(err => {
 							console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 4: " + `(${err})`);
 						});
@@ -53,12 +54,12 @@ async function housekeeping(bot) {
 				if (daysLeft < 1) {
 					// If they left the server, remove the entry without attempting the role removal
 					if (leftServer) {
-						await database_discord.query(`DELETE FROM temporary_roles WHERE userID='${rows[rowNumber].userID}' AND temporaryRole='${rName.name}'`)
+						await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${rows[rowNumber].userID}' AND temporaryRole='${rName.name}'`)
 							.catch(err => {
 								console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 5:" + `(${err})`);
 								process.exit(-1);
 							});
-						bot.createMessage(config.mainChannelID, i18n.__("⚠ {{rowUsername}} has **left** the server and **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭", {
+						bot.channels.cache.get(config.mainChannelID).send(i18n.__("⚠ {{rowUsername}} has **left** the server and **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭", {
 							rowUsername: rows[rowNumber].username,
 							rNameName: rName.name
 						})).catch(err => { console.error(GetTimestamp() + err); });
@@ -70,20 +71,20 @@ async function housekeeping(bot) {
 						continue;
 					}
 					// REMOVE ROLE FROM MEMBER IN GUILD
-					member.removeRole(rName.id).then(async members => {
-						bot.createMessage(config.mainChannelID, i18n.__("⚠ {{memberUsername}} has **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭", {
+					member.roles.remove(rName).then(async member => {
+						bot.channels.cache.get(config.mainChannelID).send(i18n.__("⚠ {{memberUsername}} has **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭", {
 							memberUsername: member.user.username,
 							rNameName: rName.name
 						})).catch(err => { console.error(helper.GetTimestamp() + err); });
-						bot.getDMChannel(member.user.id).then(dm => dm.createMessage(i18n.__("Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** has been removed.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: {{configPaypalUrl}}", {
+						member.send(i18n.__("Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** has been removed.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: {{configPaypalUrl}}", {
 							memberUsername: member.user.username,
 							rNameName: rName.name,
 							configServerName: config.serverName,
 							configPaypalUrl: config.paypal.url
-						})).catch((err) => { console.log(err) })).catch((err) => { console.log(err) })
+						})).catch(err => { console.log(err) }).catch((err) => { console.log(err) })
 
 						// REMOVE DATABASE ENTRY
-						await database_discord.query(`DELETE FROM temporary_roles WHERE userID='${member.id}' AND temporaryRole='${rName.name}'`)
+						await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${member.id}' AND temporaryRole='${rName.name}'`)
 							.catch(err => {
 								console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 2:" + `(${err})`);
 								process.exit(-1);
@@ -95,7 +96,7 @@ async function housekeeping(bot) {
 						}));
 					}).catch(error => {
 						console.error(helper.GetTimestamp() + error.message);
-						bot.createMessage(config.mainChannelID, i18n.__("**⚠ Could not remove the {{rNameName}} role from {{memberUsername}}!**", {
+						bot.channels.cache.get(config.mainChannelID).send(i18n.__("**⚠ Could not remove the {{rNameName}} role from {{memberUsername}}!**", {
 							rNameName: rName.name,
 							memberUsername: member.user.username
 						})).catch(err => { console.error(helper.GetTimestamp() + err); });
@@ -108,7 +109,7 @@ async function housekeeping(bot) {
 					let finalDate = await helper.formatTimeString(endDateVal);
 					// NOTIFY THE USER IN DM THAT THEY WILL EXPIRE
 					if (config.paypal.enabled == "yes") {
-						bot.getDMChannel(member.user.id).then(dm => dm.createMessage(i18n.__("Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** will be removed at {{finalDate}}.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: {{configPaypalUrl}}", {
+						member.send(i18n.__("Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** will be removed at {{finalDate}}.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: {{configPaypalUrl}}", {
 							memberUsername: member.user.username,
 							rNameName: rName.name,
 							configServerName: config.serverName,
@@ -119,10 +120,10 @@ async function housekeeping(bot) {
 								memberID: member.id,
 								err: err
 							}))
-						}));
+						});
 					}
 					else {
-						bot.getDMChannel(member.user.id).then(dm => dm.createMessage(i18n__(`Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** will be removed at {{finalDate}}.\nIf you want to continue, please do another donation.\n\nThank you.`, {
+						member.send(i18n__(`Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** will be removed at {{finalDate}}.\nIf you want to continue, please do another donation.\n\nThank you.`, {
 							memberUsername: member.user.username,
 							rNameName: rName.name,
 							configServerName: config.serverName,
@@ -132,17 +133,17 @@ async function housekeeping(bot) {
 								memberID: member.id,
 								err: err
 							}))
-						}));
+						});
 					}
 					// NOTIFY THE ADMINS OF THE PENDING EXPIRY
-					bot.createMessage(config.mainChannelID, i18n.__(`⚠ {{memberUsername}} will lose their role of: **{{rNameName}}** in less than 5 days on {{finalDate}}.`, {
+					bot.channels.cache.get(config.mainChannelID).send(i18n.__(`⚠ {{memberUsername}} will lose their role of: **{{rNameName}}** in less than 5 days on {{finalDate}}.`, {
 						memberUsername: member.user.username,
 						rNameName: rName.name,
 						finalDate: finalDate
 					})).catch(err => { console.error(helper.GetTimestamp() + err); });
 					// UPDATE THE DB TO REMEMBER THAT THEY WERE NOTIFIED
 					let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
-					await database_discord.query(`UPDATE temporary_roles SET notified=1, username="${name}" WHERE userID="${member.id}" AND temporaryRole="${rName.name}"`)
+					await sqlConnectionDiscord.query(`UPDATE temporary_roles SET notified=1, username="${name}" WHERE userID="${member.id}" AND temporaryRole="${rName.name}"`)
 						.catch(err => {
 							console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 3:" + `(${err})`);
 							process.exit(-1);

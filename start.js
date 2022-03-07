@@ -1,6 +1,9 @@
-﻿const Eris = require('eris');
+﻿const Discord = require('discord.js');
+const bot = new Discord.Client({
+	intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MEMBERS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.DIRECT_MESSAGES]
+});
 const config = require('./config/config.json');
-const dateMultiplier = 86400000;
+//const dateMultiplier = 86400000;
 const web = require('./module/backend.js');
 const sqlConnectionDiscord = require('./module/database/database_discord');
 const helper = require('./module/helper');
@@ -20,10 +23,7 @@ var i18nconfig = {
 var i18n_module = require('i18n-nodejs');
 var i18n = new i18n_module(i18nconfig.lang, i18nconfig.langFile);
 
-var bot = new Eris(config.token, {
-    disableEveryone: true,
-    getAllUsers: true
-});
+bot.login(config.token);
 
 bot.on('ready', () => {
 	log('Bot started', 'info.log');
@@ -32,8 +32,6 @@ bot.on('ready', () => {
 });
 
 
-bot.connect();
-
 	// ##########################################################################
 	// ############################# SERVER LISTENER ############################
 	// ##########################################################################
@@ -41,7 +39,7 @@ bot.connect();
 setInterval(async function () {
 	routine.housekeeping(bot);
 		
-}, 3600000);
+}, 15000);
 	// 86400000 = 1day
 	// 3600000 = 1hr
 	// 60000 = 1min
@@ -58,7 +56,7 @@ bot.on("messageCreate", async (message) => {
 	}
 
 	// GET CHANNEL INFO
-	let g = message.channel.guild;
+	let g = message.guild;
 	let c = message.channel;
 	let m = message.member;
 	let msg = message.content;
@@ -73,19 +71,19 @@ bot.on("messageCreate", async (message) => {
 	command = command.slice(config.cmdPrefix.length);
 
 	// GET ARGUMENTS
-	let args = message.content.split(" ").slice(1);
+	let args = msg.split(" ").slice(1);
 	//skip = "no";
 
 	// GET ROLES FROM CONFIG
 	//let AdminR = guild.members.filter(m => m.roles.)
-	let AdminR = g.roles.find(role => role.name === config.adminRoleName);
+	let AdminR = g.roles.cache.find(role => role.name.toLowerCase() === config.adminRoleName.toLowerCase());
 	if (!AdminR) {
 		AdminR = { "id": "111111111111111111" };
 		console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}", {
 			configAdminRoleName: config.adminRoleName
 		}));
 	}
-	let ModR = g.roles.find(role => role.name === config.modRoleName);
+	let ModR = g.roles.cache.find(role => role.name.toLowerCase() === config.modRoleName.toLowerCase());
 	if (!ModR) {
 		ModR = { "id": "111111111111111111" };
 		console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find mod role: {{configModRoleName}}", {
@@ -101,10 +99,6 @@ bot.on("messageCreate", async (message) => {
 	
 	if (command.startsWith("temprole") || command === "tr" || command === "trole") {
 		discordcommands.temprole(message, command, args, bot);
-	}
-
-	if (command.startsWith("telegram") || command === "tg") {
-		telegramcommands.telegram(message, command, args, bot);
 	}
 
 	if (command === "paypal" || command === "subscribe") {
