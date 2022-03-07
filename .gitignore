@@ -5,3 +5,4 @@ config/config.json
 package-lock.json
 *.sqlite
 .env
+*.log
