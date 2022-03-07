@@ -39,7 +39,7 @@ bot.on('ready', () => {
 setInterval(async function () {
 	routine.housekeeping(bot);
 		
-}, 60000);
+}, 15000);
 	// 86400000 = 1day
 	// 3600000 = 1hr
 	// 60000 = 1min
@@ -76,14 +76,14 @@ bot.on("messageCreate", async (message) => {
 
 	// GET ROLES FROM CONFIG
 	//let AdminR = guild.members.filter(m => m.roles.)
-	let AdminR = g.roles.cache.find(role => role.name === config.adminRoleName);
+	let AdminR = g.roles.cache.find(role => role.name.toLowerCase() === config.adminRoleName.toLowerCase());
 	if (!AdminR) {
 		AdminR = { "id": "111111111111111111" };
 		console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}", {
 			configAdminRoleName: config.adminRoleName
 		}));
 	}
-	let ModR = g.roles.cache.find(role => role.name === config.modRoleName);
+	let ModR = g.roles.cache.find(role => role.name.toLowerCase() === config.modRoleName.toLowerCase());
 	if (!ModR) {
 		ModR = { "id": "111111111111111111" };
 		console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find mod role: {{configModRoleName}}", {
@@ -99,10 +99,6 @@ bot.on("messageCreate", async (message) => {
 	
 	if (command.startsWith("temprole") || command === "tr" || command === "trole") {
 		discordcommands.temprole(message, command, args, bot);
-	}
-
-	if (command.startsWith("telegram") || command === "tg") {
-		telegramcommands.telegram(message, command, args, bot);
 	}
 
 	if (command === "paypal" || command === "subscribe") {

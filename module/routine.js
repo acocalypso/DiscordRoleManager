@@ -1,4 +1,4 @@
-﻿const database_discord = require('./database/database_discord');
+﻿const sqlConnectionDiscord = require('./database/database_discord');
 const helper = require('./helper');
 const config = require('./../config/config');
 const discordcommands = require('./discordcommands');
@@ -20,7 +20,7 @@ async function housekeeping(bot) {
 	let dbTime = 0;
 	let daysLeft = 0;
 	let notify = 0;
-	await database_discord.query(`SELECT * FROM temporary_roles`)
+	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles`)
 		.then(async rows => {
 			if (!rows[0]) {
 				console.info(helper.GetTimestamp() + i18n.__("No one is in the DataBase"));
@@ -31,7 +31,7 @@ async function housekeeping(bot) {
 				notify = rows[rowNumber].notified;
 				daysLeft = dbTime - timeNow;
 				let leftServer = rows[rowNumber].leftServer;
-				let rName = bot.guilds.cache.get(config.serverID).roles.cache.find(rName => rName.name === rows[rowNumber].temporaryRole);
+				let rName = bot.guilds.cache.get(config.serverID).roles.cache.find(rName => rName.name.toLowerCase() === rows[rowNumber].temporaryRole.toLowerCase());
 				var member = await discordcommands.getMember(bot,rows[rowNumber].userID)
 
 				// Check if we pulled the member's information correctly or if they left the server.
@@ -41,7 +41,7 @@ async function housekeeping(bot) {
 				// Update usernames for legacy data
 				if (!rows[rowNumber].username && !leftServer) {
 					let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
-					await database_discord.query(`UPDATE temporary_roles SET username="${name}" WHERE userID="${member.id}"`)
+					await sqlConnectionDiscord.query(`UPDATE temporary_roles SET username="${name}" WHERE userID="${member.id}"`)
 						.catch(err => {
 							console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 4: " + `(${err})`);
 						});
@@ -54,7 +54,7 @@ async function housekeeping(bot) {
 				if (daysLeft < 1) {
 					// If they left the server, remove the entry without attempting the role removal
 					if (leftServer) {
-						await database_discord.query(`DELETE FROM temporary_roles WHERE userID='${rows[rowNumber].userID}' AND temporaryRole='${rName.name}'`)
+						await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${rows[rowNumber].userID}' AND temporaryRole='${rName.name}'`)
 							.catch(err => {
 								console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 5:" + `(${err})`);
 								process.exit(-1);
@@ -84,7 +84,7 @@ async function housekeeping(bot) {
 						})).catch(err => { console.log(err) }).catch((err) => { console.log(err) })
 
 						// REMOVE DATABASE ENTRY
-						await database_discord.query(`DELETE FROM temporary_roles WHERE userID='${member.id}' AND temporaryRole='${rName.name}'`)
+						await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${member.id}' AND temporaryRole='${rName.name}'`)
 							.catch(err => {
 								console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 2:" + `(${err})`);
 								process.exit(-1);
@@ -143,7 +143,7 @@ async function housekeeping(bot) {
 					})).catch(err => { console.error(helper.GetTimestamp() + err); });
 					// UPDATE THE DB TO REMEMBER THAT THEY WERE NOTIFIED
 					let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
-					await database_discord.query(`UPDATE temporary_roles SET notified=1, username="${name}" WHERE userID="${member.id}" AND temporaryRole="${rName.name}"`)
+					await sqlConnectionDiscord.query(`UPDATE temporary_roles SET notified=1, username="${name}" WHERE userID="${member.id}" AND temporaryRole="${rName.name}"`)
 						.catch(err => {
 							console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 3:" + `(${err})`);
 							process.exit(-1);
