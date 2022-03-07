@@ -40,7 +40,7 @@ sqlConnectionDiscord.getConnection((err, connection) => {
 
 async function InitDB() {
 	// Create MySQL tabels
-	let currVersion = 6;
+	let currVersion = 7;
 	let dbVersion = 0;
 	await query(`CREATE TABLE IF NOT EXISTS metadata (
                         \`key\` VARCHAR(50) PRIMARY KEY NOT NULL,
@@ -211,7 +211,25 @@ async function InitDB() {
 										console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}e: (${err})`);
 										process.exit(-1);
 									});
-								console.log(helper.GetTimestamp() + '[InitDB] Migration #5 complete.');
+								console.log(helper.GetTimestamp() + '[InitDB] Migration #6 complete.');
+							}
+							else if (dbVersion == 6) {
+								// Wait 30 seconds and let user know we are about to migrate the database and for them to make a backup until we handle backups and rollbacks.
+								console.log(helper.GetTimestamp() + '[InitDB] MIGRATION IS ABOUT TO START IN 30 SECONDS, PLEASE MAKE SURE YOU HAVE A BACKUP!!!');
+								await wait(30 * 1000);
+
+								await query(`ALTER TABLE temporary_roles ADD guild_id int(20);`)
+									.catch(err => {
+										console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}b: (${err})`);
+										process.exit(-1);
+									});
+
+								await query(`INSERT INTO metadata (\`key\`, \`value\`) VALUES("DB_VERSION", ${dbVersion + 1}) ON DUPLICATE KEY UPDATE \`value\` = ${dbVersion + 1};`)
+									.catch(err => {
+										console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}a: (${err})`);
+										process.exit(-1);
+									});
+								console.log(helper.GetTimestamp() + '[InitDB] Migration #7 complete.');
 							}
 						}
 						console.log(helper.GetTimestamp() + '[InitDB] Migration process done.');
