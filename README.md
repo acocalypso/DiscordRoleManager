@@ -26,6 +26,7 @@
   "ownerID": "", // Your discord id
   "serverName": "", // Your Server name
   "serverID": "", // Your Server ID
+  "mainChannelID": "", // channel where the bot will listen to your commands
   "language": "", // en, de, pt
   "cmdPrefix": "?", // choose your command prefix
   "adminRoleName": "", // what is the admin role name
@@ -51,7 +52,6 @@
     "url": "https://www.paypal.me/xyz", // your paypal url
     "img": "https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/master/paypal_icon.jpg"
   },
-  "mainChannelID": "", // channel where the bot will listen to your commands
   "telegram": {
     "tele_enabled": "no", // use telegram 
     "tele_db_host": "",
@@ -72,7 +72,7 @@
 ```
 Install node dependecies
 
-Install NodeJS version 14.x!
+Install NodeJS version 16.x!
 
 ```
 npm install
