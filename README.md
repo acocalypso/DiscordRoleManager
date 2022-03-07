@@ -52,14 +52,6 @@
     "url": "https://www.paypal.me/xyz", // your paypal url
     "img": "https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/master/paypal_icon.jpg"
   },
-  "telegram": {
-    "tele_enabled": "no", // use telegram 
-    "tele_db_host": "",
-    "tele_db_name": "",
-    "tele_db_port": "",
-    "tele_db_user": "",
-    "tele_db_pass": ""
-  },
   "mysql_database": {
     "mysql_host": "localhost", // your mysql host
     "mysql_port": 3306, // mysql port
