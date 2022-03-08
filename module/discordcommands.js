@@ -503,9 +503,9 @@ async function leftserver(bot, member) {
 
 }
 
-async function guildMemberRemove(bot,member) {
+async function guildMemberRemove(bot,member,guildID) {
 	// Used to note database entries when users leave the server.
-	let guild = member.guild.id;
+	let guild = guildID;
 /*	if (guild != config.serverID) {
 		return;
 	}*/
@@ -533,62 +533,144 @@ async function guildMemberRemove(bot,member) {
 		});
 }
 
-async function getMember(bot,userID) {
+async function getMember(bot,userID,guildID) {
 	return new Promise(async (resolve) => {
 		var member = {};
-		await bot.guilds.cache.get(config.serverID).members.fetch();
-		member = bot.guilds.cache.get(config.serverID).members.cache.get(userID);
+		await bot.guilds.cache.get(guildID).members.fetch();
+		member = bot.guilds.cache.get(guildID).members.cache.get(userID);
 		// Check if we pulled the member's information correctly or if they left the server.
 		if (!member) {
-			bot.channels.cache.get(config.mainChannelID).send(":exclamation: Failed to get user ID: " +
-				userID + " <@" + userID + "> from the cache. Tagging them to force the cache update.")
-				.catch(err => { console.error(helper.GetTimestamp() + err); });
-			await bot.guilds.cache.get(config.serverID).members.fetch();
+			await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id=${guildID};`)
+				.then(async result => {
+					console.log(helper.GetTimestamp() + "[ADMIN] [MEMBER] Failed to get user ID: " + UserID);
+					bot.channels.cache.get(result[0].mainChannelID).send(":exclamation: Failed to get user ID: " +
+						userID + " <@" + userID + "> from the cache. Tagging them to force the cache update.")
+						.catch(err => { console.error(helper.GetTimestamp() + err); });
+			await bot.guilds.cache.get(guildID).members.fetch();
 			await wait(1 * 1000); // 1 second
-			member = bot.guilds.cache.get(config.serverID).members.cache.get(userID);
+			member = bot.guilds.cache.get(guildID).members.cache.get(userID);
 			// If it still doesn't exist, return an error
 			if (!member) {
 				console.error(helper.GetTimestamp() + "Failed to find a user for ID: " + userID + ". They may have left the server.");
-				bot.channels.cache.get(config.mainChannelID).send("**:x: Could not find a user for ID: " +
+				bot.channels.cache.get(result[0].mainChannelID).send("**:x: Could not find a user for ID: " +
 					userID + " <@" + userID + ">. They may have left the server.**")
 					.catch(err => { console.error(helper.GetTimestamp() + err); });
-				member = { "guild": { "id": config.serverID }, "id": userID }
-				await guildMemberRemove(bot,member)
+				member = { "guild": { "id": guildID }, "id": userID }
+				await guildMemberRemove(bot, member,guildID)
 				return resolve(false);
-			}
+					}
+				});
 		}
 		return resolve(member);
 	});
 }
 
-async function register(message, bot) {
+async function register(message, bot, args) {
 	let c = message.channel;
 	let guild_id = message.guild.id;
 	let guild_name = message.guild.name;
+	let modRole = "";
+	let adminRole = "";
 
-	await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${guild_id}"`)
-		.then(async rows => {
-			// Update all entries from the database
-			if (!rows[0]) {
-				let values = guild_id + ',\''
-					+ guild_name + '\''
-				console.log(values);
-				await sqlConnectionDiscord.query(`INSERT INTO registration (\`guild_id\`, \`guild_name\`) VALUES(${values});`)
-					.then(async result => {
-						console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [SERVER-REGISTRATION] {{guild_name}} {{guild_id}} added to database", {
-							guild_name: guild_name,
-							guild_id: guild_id
-						}));
-						c.send(i18n.__("🎉 {{guild_name}} has been registered!", {
-							guild_name: guild_name
-						}));
-					});
-			}
-		})
-		.catch(err => {
-			console.error(helper.GetTimestamp() + `[InitDB] Failed to execute query in Server registration: (${err})`);
-			return;
-		});
+	if (args[0] == "modrole") {
+		//modRole = args[1];
+		modRole = message.mentions.roles.first().id
+		await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${guild_id}" AND modRoleName="${modRole}"`)
+			.then(async rows => {
+				// Update all entries from the database
+				if (!rows[0]) {
+					await sqlConnectionDiscord.query(`UPDATE registration SET modRoleName="${modRole}" WHERE guild_id=${guild_id};`)
+						.then(async result => {
+							console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [ROLE-REGISTRATION] Role {{modRole}} on {{guild_name}} added to database", {
+								guild_name: guild_name,
+								modRole: modRole
+							}));
+							c.send(i18n.__("🎉 {{modRole}} has been registered!", {
+								modRole: modRole
+							}));
+						});
+				} else {
+					c.send(i18n.__("🎉 {{modRole}} has already been registered!", {
+						modRole: modRole
+					}));
+				}
+			})
+	}
+
+	if (args[0] == "adminrole") {
+		//adminRole = args[1];
+		adminRole = message.mentions.roles.first().id
+		await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${guild_id}" AND adminRoleName="${adminRole}"`)
+			.then(async rows => {
+				// Update all entries from the database
+				if (!rows[0]) {
+					await sqlConnectionDiscord.query(`UPDATE registration SET adminRoleName="${adminRole}" WHERE guild_id=${guild_id};`)
+						.then(async result => {
+							console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [ROLE-REGISTRATION] Role {{adminRole}} on {{guild_name}} added to database", {
+								guild_name: guild_name,
+								adminRole: adminRole
+							}));
+							c.send(i18n.__("🎉 {{adminRole}} has been registered!", {
+								adminRole: adminRole
+							}));
+						});
+				} else {
+					c.send(i18n.__("🎉 {{adminRole}} has already been registered!", {
+						adminRole: adminRole
+					}));
+				}
+			})
+	}
+
+	if (args[0] == "channel") {
+		channelID = message.mentions.channels.first().id;
+
+		await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${guild_id}" AND mainChannelID="${channelID}"`)
+			.then(async rows => {
+				// Update all entries from the database
+				if (!rows[0]) {
+					await sqlConnectionDiscord.query(`UPDATE registration SET mainChannelID = ${channelID} WHERE \`guild_id\`="${guild_id}"`)
+						.then(async result => {
+							console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [CHANNEL-REGISTRATION] Channel added to database"));
+							c.send(i18n.__("🎉 Channel has been registered!", {
+								adminRole: adminRole
+							}));
+						});
+				} else {
+					c.send(i18n.__("🎉 Channel has already been registered!"));
+				}
+			})
+	}
+
+	if (!args[0]) {
+		await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${guild_id}"`)
+			.then(async rows => {
+				// Update all entries from the database
+				if (!rows[0]) {
+					let values = guild_id + ',\''
+						+ guild_name + '\''
+					console.log(values);
+					await sqlConnectionDiscord.query(`INSERT INTO registration (\`guild_id\`, \`guild_name\`) VALUES(${values});`)
+						.then(async result => {
+							console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [SERVER-REGISTRATION] {{guild_name}} {{guild_id}} added to database", {
+								guild_name: guild_name,
+								guild_id: guild_id
+							}));
+							c.send(i18n.__("🎉 {{guild_name}} has been registered!", {
+								guild_name: guild_name
+							}));
+						});
+				} else {
+					c.send(i18n.__("🎉 {{guild_name}} has already been registered!", {
+						guild_name: guild_name
+					}));
+				}
+			})
+			.catch(err => {
+				console.error(helper.GetTimestamp() + `[InitDB] Failed to execute query in Server registration: (${err})`);
+				return;
+			});
+	}
 }
 
 exports.temprole = temprole;
