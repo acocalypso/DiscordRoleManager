@@ -18,19 +18,26 @@
 - update to latest master 
 - copie your dataBase.sqlite file back. The Bot will migrate all users from sqlite to mysql.
 
+
+For the first run please register the bot with
+```
+(prefix)register
+```
+After that please register the Admin and Moderator Role with
+```
+(prefix)register adminrole @AdminRole
+(prefix)register modrole @ModRole
+(prefix)register channel #mainchannelforthebotinformation
+```
+
 ```sh
 {
   "token": "", // Bot token
   "clientID": "", // bot client id
   "clientSecret": "", //bot client secret
   "ownerID": "", // Your discord id
-  "serverName": "", // Your Server name
-  "serverID": "", // Your Server ID
-  "mainChannelID": "", // channel where the bot will listen to your commands
   "language": "", // en, de, pt
   "cmdPrefix": "?", // choose your command prefix
-  "adminRoleName": "", // what is the admin role name
-  "modRoleName": "", // what is the mod role name
   "migrateSQLITE": {
     "migrate": true, // do you want to migrate your user from sqlite?
     "path": "" // path to your sqlite file
@@ -60,6 +67,7 @@
     "mysql_pass": "dummy" // mysql password
   }
 }
+
 
 ```
 Install node dependecies
