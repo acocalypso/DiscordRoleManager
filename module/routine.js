@@ -41,7 +41,7 @@ async function housekeeping(bot) {
 				// Update usernames for legacy data
 				if (!rows[rowNumber].username && !leftServer) {
 					
-					await sqlConnectionDiscord.query(`UPDATE temporary_roles SET username="${name}" WHERE userID="${member.id}"`)
+					await sqlConnectionDiscord.query(`UPDATE temporary_roles SET username="${name}" WHERE userID="${member.id}" AND guild_id="${member.guild.id}"`)
 						.catch(err => {
 							console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 4: " + `(${err})`);
 						});
@@ -95,7 +95,7 @@ async function housekeeping(bot) {
 						})).catch(err => { console.log(err) }).catch((err) => { console.log(err) })
 
 						// REMOVE DATABASE ENTRY
-						await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${member.id}' AND temporaryRole='${rName.name}'`)
+						await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${member.id}' AND temporaryRole='${rName.name}' AND guild_id=`)
 							.catch(err => {
 								console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 2:" + `(${err})`);
 								process.exit(-1);

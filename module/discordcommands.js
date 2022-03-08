@@ -82,7 +82,7 @@ async function temprole(message, command, args, bot) {
 
 			// CHECK DATABASE FOR ROLES
 			if (args[0] === "check") {
-				await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}"`)
+				await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
 					.then(async row => {
 						if (!row[0]) {
 							c.send(i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}", {
@@ -114,7 +114,7 @@ async function temprole(message, command, args, bot) {
 			// REMOVE MEMBER FROM DATABASE
 			else if (args[0] === "remove") {
 				mentioned = message.mentions.members.first();
-				await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}"`)
+				await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
 					.then(async row => {
 						if (!row[0]) {
 							c.send(i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}", {
@@ -127,7 +127,7 @@ async function temprole(message, command, args, bot) {
 						let theirRole = g.roles.cache.find(theirRole => theirRole.name.toLowerCase() === row[0].temporaryRole.toLowerCase());
 						mentioned.roles.remove(theirRole, 'Donation Expired').catch((err) => { console.log(err) });
 
-						await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${mentioned.id}"`)
+						await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
 							.then(async result => {
 								console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mUserUsername}} ({{mID}}) removed the access from {{mentionedUsername}} ({{mentionedID}}", {
 									mUserUsername: m.user.username,
@@ -174,7 +174,7 @@ async function temprole(message, command, args, bot) {
 					})).catch((err) => { console.log(err) });
 					return;
 				}
-				await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}"`)
+				await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
 					.then(async row => {
 						if (!row[0]) {
 							message.reply(i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the database", {
@@ -188,7 +188,7 @@ async function temprole(message, command, args, bot) {
 						let finalDate = Number(row[0].endDate * 1000) + Number(days * dateMultiplier);
 
 						let name = mentioned.username.replace(/[^a-zA-Z0-9]/g, '');
-						await sqlConnectionDiscord.query(`UPDATE temporary_roles SET endDate="${Math.round(finalDate / 1000)}", notified=0, username="${name}" WHERE userID="${mentioned.id}" AND temporaryRole="${daRole}"`)
+						await sqlConnectionDiscord.query(`UPDATE temporary_roles SET endDate="${Math.round(finalDate / 1000)}", notified=0, username="${name}" WHERE userID="${mentioned.id}" AND temporaryRole="${daRole}" AND guild_id="${g.id}"`)
 							.then(async result => {
 								let endDateVal = new Date();
 								endDateVal.setTime(finalDate);
@@ -236,7 +236,7 @@ async function temprole(message, command, args, bot) {
 			}
 
 			// ADD MEMBER TO DATASE, AND ADD THE ROLE TO MEMBER
-			await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND temporaryRole="${daRole}"`)
+			await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND temporaryRole="${daRole}" AND guild_id="${g.id}"`)
 				.then(async row => {
 					mentioned = message.mentions.members.first();
 					if (!row[0]) {
@@ -252,7 +252,8 @@ async function temprole(message, command, args, bot) {
 							+ Math.round(finalDate / 1000) + ','
 							+ m.id
 							+ ', 0' + ',\''
-							+ name + '\', 0';
+							+ name + '\', 0 ,'
+							+ g.id
 						await sqlConnectionDiscord.query(`INSERT INTO temporary_roles VALUES(${values});`)
 							.then(async result => {
 								let theirRole = g.roles.cache.find(role => role.name.toLowerCase() === daRole.toLowerCase());
@@ -408,7 +409,7 @@ async function check(message, args, bot) {
 	}
 
 	// CHECK DATABASE FOR ROLES
-	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${m.id}" AND temporaryRole="${daRole}"`)
+	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${m.id}" AND temporaryRole="${daRole}" AND guild_id="${g.id}"`)
 		.then(async row => {
 			if (!row[0]) {
 				c.send(i18n.__("⚠ [ERROR] {{mAuthorUsername}} is __NOT__ in the database for the role {{daRole}}.", {
@@ -454,14 +455,14 @@ async function map(message, bot) {
 }
 
 async function leftserver(bot, member) {
-
+	let g = message.channel.guild;
 	let c = message.channel;
 	// Check if the user had any temp roles
-	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${member.id}"`)
+	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${member.id}" AND guild_id="${g.id}"`)
 		.then(async rows => {
 			// Update all entries from the database
 			if (rows[0]) {
-				await sqlConnectionDiscord.query(`UPDATE temporary_roles SET leftServer = 1 WHERE userID="${member.id}"`)
+				await sqlConnectionDiscord.query(`UPDATE temporary_roles SET leftServer = 1 WHERE userID="${member.id}" AND guild_id="${g.id}"`)
 					.then(async result => {
 						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
 						console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) has left the server. All role assignments have been marked in the database.", {
@@ -478,7 +479,7 @@ async function leftserver(bot, member) {
 					});
 			}
 			if (rows[0]) {
-				await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${member.id}"`)
+				await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${member.id}" AND guild_id="${g.id}"`)
 					.then(async result => {
 						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
 						console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) got removed from the database.", {
@@ -505,15 +506,15 @@ async function leftserver(bot, member) {
 async function guildMemberRemove(bot,member) {
 	// Used to note database entries when users leave the server.
 	let guild = member.guild.id;
-	if (guild != config.serverID) {
+/*	if (guild != config.serverID) {
 		return;
-	}
+	}*/
 	// Check if the user had any temp roles
-	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${member.id}"`)
+	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${member.id}" AND guild_id="${guild}"`)
 		.then(async rows => {
 			// Update all entries from the database
 			if (rows[0]) {
-				await sqlConnectionDiscord.query(`UPDATE temporary_roles SET leftServer = 1 WHERE userID="${member.id}"`)
+				await sqlConnectionDiscord.query(`UPDATE temporary_roles SET leftServer = 1 WHERE userID="${member.id}" AND guild_id="${guild}"`)
 					.then(async result => {
 						var name = "Unknown";
 						name = rows[0].username;
@@ -560,11 +561,42 @@ async function getMember(bot,userID) {
 	});
 }
 
+async function register(message, bot) {
+	let c = message.channel;
+	let guild_id = message.guild.id;
+	let guild_name = message.guild.name;
+
+	await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${guild_id}"`)
+		.then(async rows => {
+			// Update all entries from the database
+			if (!rows[0]) {
+				let values = guild_id + ',\''
+					+ guild_name + '\''
+				console.log(values);
+				await sqlConnectionDiscord.query(`INSERT INTO registration (\`guild_id\`, \`guild_name\`) VALUES(${values});`)
+					.then(async result => {
+						console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [SERVER-REGISTRATION] {{guild_name}} {{guild_id}} added to database", {
+							guild_name: guild_name,
+							guild_id: guild_id
+						}));
+						c.send(i18n.__("🎉 {{guild_name}} has been registered!", {
+							guild_name: guild_name
+						}));
+					});
+			}
+		})
+		.catch(err => {
+			console.error(helper.GetTimestamp() + `[InitDB] Failed to execute query in Server registration: (${err})`);
+			return;
+		});
+}
+
 exports.temprole = temprole;
 exports.paypal = paypal;
 exports.help = help;
 exports.check = check;
 exports.map = map;
 exports.leftserver = leftserver;
-exports.guildMemberRemove = guildMemberRemove
-exports.getMember = getMember
+exports.guildMemberRemove = guildMemberRemove;
+exports.getMember = getMember;
+exports.register = register;
