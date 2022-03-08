@@ -39,7 +39,7 @@ bot.on('ready', () => {
 setInterval(async function () {
 	routine.housekeeping(bot);
 		
-}, 3600000);
+}, 30000);
 	// 86400000 = 1day
 	// 3600000 = 1hr
 	// 60000 = 1min

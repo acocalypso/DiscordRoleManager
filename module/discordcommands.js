@@ -32,8 +32,6 @@ async function temprole(message, command, args, bot) {
 	command = command.split(" ")[0];
 	command = command.slice(config.cmdPrefix.length);
 
-	//skip = "no";
-
 	// GET ROLES FROM CONFIG
 	let AdminR = g.roles.cache.find(role => role.name.toLowerCase() === config.adminRoleName.toLowerCase());
 	if (!AdminR) {

@@ -218,7 +218,7 @@ async function InitDB() {
 								console.log(helper.GetTimestamp() + '[InitDB] MIGRATION IS ABOUT TO START IN 30 SECONDS, PLEASE MAKE SURE YOU HAVE A BACKUP!!!');
 								await wait(30 * 1000);
 
-								await query(`ALTER TABLE temporary_roles ADD guild_id int(20);`)
+								await query(`ALTER TABLE temporary_roles ADD guild_id bigint(20);`)
 									.catch(err => {
 										console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}b: (${err})`);
 										process.exit(-1);

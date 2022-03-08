@@ -19,7 +19,7 @@ async function housekeeping(bot) {
 	let timeNow = new Date().getTime();
 	let dbTime = 0;
 	let daysLeft = 0;
-	let notify = 0;
+
 	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles`)
 		.then(async rows => {
 			if (!rows[0]) {
@@ -32,15 +32,15 @@ async function housekeeping(bot) {
 				daysLeft = dbTime - timeNow;
 				let leftServer = rows[rowNumber].leftServer;
 				let rName = bot.guilds.cache.get(config.serverID).roles.cache.find(rName => rName.name.toLowerCase() === rows[rowNumber].temporaryRole.toLowerCase());
-				var member = await discordcommands.getMember(bot,rows[rowNumber].userID)
-
+				var member = await discordcommands.getMember(bot, rows[rowNumber].userID)
+				let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
 				// Check if we pulled the member's information correctly or if they left the server.
 				if (!member && !leftServer) {
 					continue;
 				}
 				// Update usernames for legacy data
 				if (!rows[rowNumber].username && !leftServer) {
-					let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
+					
 					await sqlConnectionDiscord.query(`UPDATE temporary_roles SET username="${name}" WHERE userID="${member.id}"`)
 						.catch(err => {
 							console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 4: " + `(${err})`);
@@ -50,6 +50,17 @@ async function housekeeping(bot) {
 						name: name
 					}));
 				}
+				if (!leftServer && !rows[rowNumber].guild_id) {
+					var guild_id = member.guild.id;
+					await sqlConnectionDiscord.query(`UPDATE temporary_roles SET guild_id="${guild_id}" WHERE userID="${rows[rowNumber].userID}"`)
+						.catch(err => {
+							console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 4: " + `(${err})`);
+						});
+					console.log(helper.GetTimestamp() + i18n.__(`Updated guild_id for {{name}}`, {
+						name: name
+					}));
+				}
+
 				// CHECK IF THEIR ACCESS HAS EXPIRED
 				if (daysLeft < 1) {
 					// If they left the server, remove the entry without attempting the role removal
