@@ -13,6 +13,10 @@ var i18nconfig = {
 var i18n_module = require('i18n-nodejs');
 var i18n = new i18n_module(i18nconfig.lang, i18nconfig.langFile);
 
+let adminRoleName = "";
+let modRoleName = "";
+let mainChannelID = "";
+
 async function temprole(message, command, args, bot) {
 
 	/// GET CHANNEL INFO
@@ -21,289 +25,300 @@ async function temprole(message, command, args, bot) {
 	let m = message.member;
 	let msg = message.content;
 
-	// GET TAGGED USER
-	let mentioned = "";
-	if (message.mentions.users.first()) {
-		mentioned = message.mentions.users.first();
-	}
 
-	// REMOVE LETTER CASE (MAKE ALL LOWERCASE)
-	command = msg.toLowerCase();
-	command = command.split(" ")[0];
-	command = command.slice(config.cmdPrefix.length);
+	await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${g.id}" AND mainChannelID="${c.id}"`)
+		.then(async rows => {
+			// Update all entries from the database
+			if (rows[0]) {
+				adminRoleName = rows[0].adminRoleName;
+				modRoleName = rows[0].modRoleName;
+				mainChannelID = rows[0].mainChannelID;
 
-	// GET ROLES FROM CONFIG
-	let AdminR = g.roles.cache.find(role => role.name.toLowerCase() === config.adminRoleName.toLowerCase());
-	if (!AdminR) {
-		AdminR = { "id": "111111111111111111" };
-		console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}", {
-			configAdminRoleName: config.adminRoleName
-		}));
-	}
-	let ModR = g.roles.cache.find(role => role.name.toLowerCase() === config.modRoleName.toLowerCase());
-	if (!ModR) {
-		ModR = { "id": "111111111111111111" };
-		console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find mod role: {{configModRoleName}}", {
-			configModRoleName: config.modRoleName
-		}));
-	}
+				// GET TAGGED USER
+				let mentioned = "";
+				if (message.mentions.users.first()) {
+					mentioned = message.mentions.users.first();
+				}
+
+				// REMOVE LETTER CASE (MAKE ALL LOWERCASE)
+				command = msg.toLowerCase();
+				command = command.split(" ")[0];
+				command = command.slice(config.cmdPrefix.length);
+
+				// GET ROLES FROM CONFIG
+				let AdminR = g.roles.cache.find(role => role.id === adminRoleName);
+				if (!AdminR) {
+					AdminR = { "id": "111111111111111111" };
+					console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}", {
+						configAdminRoleName: adminRoleName
+					}));
+				}
+				let ModR = g.roles.cache.find(role => role.id === modRoleName);
+				if (!ModR) {
+					ModR = { "id": "111111111111111111" };
+					console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find mod role: {{configModRoleName}}", {
+						configModRoleName: modRoleName
+					}));
+				}
 
 
-	if (m.roles.cache.has(ModR.id) || m.roles.cache.has(AdminR.id) || m.id === config.ownerID) {
-		if (!args[0]) {
-			message.reply("syntax:\n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention <ROLE-NAME>`\n or `" + config.cmdPrefix + "temprole check @mention <ROLE-NAME>`").catch((err) => { console.log(err) });
-			return;
-		}
-		else if (!mentioned) {
-			message.reply("please `@mention` a person you want me to give/remove `" + config.cmdPrefix + "temprole` to...").catch((err) => { console.log(err) });
-			return;
-		}
-		else if (!args[2]) {
-			message.reply("incomplete data, please try: \n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention`\n or `" + config.cmdPrefix + "temprole check @mention`").catch((err) => { console.log(err) });
-			return;
-		}
-		else {
-			let daRole = "";
-			let days = 0;
-			if (args[0] === "add") {
-				daRole = args[3];
-				days = args[2];
-			}
-			else {
-				daRole = args[2];
-				days = args[1];
-			}
-
-			let rName = g.roles.cache.find(rName => rName.name.toLowerCase() === daRole.toLowerCase());
-			if (!rName) {
-				message.reply(i18n.__("I couldn't find such role, please check the spelling and try again."));
-				return;
-			}
-
-			// CHECK DATABASE FOR ROLES
-			if (args[0] === "check") {
-				await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
-					.then(async row => {
-						if (!row[0]) {
-							c.send(i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}", {
-								mentionedUsername: mentioned.username,
-								daRole: daRole
-							})).catch((err) => { console.log(err) });
-							return;
-						}
-						let startDateVal = new Date();
-						startDateVal.setTime(row[0].startDate * 1000);
-						let startDateTime = await helper.formatTimeString(startDateVal);
-						let endDateVal = new Date();
-						endDateVal.setTime(row[0].endDate * 1000);
-						let finalDate = await helper.formatTimeString(endDateVal);
-
-						c.send(i18n.__("✅ {{mentionedUsername}} will lose the role: **{{rowTempRole}}** on: `{{finalDate}}`! They were added on: `{{startDateTime}}`", {
-							mentionedUsername: mentioned.username,
-							rowTempRole: row[0].temporaryRole,
-							finalDate: finalDate,
-							startDateTime: startDateTime
-						})).catch((err) => { console.log(err) });
-					}).catch(err => {
-						console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 9:" + `(${err})`);
+				if (m.roles.cache.has(ModR.id) || m.roles.cache.has(AdminR.id) || m.id === config.ownerID) {
+					if (!args[0]) {
+						message.reply("syntax:\n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention <ROLE-NAME>`\n or `" + config.cmdPrefix + "temprole check @mention <ROLE-NAME>`").catch((err) => { console.log(err) });
 						return;
-					});
-				return;
-			}
-
-			// REMOVE MEMBER FROM DATABASE
-			else if (args[0] === "remove") {
-				mentioned = message.mentions.members.first();
-				await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
-					.then(async row => {
-						if (!row[0]) {
-							c.send(i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}", {
-								mentionedUsername: mentioned.user.username,
-								daRole: daRole
-							})).catch((err) => { console.log(err) });
-							return;
-						}
-
-						let theirRole = g.roles.cache.find(theirRole => theirRole.name.toLowerCase() === row[0].temporaryRole.toLowerCase());
-						mentioned.roles.remove(theirRole, 'Donation Expired').catch((err) => { console.log(err) });
-
-						await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
-							.then(async result => {
-								console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mUserUsername}} ({{mID}}) removed the access from {{mentionedUsername}} ({{mentionedID}}", {
-									mUserUsername: m.user.username,
-									mID: m.id,
-									mentionedUsername: mentioned.user.username,
-									mentionedID: mentioned.id
-								}));
-								c.send(i18n.__("⚠ {{mentionedUsername}} has **lost** their role of: **{{theirRoleName}}** and has been removed from the database", {
-									mentionedUsername: mentioned.user.username,
-									theirRoleName: theirRole.name
-								})).catch((err) => { console.log(err) });
-							})
-							.catch(err => {
-								console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 11:" + `(${err})`);
-								return;
-							});
-					})
-					.catch(err => {
-						console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 10:" + `(${err})`);
+					}
+					else if (!mentioned) {
+						message.reply("please `@mention` a person you want me to give/remove `" + config.cmdPrefix + "temprole` to...").catch((err) => { console.log(err) });
 						return;
-					});
-				return;
-			}
+					}
+					else if (!args[2]) {
+						message.reply("incomplete data, please try: \n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention`\n or `" + config.cmdPrefix + "temprole check @mention`").catch((err) => { console.log(err) });
+						return;
+					}
+					else {
+						let daRole = "";
+						let days = 0;
+						if (args[0] === "add") {
+							daRole = args[3];
+							days = args[2];
+						}
+						else {
+							daRole = args[2];
+							days = args[1];
+						}
 
-			// ADD TIME TO A USER
-			else if (args[0] === "add") {
-				if (!Number(args[2])) {
-					message.reply(i18n.__("Error: second value has to be **X** number of days, IE:\n `{{configCMDPrefix}}{{command}} add @{{mentionedUsername}} 90 {{daRole}}`", {
-						configCMDPrefix: config.cmdPrefix,
-						command: command,
-						mentionedUsername: mentioned.username,
-						daRole: daRole
-					})).catch((err) => { console.log(err) });
-					return;
-				}
-
-				if (args[1] && !mentioned) {
-					message.reply(i18n.__("please `@mention` a person you want me to add time to...")).catch((err) => { console.log(err) });
-					return;
-				}
-				if (!args[2]) {
-					message.reply( i18n.__("for how **many** days do you want {{mentionedUsername}} to have to have this role?", {
-						mentionedUsername: mentioned.username
-					})).catch((err) => { console.log(err) });
-					return;
-				}
-				await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
-					.then(async row => {
-						if (!row[0]) {
-							message.reply(i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the database", {
-								mentionedUsername: mentioned.username
-							})).catch((err) => { console.log(err) });
+						let rName = g.roles.cache.find(rName => rName.name.toLowerCase() === daRole.toLowerCase());
+						if (!rName) {
+							message.reply(i18n.__("I couldn't find such role, please check the spelling and try again."));
 							return;
 						}
-						let startDateVal = new Date();
-						startDateVal.setTime(row[0].startDate * 1000);
-						let startDateTime = await helper.formatTimeString(startDateVal);
-						let finalDate = Number(row[0].endDate * 1000) + Number(days * dateMultiplier);
 
-						let name = mentioned.username.replace(/[^a-zA-Z0-9]/g, '');
-						await sqlConnectionDiscord.query(`UPDATE temporary_roles SET endDate="${Math.round(finalDate / 1000)}", notified=0, username="${name}" WHERE userID="${mentioned.id}" AND temporaryRole="${daRole}" AND guild_id="${g.id}"`)
-							.then(async result => {
-								let endDateVal = new Date();
-								endDateVal.setTime(finalDate);
-								finalDate = await helper.formatTimeString(endDateVal);
-								dmFinalDate = finalDate;
-								console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given {{days}} days by: {{mUserUsername}} ({{mID}}) for the role: {{daRole}}", {
+						// CHECK DATABASE FOR ROLES
+						if (args[0] === "check") {
+							await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
+								.then(async row => {
+									if (!row[0]) {
+										c.send(i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}", {
+											mentionedUsername: mentioned.username,
+											daRole: daRole
+										})).catch((err) => { console.log(err) });
+										return;
+									}
+									let startDateVal = new Date();
+									startDateVal.setTime(row[0].startDate * 1000);
+									let startDateTime = await helper.formatTimeString(startDateVal);
+									let endDateVal = new Date();
+									endDateVal.setTime(row[0].endDate * 1000);
+									let finalDate = await helper.formatTimeString(endDateVal);
+
+									c.send(i18n.__("✅ {{mentionedUsername}} will lose the role: **{{rowTempRole}}** on: `{{finalDate}}`! They were added on: `{{startDateTime}}`", {
+										mentionedUsername: mentioned.username,
+										rowTempRole: row[0].temporaryRole,
+										finalDate: finalDate,
+										startDateTime: startDateTime
+									})).catch((err) => { console.log(err) });
+								}).catch(err => {
+									console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 9:" + `(${err})`);
+									return;
+								});
+							return;
+						}
+
+						// REMOVE MEMBER FROM DATABASE
+						else if (args[0] === "remove") {
+							mentioned = message.mentions.members.first();
+							await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
+								.then(async row => {
+									if (!row[0]) {
+										c.send(i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}", {
+											mentionedUsername: mentioned.user.username,
+											daRole: daRole
+										})).catch((err) => { console.log(err) });
+										return;
+									}
+
+									let theirRole = g.roles.cache.find(theirRole => theirRole.name.toLowerCase() === row[0].temporaryRole.toLowerCase());
+									mentioned.roles.remove(theirRole, 'Donation Expired').catch((err) => { console.log(err) });
+
+									await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
+										.then(async result => {
+											console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mUserUsername}} ({{mID}}) removed the access from {{mentionedUsername}} ({{mentionedID}}", {
+												mUserUsername: m.user.username,
+												mID: m.id,
+												mentionedUsername: mentioned.user.username,
+												mentionedID: mentioned.id
+											}));
+											c.send(i18n.__("⚠ {{mentionedUsername}} has **lost** their role of: **{{theirRoleName}}** and has been removed from the database", {
+												mentionedUsername: mentioned.user.username,
+												theirRoleName: theirRole.name
+											})).catch((err) => { console.log(err) });
+										})
+										.catch(err => {
+											console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 11:" + `(${err})`);
+											return;
+										});
+								})
+								.catch(err => {
+									console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 10:" + `(${err})`);
+									return;
+								});
+							return;
+						}
+
+						// ADD TIME TO A USER
+						else if (args[0] === "add") {
+							if (!Number(args[2])) {
+								message.reply(i18n.__("Error: second value has to be **X** number of days, IE:\n `{{configCMDPrefix}}{{command}} add @{{mentionedUsername}} 90 {{daRole}}`", {
+									configCMDPrefix: config.cmdPrefix,
+									command: command,
 									mentionedUsername: mentioned.username,
-									mentionedID: mentioned.id,
-									days: days,
-									mUserUsername: m.user.username,
-									mID: m.id,
 									daRole: daRole
-								}));
-								c.send(i18n.__("✅ {{mentionedUsername}} has had time added until: `{{finalDate}}`! They were added on: `{{startDateTime}}`", {
-									mentionedUsername: mentioned.username,
-									finalDate: finalDate,
-									startDateTime: startDateTime
-								}));
-
-								mentioned.send(i18n.__("Hello {{mentionedUsername}}!\n\n🎉Your access has been extended🎉.\nIt is now valid till {{finalDate}}.\n\nThanks for your support", {
-									mentionedUsername: mentioned.username,
-									finalDate: finalDate
-								})).catch(error => {
-									console.error(helper.GetTimestamp() + i18n.__("Failed to send a DM to user: {{mentionedID}}", {
-										mentionedID: mentioned.id
-									}));
-								}).catch((err) => { console.log(err) });
-
-							})
-							.catch(err => {
-								console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 14:" + `(${err})`);
+								})).catch((err) => { console.log(err) });
 								return;
-							});
-					})
-					.catch(err => {
-						console.log(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 13:" + `(${err})`);
-						return;
-					});
-				return;
-			}
-			else {
-				if (!Number(args[1])) {
-					message.reply("Error: second value has to be **X** number of days, IE:\n`!" + command + " @" + mentioned.username + " 90 " + daRole + "`").catch((err) => { console.log(err) });
-				}
-			}
+							}
 
-			// ADD MEMBER TO DATASE, AND ADD THE ROLE TO MEMBER
-			await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND temporaryRole="${daRole}" AND guild_id="${g.id}"`)
-				.then(async row => {
-					mentioned = message.mentions.members.first();
-					if (!row[0]) {
-						let curDate = new Date().getTime();
-						let finalDateDisplay = new Date();
-						let finalDate = curDate + (Number(args[1]) * dateMultiplier);
-						finalDateDisplay.setTime(finalDate);
-						finalDateDisplay = await helper.formatTimeString(finalDateDisplay);
-						let name = mentioned.user.username.replace(/[^a-zA-Z0-9]/g, '');
-						let values = mentioned.user.id + ',\''
-							+ daRole + '\','
-							+ Math.round(curDate / 1000) + ','
-							+ Math.round(finalDate / 1000) + ','
-							+ m.id
-							+ ', 0' + ',\''
-							+ name + '\', 0 ,'
-							+ g.id
-						await sqlConnectionDiscord.query(`INSERT INTO temporary_roles VALUES(${values});`)
-							.then(async result => {
-								let theirRole = g.roles.cache.find(role => role.name.toLowerCase() === daRole.toLowerCase());
-								mentioned.roles.add(theirRole).catch(err => { console.error(helper.GetTimestamp() + err); });
-								console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given the {{daRole}} role by {{mUserUsername}} ({{mID}})", {
-									mentionedUsername: mentioned.user.username,
-									mentionedID: mentioned.id,
-									daRole: daRole,
-									mUserUsername: m.user.username,
-									mID: m.id
-								}));
-								c.send(i18n.__("🎉 {{mentionedUsername}} has been given a **temporary** role of: **{{daRole}}**, enjoy! They will lose this role on: `{{finalDateDisplay}}`", {
-									mentionedUsername: mentioned.user.username,
-									daRole: daRole,
-									finalDateDisplay: finalDateDisplay
-								}));
+							if (args[1] && !mentioned) {
+								message.reply(i18n.__("please `@mention` a person you want me to add time to...")).catch((err) => { console.log(err) });
+								return;
+							}
+							if (!args[2]) {
+								message.reply(i18n.__("for how **many** days do you want {{mentionedUsername}} to have to have this role?", {
+									mentionedUsername: mentioned.username
+								})).catch((err) => { console.log(err) });
+								return;
+							}
+							await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
+								.then(async row => {
+									if (!row[0]) {
+										message.reply(i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the database", {
+											mentionedUsername: mentioned.username
+										})).catch((err) => { console.log(err) });
+										return;
+									}
+									let startDateVal = new Date();
+									startDateVal.setTime(row[0].startDate * 1000);
+									let startDateTime = await helper.formatTimeString(startDateVal);
+									let finalDate = Number(row[0].endDate * 1000) + Number(days * dateMultiplier);
 
-								mentioned.send(i18n.__("Hello {{mentionedUsername}}!\n\nYour access expires at {{finalDateDisplay}}.\n\nThanks for your support.\n\nLiveMap: {{map}}.", {
-									mentionedUsername: mentioned.user.username,
-									finalDateDisplay: finalDateDisplay,
-									map: config.mapMain.url
-								})).catch(error => {
-									console.error(helper.GetTimestamp() + i18n.__("Failed to send a DM to user: {{mentionedID}}", {
-										mentionedID: mentioned.id
+									let name = mentioned.username.replace(/[^a-zA-Z0-9]/g, '');
+									await sqlConnectionDiscord.query(`UPDATE temporary_roles SET endDate="${Math.round(finalDate / 1000)}", notified=0, username="${name}" WHERE userID="${mentioned.id}" AND temporaryRole="${daRole}" AND guild_id="${g.id}"`)
+										.then(async result => {
+											let endDateVal = new Date();
+											endDateVal.setTime(finalDate);
+											finalDate = await helper.formatTimeString(endDateVal);
+											dmFinalDate = finalDate;
+											console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given {{days}} days by: {{mUserUsername}} ({{mID}}) for the role: {{daRole}}", {
+												mentionedUsername: mentioned.username,
+												mentionedID: mentioned.id,
+												days: days,
+												mUserUsername: m.user.username,
+												mID: m.id,
+												daRole: daRole
+											}));
+											c.send(i18n.__("✅ {{mentionedUsername}} has had time added until: `{{finalDate}}`! They were added on: `{{startDateTime}}`", {
+												mentionedUsername: mentioned.username,
+												finalDate: finalDate,
+												startDateTime: startDateTime
+											}));
+
+											mentioned.send(i18n.__("Hello {{mentionedUsername}}!\n\n🎉Your access has been extended🎉.\nIt is now valid till {{finalDate}}.\n\nThanks for your support", {
+												mentionedUsername: mentioned.username,
+												finalDate: finalDate
+											})).catch(error => {
+												console.error(helper.GetTimestamp() + i18n.__("Failed to send a DM to user: {{mentionedID}}", {
+													mentionedID: mentioned.id
+												}));
+											}).catch((err) => { console.log(err) });
+
+										})
+										.catch(err => {
+											console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 14:" + `(${err})`);
+											return;
+										});
+								})
+								.catch(err => {
+									console.log(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 13:" + `(${err})`);
+									return;
+								});
+							return;
+						}
+						else {
+							if (!Number(args[1])) {
+								message.reply("Error: second value has to be **X** number of days, IE:\n`!" + command + " @" + mentioned.username + " 90 " + daRole + "`").catch((err) => { console.log(err) });
+							}
+						}
+
+						// ADD MEMBER TO DATASE, AND ADD THE ROLE TO MEMBER
+						await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND temporaryRole="${daRole}" AND guild_id="${g.id}"`)
+							.then(async row => {
+								mentioned = message.mentions.members.first();
+								if (!row[0]) {
+									let curDate = new Date().getTime();
+									let finalDateDisplay = new Date();
+									let finalDate = curDate + (Number(args[1]) * dateMultiplier);
+									finalDateDisplay.setTime(finalDate);
+									finalDateDisplay = await helper.formatTimeString(finalDateDisplay);
+									let name = mentioned.user.username.replace(/[^a-zA-Z0-9]/g, '');
+									let values = mentioned.user.id + ',\''
+										+ daRole + '\','
+										+ Math.round(curDate / 1000) + ','
+										+ Math.round(finalDate / 1000) + ','
+										+ m.id
+										+ ', 0' + ',\''
+										+ name + '\', 0 ,'
+										+ g.id
+									await sqlConnectionDiscord.query(`INSERT INTO temporary_roles VALUES(${values});`)
+										.then(async result => {
+											let theirRole = g.roles.cache.find(role => role.name.toLowerCase() === daRole.toLowerCase());
+											mentioned.roles.add(theirRole).catch(err => { console.error(helper.GetTimestamp() + err); });
+											console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given the {{daRole}} role by {{mUserUsername}} ({{mID}})", {
+												mentionedUsername: mentioned.user.username,
+												mentionedID: mentioned.id,
+												daRole: daRole,
+												mUserUsername: m.user.username,
+												mID: m.id
+											}));
+											c.send(i18n.__("🎉 {{mentionedUsername}} has been given a **temporary** role of: **{{daRole}}**, enjoy! They will lose this role on: `{{finalDateDisplay}}`", {
+												mentionedUsername: mentioned.user.username,
+												daRole: daRole,
+												finalDateDisplay: finalDateDisplay
+											}));
+
+											mentioned.send(i18n.__("Hello {{mentionedUsername}}!\n\nYour access expires at {{finalDateDisplay}}.\n\nThanks for your support.\n\nLiveMap: {{map}}.", {
+												mentionedUsername: mentioned.user.username,
+												finalDateDisplay: finalDateDisplay,
+												map: config.mapMain.url
+											})).catch(error => {
+												console.error(helper.GetTimestamp() + i18n.__("Failed to send a DM to user: {{mentionedID}}", {
+													mentionedID: mentioned.id
+												}));
+											}).catch((err) => { console.log(err) });
+										})
+										.catch(err => {
+											console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 16:" + `(${err})`);
+											return;
+										});
+								}
+								else {
+									c.send(i18n.__("This user already has the role **{{daRole}}** try using `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` if you want to reset their role.", {
+										daRole: daRole,
+										configCMDPrefix: config.cmdPrefix,
+										mentionedUsername: mentioned.user.username
 									}));
-								}).catch((err) => { console.log(err) });
+								}
 							})
 							.catch(err => {
 								console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 16:" + `(${err})`);
 								return;
 							});
 					}
-					else {
-						c.send(i18n.__("This user already has the role **{{daRole}}** try using `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` if you want to reset their role.", {
-							daRole: daRole,
-							configCMDPrefix: config.cmdPrefix,
-							mentionedUsername: mentioned.user.username
-						}));
-					}
-				})
-				.catch(err => {
-					console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 16:" + `(${err})`);
-					return;
-				});
-		}
 
-	}
-	else {
-		c.send(i18n.__("you are **NOT** allowed to use this command!")).catch((err) => { console.log(GetTimestamp() + err); });
-	}
+				}
+				else {
+					c.send(i18n.__("you are **NOT** allowed to use this command!")).catch((err) => { console.log(GetTimestamp() + err); });
+				}
+			} 
+		})
 }
 
 async function help(message, command, bot) {
@@ -314,55 +329,64 @@ async function help(message, command, bot) {
 	let m = message.member;
 	let msg = message.content;
 
+	await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${g.id}" AND mainChannelID="${c.id}"`)
+		.then(async rows => {
+			// Update all entries from the database
+			if (rows[0]) {
+				adminRoleName = rows[0].adminRoleName;
+				modRoleName = rows[0].modRoleName;
+				mainChannelID = rows[0].mainChannelID;
 
-	// REMOVE LETTER CASE (MAKE ALL LOWERCASE)
-	command = command.split(" ")[0];
-	command = command.slice(config.cmdPrefix.length);
+				// REMOVE LETTER CASE (MAKE ALL LOWERCASE)
+				command = command.split(" ")[0];
+				command = command.slice(config.cmdPrefix.length);
 
-	// GET ARGUMENTS
-	args = msg.split(" ").slice(1);
+				// GET ARGUMENTS
+				args = msg.split(" ").slice(1);
 
-	// GET ROLES FROM CONFIG
-	let AdminR = g.roles.cache.find(role => role.name.toLowerCase() === config.adminRoleName.toLowerCase());
-	if (!AdminR) {
-		AdminR = { "id": "111111111111111111" };
-		console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}", {
-			configAdminRoleName: config.adminRoleName
-		}));
-	}
-	let ModR = g.roles.cache.find(role => role.name.toLowerCase() === config.modRoleName.toLowerCase());
-	if (!ModR) {
-		ModR = { "id": "111111111111111111" };
-		console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find mod role: {{configModRoleName}}", {
-			configModRoleName: config.modRoleName
-		}));
-	}
+				// GET ROLES FROM CONFIG
+				let AdminR = g.roles.cache.find(role => role.id === adminRoleName);
+				if (!AdminR) {
+					AdminR = { "id": "111111111111111111" };
+					console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}", {
+						configAdminRoleName: adminRoleName
+					}));
+				}
+				let ModR = g.roles.cache.find(role => role.id === modRoleName);
+				if (!ModR) {
+					ModR = { "id": "111111111111111111" };
+					console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find mod role: {{configModRoleName}}", {
+						configModRoleName: modRoleName
+					}));
+				}
 
-	if (args[0] === "mods") {
-		if (m.roles.cache.has(AdminR.id) || m.roles.cache.has(ModR.id)) {
-			cmds = "`" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`   \\\u00BB   to assign a temporary roles\n"
-				+ "`" + config.cmdPrefix + "temprole check @mention <ROLE-NAME>`  \\\u00BB   to check the time left on a temporary role assignment\n"
-				+ "`" + config.cmdPrefix + "temprole remove @mention <ROLE-NAME>`   \\\u00BB   to remove a temporary role assignment\n"
-				+ "`" + config.cmdPrefix + "temprole add @mention <DAYS> <ROLE-NAME>`   \\\u00BB   to add more time to a temporary role assignment\n";
-			message.reply(cmds).catch((err) => { console.log(err) });
-		}
-		else {
-			c.send(i18n.__("you are **NOT** allowed to use this command! \ntry using: {{configCMDPrefix}}help", {
-				configCMDPrefix: config.cmdPrefix
-			})).catch((err) => { console.log(err) });
-			return;
-		}
-	}
-	if (!args[0]) {
-		cmds = "`" + config.cmdPrefix + "check <Role-NAME>`   \\\u00BB   to check the time left on your subscription\n";
-		if (config.mapMain.enabled === "yes") {
-			cmds += "`" + config.cmdPrefix + "map`   \\\u00BB   a link to our web map\n"
-		}
-		if (config.paypal.enabled === "yes") {
-			cmds += "`" + config.cmdPrefix + "subscribe`/`" + config.cmdPrefix + "paypal`   \\\u00BB   for a link to our PayPal\n"
-		}
-	}
-	c.send(cmds);
+				if (args[0] === "mods") {
+					if (m.roles.cache.has(AdminR.id) || m.roles.cache.has(ModR.id)) {
+						cmds = "`" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`   \\\u00BB   to assign a temporary roles\n"
+							+ "`" + config.cmdPrefix + "temprole check @mention <ROLE-NAME>`  \\\u00BB   to check the time left on a temporary role assignment\n"
+							+ "`" + config.cmdPrefix + "temprole remove @mention <ROLE-NAME>`   \\\u00BB   to remove a temporary role assignment\n"
+							+ "`" + config.cmdPrefix + "temprole add @mention <DAYS> <ROLE-NAME>`   \\\u00BB   to add more time to a temporary role assignment\n";
+						message.reply(cmds).catch((err) => { console.log(err) });
+					}
+					else {
+						c.send(i18n.__("you are **NOT** allowed to use this command! \ntry using: {{configCMDPrefix}}help", {
+							configCMDPrefix: config.cmdPrefix
+						})).catch((err) => { console.log(err) });
+						return;
+					}
+				}
+				if (!args[0]) {
+					cmds = "`" + config.cmdPrefix + "check <Role-NAME>`   \\\u00BB   to check the time left on your subscription\n";
+					if (config.mapMain.enabled === "yes") {
+						cmds += "`" + config.cmdPrefix + "map`   \\\u00BB   a link to our web map\n"
+					}
+					if (config.paypal.enabled === "yes") {
+						cmds += "`" + config.cmdPrefix + "subscribe`/`" + config.cmdPrefix + "paypal`   \\\u00BB   for a link to our PayPal\n"
+					}
+				}
+				c.send(cmds);
+			}
+		})
 }
 
 async function paypal(message, bot) {

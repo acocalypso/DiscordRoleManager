@@ -68,7 +68,7 @@ async function housekeeping(bot) {
 						if (daysLeft < 1) {
 							// If they left the server, remove the entry without attempting the role removal
 							if (leftServer) {
-								await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${rows[rowNumber].userID}' AND temporaryRole='${rName.name}' AND guild_id=${member.guild.id}`)
+								await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${rows[rowNumber].userID}' AND temporaryRole='${rName.name}' AND guild_id="${member.guild.id}"`)
 									.catch(err => {
 										console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 5:" + `(${err})`);
 										process.exit(-1);
@@ -98,7 +98,7 @@ async function housekeeping(bot) {
 								})).catch(err => { console.log(err) }).catch((err) => { console.log(err) })
 
 								// REMOVE DATABASE ENTRY
-								await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${member.id}' AND temporaryRole='${rName.name}' AND guild_id=${member.guild.id}`)
+								await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${member.id}' AND temporaryRole='${rName.name}' AND guild_id="${member.guild.id}"`)
 									.catch(err => {
 										console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 2:" + `(${err})`);
 										process.exit(-1);
@@ -157,7 +157,7 @@ async function housekeeping(bot) {
 							})).catch(err => { console.error(helper.GetTimestamp() + err); });
 							// UPDATE THE DB TO REMEMBER THAT THEY WERE NOTIFIED
 							let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
-							await sqlConnectionDiscord.query(`UPDATE temporary_roles SET notified=1, username="${name}" WHERE userID="${member.id}" AND temporaryRole="${rName.name}" AND guild_id=${guild_id}`)
+							await sqlConnectionDiscord.query(`UPDATE temporary_roles SET notified=1, username="${name}" WHERE userID="${member.id}" AND temporaryRole="${rName.name}" AND guild_id="${guild_id}"`)
 								.catch(err => {
 									console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 3:" + `(${err})`);
 									process.exit(-1);
