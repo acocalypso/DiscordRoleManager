@@ -3,13 +3,8 @@
   "clientID": "", // bot client id
   "clientSecret": "", //bot client secret
   "ownerID": "", // Your discord id
-  "serverName": "", // Your Server name
-  "serverID": "", // Your Server ID
-  "mainChannelID": "", //Your main channel for information
   "language": "", // en, de, pt
   "cmdPrefix": "?", // choose your command prefix
-  "adminRoleName": "", // what is the admin role name
-  "modRoleName": "", // what is the mod role name
   "migrateSQLITE": {
     "migrate": true, // do you want to migrate your user from sqlite?
     "path": "" // path to your sqlite file
