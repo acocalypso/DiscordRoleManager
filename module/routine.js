@@ -73,7 +73,7 @@ async function housekeeping(bot) {
 										console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 5:" + `(${err})`);
 										process.exit(-1);
 									});
-								bot.channels.cache.get(config.mainChannelID).send(i18n.__("⚠ {{rowUsername}} has **left** the server and **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭", {
+									bot.channels.cache.get(result[0].mainChannelID).send(i18n.__("⚠ {{rowUsername}} has **left** the server and **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭", {
 									rowUsername: rows[rowNumber].username,
 									rNameName: rName.name
 								})).catch(err => { console.error(GetTimestamp() + err); });

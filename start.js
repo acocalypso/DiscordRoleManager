@@ -76,26 +76,14 @@ bot.on("messageCreate", async (message) => {
 
 	// GET ROLES FROM CONFIG
 	//let AdminR = guild.members.filter(m => m.roles.)
-	let AdminR = g.roles.cache.find(role => role.name.toLowerCase() === config.adminRoleName.toLowerCase());
+	/*let AdminR = g.roles.cache.find(role => role.name.toLowerCase() === config.adminRoleName.toLowerCase());
 	if (!AdminR) {
 		AdminR = { "id": "111111111111111111" };
-		log(i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}", {
-			configAdminRoleName: config.adminRoleName
-		}), 'info.log');
-		console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}", {
-			configAdminRoleName: config.adminRoleName
-		}));
 	}
 	let ModR = g.roles.cache.find(role => role.name.toLowerCase() === config.modRoleName.toLowerCase());
 	if (!ModR) {
 		ModR = { "id": "111111111111111111" };
-		log(i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configModRoleName}}", {
-			configModRoleName: config.modRoleName
-		}), 'info.log');
-		console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find mod role: {{configModRoleName}}", {
-			configModRoleName: config.modRoleName
-		}));
-	}
+	}*/
 
 	// ############################################################################
 	// ################################ COMMANDS ##################################

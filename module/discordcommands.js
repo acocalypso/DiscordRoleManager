@@ -49,16 +49,10 @@ async function temprole(message, command, args, bot) {
 				let AdminR = g.roles.cache.find(role => role.id === adminRoleName);
 				if (!AdminR) {
 					AdminR = { "id": "111111111111111111" };
-					console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}", {
-						configAdminRoleName: adminRoleName
-					}));
 				}
 				let ModR = g.roles.cache.find(role => role.id === modRoleName);
 				if (!ModR) {
 					ModR = { "id": "111111111111111111" };
-					console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find mod role: {{configModRoleName}}", {
-						configModRoleName: modRoleName
-					}));
 				}
 
 
