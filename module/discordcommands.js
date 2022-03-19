@@ -560,20 +560,20 @@ async function getMember(bot,userID,guildID) {
 		if (!member) {
 			await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id=${guildID};`)
 				.then(async result => {
-					console.log(helper.GetTimestamp() + "[ADMIN] [MEMBER] Failed to get user ID: " + UserID);
+					console.log(helper.GetTimestamp() + "[ADMIN] [MEMBER] Failed to get user ID: " + member.id);
 					bot.channels.cache.get(result[0].mainChannelID).send(":exclamation: Failed to get user ID: " +
-						userID + " <@" + userID + "> from the cache. Tagging them to force the cache update.")
+						member.id + " <@" + member.id + "> from the cache. Tagging them to force the cache update.")
 						.catch(err => { console.error(helper.GetTimestamp() + err); });
 			await bot.guilds.cache.get(guildID).members.fetch();
 			await wait(1 * 1000); // 1 second
 			member = bot.guilds.cache.get(guildID).members.cache.get(userID);
 			// If it still doesn't exist, return an error
 			if (!member) {
-				console.error(helper.GetTimestamp() + "Failed to find a user for ID: " + userID + ". They may have left the server.");
+				console.error(helper.GetTimestamp() + "Failed to find a user for ID: " + member.id + ". They may have left the server.");
 				bot.channels.cache.get(result[0].mainChannelID).send("**:x: Could not find a user for ID: " +
-					userID + " <@" + userID + ">. They may have left the server.**")
+					member.id + " <@" + member.id + ">. They may have left the server.**")
 					.catch(err => { console.error(helper.GetTimestamp() + err); });
-				member = { "guild": { "id": guildID }, "id": userID }
+				member = { "guild": { "id": guildID }, "id": member.id }
 				await guildMemberRemove(bot, member,guildID)
 				return resolve(false);
 					}
