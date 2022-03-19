@@ -19,6 +19,11 @@
 - copie your dataBase.sqlite file back. The Bot will migrate all users from sqlite to mysql.
 
 
+As a Workaround to use the multiguild feature and not to crash the bot please manually set the guild_id for all users in the db.
+(This will be fixed later after I figured out how to)
+
+```update temporary_roles set guild_id = YOURGUILDID where guild_id is null;```
+
 For the first run please register the bot with
 ```
 (prefix)register
