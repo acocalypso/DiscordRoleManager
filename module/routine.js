@@ -137,7 +137,7 @@ async function housekeeping(bot) {
 								});
 							}
 							else {
-								member.send(i18n__(`Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** will be removed at {{finalDate}}.\nIf you want to continue, please do another donation.\n\nThank you.`, {
+								member.send(i18n.__(`Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** will be removed at {{finalDate}}.\nIf you want to continue, please do another donation.\n\nThank you.`, {
 									memberUsername: member.user.username,
 									rNameName: rName.name,
 									configServerName: result[0].guild_name,
