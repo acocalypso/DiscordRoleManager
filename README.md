@@ -107,11 +107,6 @@ Admin / Mod commands:
 (prefix)temprole remove @mention <ROLE-NAME> » to remove a temporary role assignment
 (prefix)temprole check @mention <ROLE-NAME> » to check the time left on a temporary role assignment
 
-full_auto_abo_telegram https://github.com/Micha854/full_auto_abo_telegram/
-(prefix)telegram @telegramuser days
-(prefix)telegram add @telegramuser days
-(prefix)telegram check @telegramuser
-
 Help commands:
 
 (prefix)help » display help commands
