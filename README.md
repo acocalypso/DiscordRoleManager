@@ -18,7 +18,8 @@
 - update to latest master 
 - copy your dataBase.sqlite file back. The Bot will migrate all users from sqlite to mysql.
 
-Even if you have this bot o ly on a single discord server you have to set the guild ID and register the bot
+Even if you have this bot only on a single discord server you have to set the guild ID and register the bot.
+
 As a Workaround to use the multiguild feature and not to crash the bot please manually set the guild_id for all users in the db.
 (This will be fixed later after I figured out how to)
 
