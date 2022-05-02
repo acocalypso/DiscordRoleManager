@@ -11,6 +11,11 @@ function website() {
 
 	backend.use(session({
 		name: "rolebot",
+		cookie: {
+			path: "/",
+			name: "rolebot",
+			maxAge: 1000 * 60 * 24
+		},
 		secret: config.webinterface.secret,
 		resave: true,
 		saveUninitialized: true
