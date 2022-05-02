@@ -1,38 +1,37 @@
 {
-  "token": "",
-  "botID": "",
-  "ownerID": "",
-  "serverName": "",
-  "serverID": "",
-  "language": "",
-  "cmdPrefix": "?",
-  "adminRoleName": "",
-  "modRoleName": "",
-  "debug": "no",
+  "token": "", // Bot token
+  "clientID": "", // bot client id
+  "clientSecret": "", //bot client secret
+  "ownerID": "", // Your discord id
+  "language": "", // en, de, pt
+  "cmdPrefix": "?", // choose your command prefix
+  "migrateSQLITE": {
+    "migrate": true, // do you want to migrate your user from sqlite?
+    "path": "" // path to your sqlite file
+  },
+  "debug": "no", // enable / disable debug infos
+  "webinterface": {
+    "disabled": "yes", //enable webinterface
+    "backendPort": 9000, // interface port
+    "username": "admin", // your login username - This can be removed afterwards
+    "password": "SuperSecretPW", // your login password - This can be removed afterwards
+    "secret": "ThisShouldBeChanged" // session secret
+  },
   "mapMain": {
-    "enabled": "yes",
-    "url": "https://yourmap.com"
+    "enabled": "yes", // enable link to your map
+    "url": "https://yourmap.com" // your map link
   },
   "paypal": {
-    "enabled": "yes",
-    "url": "https://www.paypal.me/xyz",
+    "enabled": "yes", // enable paypal link
+    "url": "https://www.paypal.me/xyz", // your paypal url
     "img": "https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/master/paypal_icon.jpg"
   },
-  "mainChannelID": "",
-  "telegram": {
-    "tele_enabled": "yes",
-    "tele_db_host": "",
-    "tele_db_name": "",
-    "tele_db_port": "",
-    "tele_db_user": "",
-    "tele_db_pass": ""
-  },
   "mysql_database": {
-    "mysql_host": "localhost",
-    "mysql_port": 3306,
-    "mysql_db": "rolemanager",
-    "mysql_user": "dummy",
-    "mysql_pass": "dummy"
+    "mysql_host": "localhost", // your mysql host
+    "mysql_port": 3306, // mysql port
+    "mysql_db": "rolemanager", // mysql database for rolemanager
+    "mysql_user": "dummy", // mysql username
+    "mysql_pass": "dummy" // mysql password
   }
 }
 

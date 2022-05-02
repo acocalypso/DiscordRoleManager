@@ -1,0 +1,54 @@
+<div class="row">
+    <div class="col-6"><h1>Users</h1></div>
+    <div class="col-6 d-flex justify-content-end">
+        <a href="/addDiscordUser" type="button" class="btn btn-primary align-self-center">Add user</a>
+    </div>
+</div>
+
+<table class="table table-condensed">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">UserID</th>
+            <th scope="col">Username</th>
+            <th scope="col">Role</th>
+            <th scope="col">Valid until</th>
+            <th scope="col" class="text-end">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each rows}}
+        <tr>
+            <th scope="row">{{this.UserID}}</th>
+            <td>{{this.username}}</td>
+            <td>{{this.temporaryRole}}</td>
+            <td>{{this.endDate}}</td>
+            <td class="text-end">
+                <a href="/editUser/{{this.UserID}}" type="button" class="btn btn-light btn-small"><i class="bi bi-pencil"></i>Edit</a>
+                <button type="button" class="btn btn-small btn-danger" data-toggle="modal" data-target="#user_{{this.UserID}}">Delete</button>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+{{#each rows}}
+<!-- Modal -->
+<div class="modal fade" id="user_{{this.UserID}}" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userDeleteTitle">Delete User!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Do you really want to delete the user {{this.username}}?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+{{/each}}
