@@ -3,7 +3,6 @@ const bot = new Discord.Client({
 	intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MEMBERS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.DIRECT_MESSAGES]
 });
 const config = require('./config/config.json');
-//const dateMultiplier = 86400000;
 const web = require('./module/backend.js');
 const sqlConnectionDiscord = require('./module/database/database_discord');
 const helper = require('./module/helper');
