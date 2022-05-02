@@ -18,47 +18,66 @@
 - update to latest master 
 - copie your dataBase.sqlite file back. The Bot will migrate all users from sqlite to mysql.
 
+
+As a Workaround to use the multiguild feature and not to crash the bot please manually set the guild_id for all users in the db.
+(This will be fixed later after I figured out how to)
+
+```update temporary_roles set guild_id = YOURGUILDID where guild_id is null;```
+
+For the first run please register the bot with
+```
+(prefix)register
+```
+After that please register the Admin and Moderator Role with
+```
+(prefix)register adminrole @AdminRole
+(prefix)register modrole @ModRole
+(prefix)register channel #mainchannelforthebotinformation
+```
+
 ```sh
 {
-  "token": "", // your bot token
-  "botID": "", // your bot id
-  "ownerID": "", // discord bot owner (usually the one who is using the bot)
-  "serverName": "", // discord Server Name
-  "serverID": "", // discord Server ID
+  "token": "", // Bot token
+  "clientID": "", // bot client id
+  "clientSecret": "", //bot client secret
+  "ownerID": "", // Your discord id
   "language": "", // en, de, pt
-  "cmdPrefix": "?", // prefix for commands
-  "adminRoleName": "", // Name of the Admin Role
-  "modRoleName": "", // Name of the moderator Role
-  "debug": "no",
+  "cmdPrefix": "?", // choose your command prefix
+  "migrateSQLITE": {
+    "migrate": true, // do you want to migrate your user from sqlite?
+    "path": "" // path to your sqlite file
+  },
+  "debug": "no", // enable / disable debug infos
+  "webinterface": {
+    "disabled": "yes", //enable webinterface
+    "backendPort": 9000, // interface port
+    "username": "admin", // your login username - This can be removed afterwards
+    "password": "SuperSecretPW", // your login password - This can be removed afterwards
+    "secret": "ThisShouldBeChanged" // session secret
+  },
   "mapMain": {
-    "enabled": "yes", // yes or no
-    "url": "https://yourmap.com" // link to your site / map
+    "enabled": "yes", // enable link to your map
+    "url": "https://yourmap.com" // your map link
   },
   "paypal": {
-    "enabled": "yes", // yes or no
-    "url": "https://www.paypal.me/xyz", // URL to your paypal donation site
+    "enabled": "yes", // enable paypal link
+    "url": "https://www.paypal.me/xyz", // your paypal url
     "img": "https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/master/paypal_icon.jpg"
   },
-  "mainChannelID": "", //channel where admin / mod infos are posted
-  "telegram": {		// Support for https://github.com/Micha854/full_auto_abo_telegram/ usermanagement.
-    "tele_enabled": "yes",
-    "tele_db_host": "",
-    "tele_db_name": "",
-    "tele_db_port": "",
-    "tele_db_user": "",
-    "tele_db_pass": ""
-  },
   "mysql_database": {
-    "mysql_host": "localhost",
-    "mysql_port": 3306,
-    "mysql_db": "rolemanager",
-    "mysql_user": "dummy",
-    "mysql_pass": "dummy"
+    "mysql_host": "localhost", // your mysql host
+    "mysql_port": 3306, // mysql port
+    "mysql_db": "rolemanager", // mysql database for rolemanager
+    "mysql_user": "dummy", // mysql username
+    "mysql_pass": "dummy" // mysql password
   }
 }
 
+
 ```
 Install node dependecies
+
+Install NodeJS version 16.x!
 
 ```
 npm install
@@ -88,18 +107,17 @@ Admin / Mod commands:
 (prefix)temprole remove @mention <ROLE-NAME> » to remove a temporary role assignment
 (prefix)temprole check @mention <ROLE-NAME> » to check the time left on a temporary role assignment
 
-full_auto_abo_telegram https://github.com/Micha854/full_auto_abo_telegram/
-(prefix)telegram @telegramuser days
-(prefix)telegram add @telegramuser days
-(prefix)telegram check @telegramuser
-
 Help commands:
 
 (prefix)help » display help commands
 (prefix)help mods >> display mod commands
 ```
 
-##Contribution:
+## Grafana 8.x Support
+
+![alt text](https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/backend/grafana_donators.PNG)
+
+## Contribution:
 
 You can find the local.json file in locale/local.json
 
@@ -115,10 +133,4 @@ if you want to add another langue you just need to add a new entry in the json f
 ## Additional IMPORTANT Infos:
 This is a port from https://github.com/Kneckter/DiscordRoleBot
 
-Many thanks to him for his original (no longer supported) version.
-
-Used libs:
-- ErisJS
-- sqlite3
-- mysql
-- i18n-nodejs
+Many thanks to him for his original version.
