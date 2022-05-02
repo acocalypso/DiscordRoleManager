@@ -66,7 +66,7 @@ async function temprole(message, command, args, bot) {
 						return;
 					}
 					else if (!args[2]) {
-						message.reply("incomplete data, please try: \n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention`\n or `" + config.cmdPrefix + "temprole check @mention`").catch((err) => { console.log(err) });
+						message.reply("incomplete data, please try: \n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention <ROLE-NAME>`\n or `" + config.cmdPrefix + "temprole check @mention <ROLE-NAME>`").catch((err) => { console.log(err) });
 						return;
 					}
 					else {
@@ -537,7 +537,14 @@ async function guildMemberRemove(bot,member,guildID) {
 						var name = "Unknown";
 						name = rows[0].username;
 						console.log(helper.GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + name + "\" (" + member.id + ") has left the server. All temp role assignments have been marked in the database.");
-						bot.channels.cache.get(config.mainChannelID).send(":exclamation: " + name + " has left the server. All temp role assignments have been marked in the database.");
+						await sqlConnectionDiscord.query(`SELECT mainChannelID from registration WHERE guild_id="${guild}"`)
+							.then(async result => {
+								bot.channels.cache.get(rows[0].mainChannelID).send(":exclamation: " + name + " has left the server. All temp role assignments have been marked in the database.");
+							})
+							.catch(err => {
+								console.error(GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove 3: (${err})`);
+								return;
+							});
 					})
 					.catch(err => {
 						console.error(GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove 2: (${err})`);
