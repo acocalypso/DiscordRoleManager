@@ -10,6 +10,7 @@ const routes = require('../webserver/routes/user');
 function website() {
 
 	backend.use(session({
+		name: "rolebot",
 		secret: config.webinterface.secret,
 		resave: true,
 		saveUninitialized: true
