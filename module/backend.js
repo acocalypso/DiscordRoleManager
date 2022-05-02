@@ -21,7 +21,7 @@ function website() {
 	backend.use(express.static('../public'));
 
 	//Template Engine
-	backend.engine('hbs', exphbs({ extname: '.hbs' }));
+	backend.engine('hbs', exphbs.engine({ extname: '.hbs' }));
 	backend.set('view engine', 'hbs');
 
 	backend.use('/', routes);
