@@ -36,6 +36,8 @@ After that please register the Admin and Moderator Role with
 ```
 
 ```sh
+#Please remove all comments as this is currently not handled by the bot!
+
 {
   "token": "", // Bot token
   "clientID": "", // bot client id
