@@ -3,7 +3,7 @@
   "clientID": "", // bot client id
   "clientSecret": "", //bot client secret
   "ownerID": "", // Your discord id
-  "language": "", // en, de, pt
+  "language": "", // en, de, pt, nl
   "cmdPrefix": "?", // choose your command prefix
   "migrateSQLITE": {
     "migrate": true, // do you want to migrate your user from sqlite?
