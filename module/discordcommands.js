@@ -81,7 +81,8 @@ async function temprole(message, command, args, bot) {
 							days = args[1];
 						}
 
-						let rName = g.roles.cache.find(rName => rName.name.toLowerCase() === daRole.toLowerCase());
+						//let rName = g.roles.cache.find(rName => rName.name.toLowerCase() === daRole.toLowerCase());
+						let rName = g.roles.cache.find(rName => rName.name.toLowerCase() === message.mentioned.roles.first());
 						if (!rName) {
 							message.reply(i18n.__("I couldn't find such role, please check the spelling and try again."));
 							return;
