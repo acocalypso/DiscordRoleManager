@@ -103,14 +103,19 @@ bot.on("messageCreate", async (message) => {
 // Check for bot events other than messages
 bot.on('guildMemberRemove', async member => {
 
+
 	// Used to note database entries when users leave the server.
 	let guild = member.guild.id;
-	if (guild != config.serverID) {
-		return;
-	}
-
-	discordcommands.leftserver(bot, member);
-	
+	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${member.id}" AND guild_id="${guild}"`)
+		.then(async rows => {
+			for (rowNumber = "0"; rowNumber < rows.length; rowNumber++) {
+				discordcommands.leftserver(bot, member, rows[rowNumber].userID, rows[rowNumber].guild_id);
+			}
+		})
+		.catch(err => {
+			console.error(helper.GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove: (${err})`);
+			return;
+		});
 });
 
 	function RestartBot(type) {

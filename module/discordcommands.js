@@ -473,61 +473,70 @@ async function map(message, bot) {
 	return;
 }
 
-async function leftserver(bot, member) {
-	let g = message.channel.guild;
-	let c = message.channel;
+async function leftserver(bot ,member, userID, guildID) {
+
 	// Check if the user had any temp roles
-	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${member.id}" AND guild_id="${g.id}"`)
+	await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${guildID}"`)
 		.then(async rows => {
 			// Update all entries from the database
 			if (rows[0]) {
-				await sqlConnectionDiscord.query(`UPDATE temporary_roles SET leftServer = 1 WHERE userID="${member.id}" AND guild_id="${g.id}"`)
-					.then(async result => {
-						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
-						console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) has left the server. All role assignments have been marked in the database.", {
-							name: name,
-							memberID: member.id
-						}));
-						c.send(i18n.__(":exclamation: {{name}} has left the server.", {
-							name: name
-						}));
+				let c = rows[0].mainChannelID
+				console.log("User has left the server: %s - %s - %s", member, userID, guildID);
+				// Check if the user had any temp roles
+				await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${userID}" AND guild_id="${guildID}"`)
+					.then(async rows => {
+						// Update all entries from the database
+						if (rows[0]) {
+							await sqlConnectionDiscord.query(`UPDATE temporary_roles SET leftServer = 1 WHERE userID="${userID}" AND guild_id="${guildID}"`)
+								.then(async result => {
+									let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
+									console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) has left the server. All role assignments have been marked in the database.", {
+										name: name,
+										memberID: member.id
+									}));
+									bot.channels.cache.get(c).send(i18n.__(":exclamation: {{name}} has left the server.", {
+										name: name
+									}));
+								})
+								.catch(err => {
+									console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 2:" + `(${err})`);
+									return;
+								});
+						}
+						if (rows[0]) {
+							await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${userID}" AND guild_id="${guildID}"`)
+								.then(async result => {
+									let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
+									console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) got removed from the database.", {
+										name: name,
+										memberID: member.id
+									}));
+									bot.channels.cache.get(c).send(i18n.__(":exclamation: {{name}} all access removed from database.", {
+										name: name
+									}));
+								})
+								.catch(err => {
+									console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute query in guildMemberRemove") + "2:" + `(${err})`);
+									return;
+								});
+						}
 					})
 					.catch(err => {
-						console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 2:" + `(${err})`);
+						console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute query in guildMemberRemove") + "1:" + `(${err})`);
 						return;
 					});
 			}
-			if (rows[0]) {
-				await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${member.id}" AND guild_id="${g.id}"`)
-					.then(async result => {
-						let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
-						console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) got removed from the database.", {
-							name: name,
-							memberID: member.id
-						}));
-						c.send(i18n.__(":exclamation: {{name}} all access removed from database.", {
-							name: name
-						}));
-					})
-					.catch(err => {
-						console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute query in guildMemberRemove") + "2:" + `(${err})`);
-						return;
-					});
-			}
-		})
-		.catch(err => {
-			console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute query in guildMemberRemove") + "1:" + `(${err})`);
-			return;
-		});
-
+			})
+				.catch(err => {
+					console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute mainChannelID") + " 2:" + `(${err})`);
+					return;
+				});
 }
 
 async function guildMemberRemove(bot,member,guildID) {
 	// Used to note database entries when users leave the server.
 	let guild = guildID;
-/*	if (guild != config.serverID) {
-		return;
-	}*/
+
 	// Check if the user had any temp roles
 	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${member.id}" AND guild_id="${guild}"`)
 		.then(async rows => {
