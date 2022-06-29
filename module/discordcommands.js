@@ -24,9 +24,6 @@ async function temprole(message, command, args, bot) {
 	let c = message.channel;
 	let m = message.member;
 	let msg = message.content;
-	let roleID = message.mentions.roles.first().id;
-	let daRole = message.member.guild.roles.cache.get(roleID);
-
 
 	await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${g.id}" AND mainChannelID="${c.id}"`)
 		.then(async rows => {
@@ -80,6 +77,9 @@ async function temprole(message, command, args, bot) {
 							days = args[1];
 						}
 
+						let roleID = message.mentions.roles.first().id;
+						let daRole = message.member.guild.roles.cache.get(roleID);
+
 
 						if (!daRole) {
 							message.reply(i18n.__("I couldn't find such role, please check the spelling and try again."));
@@ -120,20 +120,20 @@ async function temprole(message, command, args, bot) {
 						// REMOVE MEMBER FROM DATABASE
 						else if (args[0] === "remove") {
 							mentioned = message.mentions.members.first();
-							await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
+							await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}" AND temporaryRole="${daRole.name}"`)
 								.then(async row => {
 									if (!row[0]) {
 										c.send(i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}", {
 											mentionedUsername: mentioned.user.username,
-											daRole: daRole
+											daRole: daRole.name
 										})).catch((err) => { console.log(err) });
 										return;
 									}
 
-									let theirRole = g.roles.cache.find(theirRole => theirRole.name.toLowerCase() === row[0].temporaryRole.toLowerCase());
+									let theirRole = g.roles.cache.find(daRole => daRole.name.toLowerCase() === row[0].temporaryRole.toLowerCase());
 									mentioned.roles.remove(theirRole, 'Donation Expired').catch((err) => { console.log(err) });
 
-									await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
+									await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}" AND temporaryRole="${daRole.name}"`)
 										.then(async result => {
 											console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mUserUsername}} ({{mID}}) removed the access from {{mentionedUsername}} ({{mentionedID}}", {
 												mUserUsername: m.user.username,
