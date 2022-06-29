@@ -15,7 +15,7 @@ var i18n = new i18n_module(i18nconfig.lang, i18nconfig.langFile);
 
 let adminRoleName = "";
 let modRoleName = "";
-let mainChannelID = "";
+
 
 async function temprole(message, command, args, bot) {
 
@@ -24,6 +24,8 @@ async function temprole(message, command, args, bot) {
 	let c = message.channel;
 	let m = message.member;
 	let msg = message.content;
+	let roleID = message.mentions.roles.first().id;
+	let daRole = message.member.guild.roles.cache.get(roleID);
 
 
 	await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${g.id}" AND mainChannelID="${c.id}"`)
@@ -66,24 +68,20 @@ async function temprole(message, command, args, bot) {
 						return;
 					}
 					else if (!args[2]) {
-						message.reply("incomplete data, please try: \n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention <ROLE-NAME>`\n or `" + config.cmdPrefix + "temprole check @mention <ROLE-NAME>`").catch((err) => { console.log(err) });
+						message.reply("incomplete data, please try: \n `" + config.cmdPrefix + "temprole @mention <DAYS> <@ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention <ROLE-NAME>`\n or `" + config.cmdPrefix + "temprole check @mention <ROLE-NAME>`").catch((err) => { console.log(err) });
 						return;
 					}
 					else {
-						let daRole = "";
 						let days = 0;
 						if (args[0] === "add") {
-							daRole = args[3];
 							days = args[2];
 						}
 						else {
-							daRole = args[2];
 							days = args[1];
 						}
 
-						let rName = g.roles.cache.find(rName => rName.name.toLowerCase() === daRole.toLowerCase());
-						//let rName = g.roles.cache.find(rName => rName.name.toLowerCase() === message.mentioned.roles.first());
-						if (!rName) {
+
+						if (!daRole) {
 							message.reply(i18n.__("I couldn't find such role, please check the spelling and try again."));
 							return;
 						}
@@ -95,7 +93,7 @@ async function temprole(message, command, args, bot) {
 									if (!row[0]) {
 										c.send(i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}", {
 											mentionedUsername: mentioned.username,
-											daRole: daRole
+											daRole: daRole.name
 										})).catch((err) => { console.log(err) });
 										return;
 									}
@@ -167,7 +165,7 @@ async function temprole(message, command, args, bot) {
 									configCMDPrefix: config.cmdPrefix,
 									command: command,
 									mentionedUsername: mentioned.username,
-									daRole: daRole
+									daRole: daRole.name
 								})).catch((err) => { console.log(err) });
 								return;
 							}
@@ -196,7 +194,7 @@ async function temprole(message, command, args, bot) {
 									let finalDate = Number(row[0].endDate * 1000) + Number(days * dateMultiplier);
 
 									let name = mentioned.username.replace(/[^a-zA-Z0-9]/g, '');
-									await sqlConnectionDiscord.query(`UPDATE temporary_roles SET endDate="${Math.round(finalDate / 1000)}", notified=0, username="${name}" WHERE userID="${mentioned.id}" AND temporaryRole="${daRole}" AND guild_id="${g.id}"`)
+									await sqlConnectionDiscord.query(`UPDATE temporary_roles SET endDate="${Math.round(finalDate / 1000)}", notified=0, username="${name}" WHERE userID="${mentioned.id}" AND temporaryRole="${daRole.name}" AND guild_id="${g.id}"`)
 										.then(async result => {
 											let endDateVal = new Date();
 											endDateVal.setTime(finalDate);
@@ -208,7 +206,7 @@ async function temprole(message, command, args, bot) {
 												days: days,
 												mUserUsername: m.user.username,
 												mID: m.id,
-												daRole: daRole
+												daRole: daRole.name
 											}));
 											c.send(i18n.__("✅ {{mentionedUsername}} has had time added until: `{{finalDate}}`! They were added on: `{{startDateTime}}`", {
 												mentionedUsername: mentioned.username,
@@ -244,7 +242,7 @@ async function temprole(message, command, args, bot) {
 						}
 
 						// ADD MEMBER TO DATASE, AND ADD THE ROLE TO MEMBER
-						await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND temporaryRole="${daRole}" AND guild_id="${g.id}"`)
+						await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND temporaryRole="${daRole.name}" AND guild_id="${g.id}"`)
 							.then(async row => {
 								mentioned = message.mentions.members.first();
 								if (!row[0]) {
@@ -255,7 +253,7 @@ async function temprole(message, command, args, bot) {
 									finalDateDisplay = await helper.formatTimeString(finalDateDisplay);
 									let name = mentioned.user.username.replace(/[^a-zA-Z0-9]/g, '');
 									let values = mentioned.user.id + ',\''
-										+ daRole + '\','
+										+ daRole.name + '\','
 										+ Math.round(curDate / 1000) + ','
 										+ Math.round(finalDate / 1000) + ','
 										+ m.id
@@ -264,18 +262,18 @@ async function temprole(message, command, args, bot) {
 										+ g.id
 									await sqlConnectionDiscord.query(`INSERT INTO temporary_roles VALUES(${values});`)
 										.then(async result => {
-											let theirRole = g.roles.cache.find(role => role.name.toLowerCase() === daRole.toLowerCase());
+											let theirRole = g.roles.cache.find(role => role.name === daRole.name);
 											mentioned.roles.add(theirRole).catch(err => { console.error(helper.GetTimestamp() + err); });
 											console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given the {{daRole}} role by {{mUserUsername}} ({{mID}})", {
 												mentionedUsername: mentioned.user.username,
 												mentionedID: mentioned.id,
-												daRole: daRole,
+												daRole: daRole.name,
 												mUserUsername: m.user.username,
 												mID: m.id
 											}));
 											c.send(i18n.__("🎉 {{mentionedUsername}} has been given a **temporary** role of: **{{daRole}}**, enjoy! They will lose this role on: `{{finalDateDisplay}}`", {
 												mentionedUsername: mentioned.user.username,
-												daRole: daRole,
+												daRole: daRole.name,
 												finalDateDisplay: finalDateDisplay
 											}));
 
@@ -414,26 +412,21 @@ async function check(message, args, bot) {
 		}));
 		return;
 	}
-	// ROLES WITH SPACES
-	let daRole = "";
-	for (var x = 0; x < args.length; x++) {
-		daRole += args[x] + " ";
-	}
-	daRole = daRole.slice(0, -1);
+
 	// CHECK ROLE EXIST
-	let rName = g.roles.cache.find(rName => rName.name === daRole);
+	let rName = g.roles.cache.find(rName => rName.name === daRole.name);
 	if (!rName) {
 		c.send(i18n.__("I couldn't find such role, please check the spelling and try again."));
 		return;
 	}
 
 	// CHECK DATABASE FOR ROLES
-	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${m.id}" AND temporaryRole="${daRole}" AND guild_id="${g.id}"`)
+	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${m.id}" AND temporaryRole="${daRole.name}" AND guild_id="${g.id}"`)
 		.then(async row => {
 			if (!row[0]) {
 				c.send(i18n.__("⚠ [ERROR] {{mAuthorUsername}} is __NOT__ in the database for the role {{daRole}}.", {
 					mAuthorUsername: message.author.username,
-					daRole: daRole
+					daRole: daRole.name
 				})).catch((err) => { console.log(err) });
 				return;
 			}
@@ -481,7 +474,6 @@ async function leftserver(bot ,member, userID, guildID) {
 			// Update all entries from the database
 			if (rows[0]) {
 				let c = rows[0].mainChannelID
-				console.log("User has left the server: %s - %s - %s", member, userID, guildID);
 				// Check if the user had any temp roles
 				await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${userID}" AND guild_id="${guildID}"`)
 					.then(async rows => {
@@ -608,7 +600,6 @@ async function register(message, bot, args) {
 	let adminRole = "";
 
 	if (args[0] == "modrole") {
-		//modRole = args[1];
 		modRole = message.mentions.roles.first().id
 		await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${guild_id}" AND modRoleName="${modRole}"`)
 			.then(async rows => {
@@ -633,7 +624,6 @@ async function register(message, bot, args) {
 	}
 
 	if (args[0] == "adminrole") {
-		//adminRole = args[1];
 		adminRole = message.mentions.roles.first().id
 		await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${guild_id}" AND adminRoleName="${adminRole}"`)
 			.then(async rows => {

@@ -55,9 +55,6 @@ bot.on("messageCreate", async (message) => {
 	}
 
 	// GET CHANNEL INFO
-	let g = message.guild;
-	let c = message.channel;
-	let m = message.member;
 	let msg = message.content;
 	msg = msg.toLowerCase();
 
