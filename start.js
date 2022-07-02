@@ -55,9 +55,6 @@ bot.on("messageCreate", async (message) => {
 	}
 
 	// GET CHANNEL INFO
-	let g = message.guild;
-	let c = message.channel;
-	let m = message.member;
 	let msg = message.content;
 	msg = msg.toLowerCase();
 
@@ -72,22 +69,6 @@ bot.on("messageCreate", async (message) => {
 	// GET ARGUMENTS
 	let args = msg.split(" ").slice(1);
 	//skip = "no";
-
-	// GET ROLES FROM CONFIG
-	//let AdminR = guild.members.filter(m => m.roles.)
-	/*let AdminR = g.roles.cache.find(role => role.name.toLowerCase() === config.adminRoleName.toLowerCase());
-	if (!AdminR) {
-		AdminR = { "id": "111111111111111111" };
-	}
-	let ModR = g.roles.cache.find(role => role.name.toLowerCase() === config.modRoleName.toLowerCase());
-	if (!ModR) {
-		ModR = { "id": "111111111111111111" };
-	}*/
-
-	// ############################################################################
-	// ################################ COMMANDS ##################################
-	// ############################################################################
-
 
 	
 	if (command.startsWith("temprole") || command === "tr" || command === "trole") {
@@ -119,14 +100,19 @@ bot.on("messageCreate", async (message) => {
 // Check for bot events other than messages
 bot.on('guildMemberRemove', async member => {
 
+
 	// Used to note database entries when users leave the server.
 	let guild = member.guild.id;
-	if (guild != config.serverID) {
-		return;
-	}
-
-	discordcommands.leftserver(bot, member);
-	
+	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${member.id}" AND guild_id="${guild}"`)
+		.then(async rows => {
+			for (rowNumber = "0"; rowNumber < rows.length; rowNumber++) {
+				discordcommands.leftserver(bot, member, rows[rowNumber].userID, rows[rowNumber].guild_id);
+			}
+		})
+		.catch(err => {
+			console.error(helper.GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove: (${err})`);
+			return;
+		});
 });
 
 	function RestartBot(type) {
@@ -140,42 +126,43 @@ bot.on('guildMemberRemove', async member => {
 	}
 
 
-	if (!config.debug == "yes") {
-		bot.on('error', function (err) {
-			if (typeof err == 'object') {
-				log('Uncaught error: ' + err, 'error.log');
-				console.error(helper.GetTimestamp() + 'Uncaught error: ' + err);
-			}
-			RestartBot();
+if (!config.debug == "yes") {
+	bot.on('error', function (err) {
+		if (typeof err == 'object') {
+			log('Uncaught error: ' + err, 'error.log');
+			console.error(helper.GetTimestamp() + 'Uncaught error: ' + err);
+		}
+		RestartBot();
+		return;
+	});
+
+	process.on('unhandledRejection', (reason, p) => {
+		log('Unhandled Rejection at Promise: ', p, 'error.log');
+		console.error(helper.GetTimestamp() + 'Unhandled Rejection at Promise: ', p);
+	});
+
+	process.on('uncaughtException', err => {
+		if (err.code === "PROTOCOL_CONNECTION_LOST" || err.code === "ECONNRESET") {
+			log("Lost connection to the DB server. Waiting for activity before reconnecting...", 'error.log');
+			console.log(helper.GetTimestamp() + "Lost connection to the DB server. Waiting for activity before reconnecting...");
 			return;
-		});
+		}
+		else {
+			log("Uncaught Exception thrown: " + err, 'error.log');
+			console.error(helper.GetTimestamp() + 'Uncaught Exception thrown: ' + err);
+			process.exit(1);
+		}
+	});
 
-		process.on('unhandledRejection', (reason, p) => {
-			log('Unhandled Rejection at Promise: ', p, 'error.log');
-			console.error(helper.GetTimestamp() + 'Unhandled Rejection at Promise: ', p);
-		});
+	bot.on('disconnect', (error) => {
+		log("Disconnected from Discord: " + error, 'error.log');
+		console.log(helper.GetTimestamp() + "Disconnected from Discord. %s ", error);
+		bot.connect();
+	});
 
-		process.on('uncaughtException', err => {
-			if (err.code === "PROTOCOL_CONNECTION_LOST" || err.code === "ECONNRESET") {
-				log("Lost connection to the DB server. Waiting for activity before reconnecting...", 'error.log');
-				console.log(helper.GetTimestamp() + "Lost connection to the DB server. Waiting for activity before reconnecting...");
-				return;
-			}
-			else {
-				log("Uncaught Exception thrown: " + err, 'error.log');
-				console.error(helper.GetTimestamp() + 'Uncaught Exception thrown: ' + err);
-				process.exit(1);
-			}
-		});
+	bot.on('shardError', error => {
+		console.error('A websocket connection encountered an error:', error);
+	});
 
-		socket.on('error', function (exec) {
-			log("Exception occured: " + exec, 'error.log')
-			console.error(helper.GetTimestamp() + 'Exception occured: %s - ignored', exec);
-		});
+}
 
-		bot.on('disconnect', (error) => {
-			log("Disconnected from Discord: " + error, 'error.log');
-			console.log(helper.GetTimestamp() + "Disconnected from Discord. %s ", error);
-			bot.connect();
-		});
-	}

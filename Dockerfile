@@ -1,13 +1,12 @@
-FROM node:14
+FROM node:16
 
 # Create the bot's directory
-RUN mkdir -p /usr/src/bot
-WORKDIR /usr/src/bot
+WORKDIR /usr/src/app
 
-COPY package.json /usr/src/bot
+COPY package*.json ./
 RUN npm install
 
-COPY . /usr/src/bot
-
+COPY . .
+EXPOSE 3000
 # Start the bot.
 CMD ["node", "start.js"]
