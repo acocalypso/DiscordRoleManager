@@ -105,10 +105,10 @@ User commands:
 
 Admin / Mod commands:
 
-(prefix)temprole @mention <DAYS> <ROLE-NAME> » to assign a temporary roles
-(prefix)temprole add @mention <DAYS> <ROLE-NAME> » to add more time to a temporary role assignment
-(prefix)temprole remove @mention <ROLE-NAME> » to remove a temporary role assignment
-(prefix)temprole check @mention <ROLE-NAME> » to check the time left on a temporary role assignment
+(prefix)temprole @mention <DAYS> @rolename » to assign a temporary roles
+(prefix)temprole add @mention <DAYS> @rolename » to add more time to a temporary role assignment
+(prefix)temprole remove @mention @rolename » to remove a temporary role assignment
+(prefix)temprole check @mention @rolename » to check the time left on a temporary role assignment
 
 Help commands:
 
