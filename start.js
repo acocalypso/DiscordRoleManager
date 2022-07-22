@@ -1,6 +1,12 @@
-﻿const Discord = require('discord.js');
-const bot = new Discord.Client({
-	intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MEMBERS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.DIRECT_MESSAGES]
+﻿//Switch from Discord.js V13 to V14 upgrade Code (Intents is EOL)
+const { Client, GatewayIntentBits } = require('discord.js');
+const bot = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+	GatewayIntentBits.GuildMessages,
+	GatewayIntentBits.DirectMessages,
+  ],
 });
 const config = require('./config/config.json');
 const web = require('./module/backend.js');
