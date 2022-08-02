@@ -9,7 +9,7 @@
 	- Check the boxes for the needed permissions
 	- Minimum requirements: manage roles and send messages
 	- Manage roles, it will only be able to manage roles that are below his role/permissions
-	- Enable PRESENCE INTENT and SERVER MEMBERS INTENT
+	- Enable PRESENCE INTENT, SERVER MEMBERS INTENT and MESSAGE CONTENT INTENT
 	- Use the URL that page generates and go to it, and you will be asked to log into your discord. You will need Admin access in order to get the bot to join that server.
 - Rename config.json.example to config.json
 - Edit config.json and fill out the required infos.
