@@ -6,6 +6,7 @@ const bot = new Client({
     GatewayIntentBits.GuildMembers,
 	GatewayIntentBits.GuildMessages,
 	GatewayIntentBits.DirectMessages,
+	GatewayIntentBits.MessageContent
   ],
 });
 const config = require('./config/config.json');
