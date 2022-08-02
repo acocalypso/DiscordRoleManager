@@ -1,4 +1,3 @@
-﻿//Switch from Discord.js V13 to V14 upgrade Code (Intents is EOL)
 const { Client, GatewayIntentBits } = require('discord.js');
 const bot = new Client({
   intents: [
