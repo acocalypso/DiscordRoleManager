@@ -118,7 +118,7 @@ Help commands:
 
 ## Grafana 8.x Support
 
-![alt text](https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/backend/grafana_donators.PNG)
+![alt text](https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/grafana_donators.PNG)
 
 ## Contribution:
 
