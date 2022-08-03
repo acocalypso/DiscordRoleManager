@@ -4,7 +4,7 @@ FROM node:16-alpine
 WORKDIR /usr/src/app
 ADD . ./
 RUN npm install
-
-EXPOSE 9000
+# Expose ports for bot and webinterface
+EXPOSE 9000 40444
 # Start the bot.
 CMD ["node", "start.js"]

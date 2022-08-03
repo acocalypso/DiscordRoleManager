@@ -6,6 +6,7 @@ services:
     image: acocalypso/discordrolemanager:latest 
     ports:
       - "9000:9000"
+      - "40444:40444"
     volumes:
       - ./config/:/usr/src/app/config/
       - ./locale/:/usr/src/app/locale/
