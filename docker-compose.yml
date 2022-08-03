@@ -1,8 +1,9 @@
 version: '3.5'
 services:
   discordrolebot:
-    build:
-      context: ./
+   #build:
+   #   context: ./
+    image: acocalypso/discordrolemanager:latest 
     ports:
       - "9000:9000"
     volumes:
