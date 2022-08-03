@@ -1,14 +1,10 @@
-version: '3.8'
+version: '3.5'
 services:
-  web:
+  discordrolebot:
     build:
       context: ./
-
-    volumes:
-      - .:/src
-    command: npm run start:dev
     ports:
-      - "3000:3000"
-    environment:
-      NODE_ENV: development
-      DEBUG: nodejs-docker-express:*
+      - "9000:9000"
+    volumes:
+      - ./config/:/usr/src/app/config/
+      - ./locale/:/usr/src/app/locale/

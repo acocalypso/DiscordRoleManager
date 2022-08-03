@@ -1,12 +1,9 @@
-FROM node:16
+FROM node:16-alpine
 
-# Create the bot's directory
 WORKDIR /usr/src/app
-
-COPY package*.json ./
+ADD . ./
 RUN npm install
 
-COPY . .
-EXPOSE 3000
+EXPOSE 9000
 # Start the bot.
 CMD ["node", "start.js"]
