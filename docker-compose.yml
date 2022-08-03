@@ -10,5 +10,6 @@ services:
     volumes:
       - ./config/:/usr/src/app/config/
       - ./locale/:/usr/src/app/locale/
+      - ./logs/:/usr/src/app/logs/
     #if you host your db locally use network_mode
     #network_mode: "host"
