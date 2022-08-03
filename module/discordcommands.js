@@ -271,6 +271,7 @@ async function temprole(message, command, args, bot) {
 												mUserUsername: m.user.username,
 												mID: m.id
 											}));
+											helper.myLogger.info(helper.GetTimestamp() + "User has been added to DB: %s %s", mentioned.user.username, daRole.name);
 											c.send(i18n.__("🎉 {{mentionedUsername}} has been given a **temporary** role of: **{{daRole}}**, enjoy! They will lose this role on: `{{finalDateDisplay}}`", {
 												mentionedUsername: mentioned.user.username,
 												daRole: daRole.name,
