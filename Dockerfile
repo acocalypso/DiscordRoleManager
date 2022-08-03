@@ -1,5 +1,6 @@
 FROM node:16-alpine
 
+#define WORKDIR
 WORKDIR /usr/src/app
 ADD . ./
 RUN npm install
