@@ -2,7 +2,7 @@
 const helper = require('./helper');
 const config = require('./../config/config');
 const discordcommands = require('./discordcommands');
-const log = require('log-to-file');
+
 
 
 var i18nconfig = {
@@ -24,7 +24,7 @@ async function housekeeping(bot) {
 	await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles`)
 		.then(async rows => {
 			if (!rows[0]) {
-				log(i18n.__("No one is in the DataBase"), 'info.log');
+				helper.myLogger.log(i18n.__("No one is in the DataBase"));
 				console.info(helper.GetTimestamp() + i18n.__("No one is in the DataBase"));
 				return;
 			}
@@ -46,14 +46,13 @@ async function housekeeping(bot) {
 					
 					await sqlConnectionDiscord.query(`UPDATE temporary_roles SET username="${name}" WHERE userID="${member.id}" AND guild_id="${member.guild.id}"`)
 						.catch(err => {
-							log(i18n.__("[InitDB] Failed to execute role check query") + " 4: " + `(${err})`, 'error.log');
-							console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 4: " + `(${err})`);
+							helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 4: " + `(${err})`);
 						});
-					log(i18n.__(`Updated the username for {{memberId}} to {{name}}`, {
+					helper.myLogger.log(i18n.__(`Updated the username for {{memberId}} to {{name}}`, {
 						memberID: member.id,
 						name: name
-					}), 'info.log');
-					console.log(helper.GetTimestamp() + i18n.__(`Updated the username for {{memberId}} to {{name}}`, {
+					}));
+					helper.myLogger.log(helper.GetTimestamp() + i18n.__(`Updated the username for {{memberId}} to {{name}}`, {
 						memberID: member.id,
 						name: name
 					}));
@@ -62,12 +61,9 @@ async function housekeeping(bot) {
 					var guild_id = member.guild.id;
 					await sqlConnectionDiscord.query(`UPDATE temporary_roles SET guild_id="${guild_id}" WHERE userID="${rows[rowNumber].userID}"`)
 						.catch(err => {
-							console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 4: " + `(${err})`);
+							helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 4: " + `(${err})`);
 						});
-					log(i18n.__(`Updated guild_id for {{name}}`, {
-						name: name
-					}),"info.log");
-					console.log(helper.GetTimestamp() + i18n.__(`Updated guild_id for {{name}}`, {
+					helper.myLogger.log(helper.GetTimestamp() + i18n.__(`Updated guild_id for {{name}}`, {
 						name: name
 					}));
 				}
@@ -80,7 +76,7 @@ async function housekeeping(bot) {
 							if (leftServer) {
 								await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${rows[rowNumber].userID}' AND temporaryRole='${rName.name}' AND guild_id="${member.guild.id}"`)
 									.catch(err => {
-										console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 5:" + `(${err})`);
+										helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 5:" + `(${err})`);
 										process.exit(-1);
 									});
 									bot.channels.cache.get(result[0].mainChannelID).send(i18n.__("⚠ {{rowUsername}} has **left** the server and **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭", {
@@ -88,10 +84,10 @@ async function housekeeping(bot) {
 									rNameName: rName.name
 									})).catch(err => {
 										console.error(GetTimestamp() + err);
-										log("Error while fetching user for left server: "+ err, "error.log");
+										helper.myLogger.error("Error while fetching user for left server: " + err);
 
 									});
-								console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{rowUsername}} - {{rowUserID}} has left the server and lost their role: {{rNameName}} ... time EXPIRED", {
+								    helper.myLogger.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{rowUsername}} - {{rowUserID}} has left the server and lost their role: {{rNameName}} ... time EXPIRED", {
 									rowUsername: rows[rowNumber].username,
 									rowUserID: rows[rowNumber].userID,
 									rNameName: rName.name
@@ -117,13 +113,13 @@ async function housekeeping(bot) {
 										console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 2:" + `(${err})`);
 										process.exit(-1);
 									});
-								console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - {{memberId}} have lost their role: {{rNameName}} ... time EXPIRED", {
+								    helper.myLogger.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - {{memberId}} have lost their role: {{rNameName}} ... time EXPIRED", {
 									memberUsername: member.user.username,
 									memberId: member.id,
 									rNameName: rName.name
 								}));
 							}).catch(error => {
-								console.error(helper.GetTimestamp() + error.message);
+								helper.myLogger.error(helper.GetTimestamp() + error.message);
 								bot.channels.cache.get(result[0].mainChannelID).send(i18n.__("**⚠ Could not remove the {{rNameName}} role from {{memberUsername}}!**", {
 									rNameName: rName.name,
 									memberUsername: member.user.username
@@ -144,7 +140,7 @@ async function housekeeping(bot) {
 									finalDate: finalDate,
 									configPaypalUrl: config.paypal.url
 								})).catch((err) => {
-									console.log(helper.GetTimestamp() + i18n.__(`Failed to send a DM to user: {{memberID}} - {{err}}`, {
+									helper.myLogger.error(helper.GetTimestamp() + i18n.__(`Failed to send a DM to user: {{memberID}} - {{err}}`, {
 										memberID: member.id,
 										err: err
 									}))
@@ -157,7 +153,7 @@ async function housekeeping(bot) {
 									configServerName: result[0].guild_name,
 									finalDate: finalDate,
 								})).catch((err) => {
-									console.log(helper.GetTimestamp() + i18n.__(`Failed to send a DM to user: {{memberID}} - {{err}}`, {
+									    helper.myLogger.error(helper.GetTimestamp() + i18n.__(`Failed to send a DM to user: {{memberID}} - {{err}}`, {
 										memberID: member.id,
 										err: err
 									}))
@@ -168,15 +164,15 @@ async function housekeeping(bot) {
 								memberUsername: member.user.username,
 								rNameName: rName.name,
 								finalDate: finalDate
-							})).catch(err => { console.error(helper.GetTimestamp() + err); });
+							})).catch(err => { helper.myLogger.error(helper.GetTimestamp() + err); });
 							// UPDATE THE DB TO REMEMBER THAT THEY WERE NOTIFIED
 							let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
 							await sqlConnectionDiscord.query(`UPDATE temporary_roles SET notified=1, username="${name}" WHERE userID="${member.id}" AND temporaryRole="${rName.name}" AND guild_id="${member.guild.id}"`)
 								.catch(err => {
-									console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 3:" + `(${err})`);
+									helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 3:" + `(${err})`);
 									process.exit(-1);
 								});
-							console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - ({{memberID}}) has been notified that they will lose their role {{rNameName}} in less than 5 days on {{finalDate}}", {
+							    helper.myLogger.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - ({{memberID}}) has been notified that they will lose their role {{rNameName}} in less than 5 days on {{finalDate}}", {
 								memberUsername: member.user.username,
 								memberID: member.id,
 								rNameName: rName.name,
@@ -188,8 +184,7 @@ async function housekeeping(bot) {
 			}
 		})
 		.catch(err => {
-			console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 1:" + `(${err})`);
-			log(i18n.__("[InitDB] Failed to execute role check query") + " 1:" + `(${err})`, "error.log");
+			helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 1:" + `(${err})`);
 			process.exit(-1);
 		});
 }

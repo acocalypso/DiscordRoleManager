@@ -57,15 +57,15 @@ async function temprole(message, command, args, bot) {
 
 				if (m.roles.cache.has(ModR.id) || m.roles.cache.has(AdminR.id) || m.id === config.ownerID) {
 					if (!args[0]) {
-						message.reply("syntax:\n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention <ROLE-NAME>`\n or `" + config.cmdPrefix + "temprole check @mention <ROLE-NAME>`").catch((err) => { console.log(err) });
+						message.reply("syntax:\n `" + config.cmdPrefix + "temprole @mention <DAYS> <ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention <ROLE-NAME>`\n or `" + config.cmdPrefix + "temprole check @mention <ROLE-NAME>`").catch((err) => { helper.myLogger.error(err) });
 						return;
 					}
 					else if (!mentioned) {
-						message.reply("please `@mention` a person you want me to give/remove `" + config.cmdPrefix + "temprole` to...").catch((err) => { console.log(err) });
+						message.reply("please `@mention` a person you want me to give/remove `" + config.cmdPrefix + "temprole` to...").catch((err) => { helper.myLogger.error(err) });
 						return;
 					}
 					else if (!args[2]) {
-						message.reply("incomplete data, please try: \n `" + config.cmdPrefix + "temprole @mention <DAYS> <@ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention <ROLE-NAME>`\n or `" + config.cmdPrefix + "temprole check @mention <ROLE-NAME>`").catch((err) => { console.log(err) });
+						message.reply("incomplete data, please try: \n `" + config.cmdPrefix + "temprole @mention <DAYS> <@ROLE-NAME>`,\n or `" + config.cmdPrefix + "temprole remove @mention <ROLE-NAME>`\n or `" + config.cmdPrefix + "temprole check @mention <ROLE-NAME>`").catch((err) => { helper.myLogger.error(err) });
 						return;
 					}
 					else {
@@ -94,7 +94,7 @@ async function temprole(message, command, args, bot) {
 										c.send(i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}", {
 											mentionedUsername: mentioned.username,
 											daRole: daRole.name
-										})).catch((err) => { console.log(err) });
+										})).catch((err) => { helper.myLogger.error(err) });
 										return;
 									}
 									let startDateVal = new Date();
@@ -109,9 +109,9 @@ async function temprole(message, command, args, bot) {
 										rowTempRole: row[0].temporaryRole,
 										finalDate: finalDate,
 										startDateTime: startDateTime
-									})).catch((err) => { console.log(err) });
+									})).catch((err) => { helper.myLogger.error(err) });
 								}).catch(err => {
-									console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 9:" + `(${err})`);
+									helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 9:" + `(${err})`);
 									return;
 								});
 							return;
@@ -126,16 +126,16 @@ async function temprole(message, command, args, bot) {
 										c.send(i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}", {
 											mentionedUsername: mentioned.user.username,
 											daRole: daRole.name
-										})).catch((err) => { console.log(err) });
+										})).catch((err) => { helper.myLogger.error(err) });
 										return;
 									}
 
 									let theirRole = g.roles.cache.find(daRole => daRole.name.toLowerCase() === row[0].temporaryRole.toLowerCase());
-									mentioned.roles.remove(theirRole, 'Donation Expired').catch((err) => { console.log(err) });
+									mentioned.roles.remove(theirRole, 'Donation Expired').catch((err) => { helper.myLogger.error(err) });
 
 									await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}" AND temporaryRole="${daRole.name}"`)
 										.then(async result => {
-											console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mUserUsername}} ({{mID}}) removed the access from {{mentionedUsername}} ({{mentionedID}}", {
+											helper.myLogger.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mUserUsername}} ({{mID}}) removed the access from {{mentionedUsername}} ({{mentionedID}}", {
 												mUserUsername: m.user.username,
 												mID: m.id,
 												mentionedUsername: mentioned.user.username,
@@ -144,15 +144,15 @@ async function temprole(message, command, args, bot) {
 											c.send(i18n.__("⚠ {{mentionedUsername}} has **lost** their role of: **{{theirRoleName}}** and has been removed from the database", {
 												mentionedUsername: mentioned.user.username,
 												theirRoleName: theirRole.name
-											})).catch((err) => { console.log(err) });
+											})).catch((err) => { helper.myLogger.error(err) });
 										})
 										.catch(err => {
-											console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 11:" + `(${err})`);
+											helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 11:" + `(${err})`);
 											return;
 										});
 								})
 								.catch(err => {
-									console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 10:" + `(${err})`);
+									helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 10:" + `(${err})`);
 									return;
 								});
 							return;
@@ -166,18 +166,18 @@ async function temprole(message, command, args, bot) {
 									command: command,
 									mentionedUsername: mentioned.username,
 									daRole: daRole.name
-								})).catch((err) => { console.log(err) });
+								})).catch((err) => { helper.myLogger.error(err) });
 								return;
 							}
 
 							if (args[1] && !mentioned) {
-								message.reply(i18n.__("please `@mention` a person you want me to add time to...")).catch((err) => { console.log(err) });
+								message.reply(i18n.__("please `@mention` a person you want me to add time to...")).catch((err) => { helper.myLogger.error(err) });
 								return;
 							}
 							if (!args[2]) {
 								message.reply(i18n.__("for how **many** days do you want {{mentionedUsername}} to have to have this role?", {
 									mentionedUsername: mentioned.username
-								})).catch((err) => { console.log(err) });
+								})).catch((err) => { helper.myLogger.error(err) });
 								return;
 							}
 							await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
@@ -185,7 +185,7 @@ async function temprole(message, command, args, bot) {
 									if (!row[0]) {
 										message.reply(i18n.__("⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the database", {
 											mentionedUsername: mentioned.username
-										})).catch((err) => { console.log(err) });
+										})).catch((err) => { helper.myLogger.error(err) });
 										return;
 									}
 									let startDateVal = new Date();
@@ -200,7 +200,7 @@ async function temprole(message, command, args, bot) {
 											endDateVal.setTime(finalDate);
 											finalDate = await helper.formatTimeString(endDateVal);
 											dmFinalDate = finalDate;
-											console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given {{days}} days by: {{mUserUsername}} ({{mID}}) for the role: {{daRole}}", {
+											helper.myLogger.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given {{days}} days by: {{mUserUsername}} ({{mID}}) for the role: {{daRole}}", {
 												mentionedUsername: mentioned.username,
 												mentionedID: mentioned.id,
 												days: days,
@@ -218,19 +218,19 @@ async function temprole(message, command, args, bot) {
 												mentionedUsername: mentioned.username,
 												finalDate: finalDate
 											})).catch(error => {
-												console.error(helper.GetTimestamp() + i18n.__("Failed to send a DM to user: {{mentionedID}}", {
+												helper.myLogger.error(helper.GetTimestamp() + i18n.__("Failed to send a DM to user: {{mentionedID}}", {
 													mentionedID: mentioned.id
 												}));
-											}).catch((err) => { console.log(err) });
+											}).catch((err) => { helper.myLogger.error(err) });
 
 										})
 										.catch(err => {
-											console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 14:" + `(${err})`);
+											helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 14:" + `(${err})`);
 											return;
 										});
 								})
 								.catch(err => {
-									console.log(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 13:" + `(${err})`);
+									helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 13:" + `(${err})`);
 									return;
 								});
 							return;
@@ -264,7 +264,7 @@ async function temprole(message, command, args, bot) {
 										.then(async result => {
 											let theirRole = g.roles.cache.find(role => role.name === daRole.name);
 											mentioned.roles.add(theirRole).catch(err => { console.error(helper.GetTimestamp() + err); });
-											console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given the {{daRole}} role by {{mUserUsername}} ({{mID}})", {
+											helper.myLogger.error(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given the {{daRole}} role by {{mUserUsername}} ({{mID}})", {
 												mentionedUsername: mentioned.user.username,
 												mentionedID: mentioned.id,
 												daRole: daRole.name,
@@ -282,13 +282,13 @@ async function temprole(message, command, args, bot) {
 												finalDateDisplay: finalDateDisplay,
 												map: config.mapMain.url
 											})).catch(error => {
-												console.error(helper.GetTimestamp() + i18n.__("Failed to send a DM to user: {{mentionedID}}", {
+												helper.myLogger.error(helper.GetTimestamp() + i18n.__("Failed to send a DM to user: {{mentionedID}}", {
 													mentionedID: mentioned.id
 												}));
-											}).catch((err) => { console.log(err) });
+											}).catch((err) => { helper.myLogger.error(err) });
 										})
 										.catch(err => {
-											console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 16:" + `(${err})`);
+											helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 16:" + `(${err})`);
 											return;
 										});
 								}
@@ -301,14 +301,14 @@ async function temprole(message, command, args, bot) {
 								}
 							})
 							.catch(err => {
-								console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 16:" + `(${err})`);
+								helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 16:" + `(${err})`);
 								return;
 							});
 					}
 
 				}
 				else {
-					c.send(i18n.__("you are **NOT** allowed to use this command!")).catch((err) => { console.log(GetTimestamp() + err); });
+					c.send(i18n.__("you are **NOT** allowed to use this command!")).catch((err) => { helper.myLogger.error(GetTimestamp() + err); });
 				}
 			} 
 		})
@@ -341,14 +341,14 @@ async function help(message, command, bot) {
 				let AdminR = g.roles.cache.find(role => role.id === adminRoleName);
 				if (!AdminR) {
 					AdminR = { "id": "111111111111111111" };
-					console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}", {
+					helper.myLogger.error(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}", {
 						configAdminRoleName: adminRoleName
 					}));
 				}
 				let ModR = g.roles.cache.find(role => role.id === modRoleName);
 				if (!ModR) {
 					ModR = { "id": "111111111111111111" };
-					console.info(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find mod role: {{configModRoleName}}", {
+					helper.myLogger.error(helper.GetTimestamp() + i18n.__("[ERROR] [CONFIG] I could not find mod role: {{configModRoleName}}", {
 						configModRoleName: modRoleName
 					}));
 				}
@@ -359,12 +359,12 @@ async function help(message, command, bot) {
 							+ "`" + config.cmdPrefix + "temprole check @mention <ROLE-NAME>`  \\\u00BB   to check the time left on a temporary role assignment\n"
 							+ "`" + config.cmdPrefix + "temprole remove @mention <ROLE-NAME>`   \\\u00BB   to remove a temporary role assignment\n"
 							+ "`" + config.cmdPrefix + "temprole add @mention <DAYS> <ROLE-NAME>`   \\\u00BB   to add more time to a temporary role assignment\n";
-						message.reply(cmds).catch((err) => { console.log(err) });
+						message.reply(cmds).catch((err) => { helper.myLogger.error(err) });
 					}
 					else {
 						c.send(i18n.__("you are **NOT** allowed to use this command! \ntry using: {{configCMDPrefix}}help", {
 							configCMDPrefix: config.cmdPrefix
-						})).catch((err) => { console.log(err) });
+						})).catch((err) => { helper.myLogger.error(err) });
 						return;
 					}
 				}
@@ -395,7 +395,7 @@ async function paypal(message, bot) {
 			.setURL(config.paypal.url)
 			.setThumbnail(config.paypal.img)
 			.setDescription(paypal_description);
-		c.send({ embeds: [embedMSG] }).catch((err) => { console.log(err) });
+		c.send({ embeds: [embedMSG] }).catch((err) => { helper.myLogger.error(err) });
 		};
 	}
 
@@ -427,7 +427,7 @@ async function check(message, args, bot) {
 				c.send(i18n.__("⚠ [ERROR] {{mAuthorUsername}} is __NOT__ in the database for the role {{daRole}}.", {
 					mAuthorUsername: message.author.username,
 					daRole: daRole.name
-				})).catch((err) => { console.log(err) });
+				})).catch((err) => { helper.myLogger.error(err) });
 				return;
 			}
 
@@ -442,11 +442,11 @@ async function check(message, args, bot) {
 				rowTempRole: row[0].temporaryRole,
 				finalDate: finalDate,
 				startDateTime: startDateTime
-			})).catch((err) => { console.log(err) });
+			})).catch((err) => { helper.myLogger.error(err) });
 
 		})
 		.catch(err => {
-			console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 8:" + `(${err})`);
+			helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 8:" + `(${err})`);
 			return;
 		});
 	return;
@@ -461,7 +461,7 @@ async function map(message, bot) {
 	if (config.mapMain.enabled === "yes") {
 		c.send(i18n.__("Our official webmap: {{configMapUrl}}", {
 			configMapUrl: config.mapMain.url
-		})).catch((err) => { console.error(helper.GetTimestamp() + err); });
+		})).catch((err) => { helper.myLogger.error(helper.GetTimestamp() + err); });
 	}
 	return;
 }
@@ -482,7 +482,7 @@ async function leftserver(bot ,member, userID, guildID) {
 							await sqlConnectionDiscord.query(`UPDATE temporary_roles SET leftServer = 1 WHERE userID="${userID}" AND guild_id="${guildID}"`)
 								.then(async result => {
 									let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
-									console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) has left the server. All role assignments have been marked in the database.", {
+									helper.myLogger.error(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) has left the server. All role assignments have been marked in the database.", {
 										name: name,
 										memberID: member.id
 									}));
@@ -491,7 +491,7 @@ async function leftserver(bot ,member, userID, guildID) {
 									}));
 								})
 								.catch(err => {
-									console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 2:" + `(${err})`);
+									helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute role check query") + " 2:" + `(${err})`);
 									return;
 								});
 						}
@@ -499,7 +499,7 @@ async function leftserver(bot ,member, userID, guildID) {
 							await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${userID}" AND guild_id="${guildID}"`)
 								.then(async result => {
 									let name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
-									console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) got removed from the database.", {
+									helper.myLogger.error(helper.GetTimestamp() + i18n.__("[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) got removed from the database.", {
 										name: name,
 										memberID: member.id
 									}));
@@ -508,19 +508,19 @@ async function leftserver(bot ,member, userID, guildID) {
 									}));
 								})
 								.catch(err => {
-									console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute query in guildMemberRemove") + "2:" + `(${err})`);
+									helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute query in guildMemberRemove") + "2:" + `(${err})`);
 									return;
 								});
 						}
 					})
 					.catch(err => {
-						console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute query in guildMemberRemove") + "1:" + `(${err})`);
+						helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute query in guildMemberRemove") + "1:" + `(${err})`);
 						return;
 					});
 			}
 			})
 				.catch(err => {
-					console.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute mainChannelID") + " 2:" + `(${err})`);
+					helper.myLogger.error(helper.GetTimestamp() + i18n.__("[InitDB] Failed to execute mainChannelID") + " 2:" + `(${err})`);
 					return;
 				});
 }
@@ -538,24 +538,24 @@ async function guildMemberRemove(bot,member,guildID) {
 					.then(async result => {
 						var name = "Unknown";
 						name = rows[0].username;
-						console.log(helper.GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + name + "\" (" + member.id + ") has left the server. All temp role assignments have been marked in the database.");
+						helper.myLogger.error(helper.GetTimestamp() + "[ADMIN] [TEMPORARY-ROLE] \"" + name + "\" (" + member.id + ") has left the server. All temp role assignments have been marked in the database.");
 						await sqlConnectionDiscord.query(`SELECT mainChannelID from registration WHERE guild_id="${guild}"`)
 							.then(async result => {
 								bot.channels.cache.get(rows[0].mainChannelID).send(":exclamation: " + name + " has left the server. All temp role assignments have been marked in the database.");
 							})
 							.catch(err => {
-								console.error(GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove 3: (${err})`);
+								helper.myLogger.error(GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove 3: (${err})`);
 								return;
 							});
 					})
 					.catch(err => {
-						console.error(GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove 2: (${err})`);
+						helper.myLogger.error(GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove 2: (${err})`);
 						return;
 					});
 			}
 		})
 		.catch(err => {
-			console.error(helper.GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove 1: (${err})`);
+			helper.myLogger.error(helper.GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove 1: (${err})`);
 			return;
 		});
 }
@@ -569,19 +569,19 @@ async function getMember(bot,userID,guildID) {
 		if (!member) {
 			await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id=${guildID};`)
 				.then(async result => {
-					console.log(helper.GetTimestamp() + "[ADMIN] [MEMBER] Failed to get user ID: " + member.id);
+					helper.myLogger.error(helper.GetTimestamp() + "[ADMIN] [MEMBER] Failed to get user ID: " + member.id);
 					bot.channels.cache.get(result[0].mainChannelID).send(":exclamation: Failed to get user ID: " +
 						member.id + " <@" + member.id + "> from the cache. Tagging them to force the cache update.")
-						.catch(err => { console.error(helper.GetTimestamp() + err); });
+						.catch(err => { helper.myLogger.error(helper.GetTimestamp() + err); });
 			await bot.guilds.cache.get(guildID).members.fetch();
 			await wait(1 * 1000); // 1 second
 			member = bot.guilds.cache.get(guildID).members.cache.get(userID);
 			// If it still doesn't exist, return an error
 			if (!member) {
-				console.error(helper.GetTimestamp() + "Failed to find a user for ID: " + member.id + ". They may have left the server.");
+				helper.myLogger.error(helper.GetTimestamp() + "Failed to find a user for ID: " + member.id + ". They may have left the server.");
 				bot.channels.cache.get(result[0].mainChannelID).send("**:x: Could not find a user for ID: " +
 					member.id + " <@" + member.id + ">. They may have left the server.**")
-					.catch(err => { console.error(helper.GetTimestamp() + err); });
+					.catch(err => { helper.myLogger.error(helper.GetTimestamp() + err); });
 				member = { "guild": { "id": guildID }, "id": member.id }
 				await guildMemberRemove(bot, member,guildID)
 				return resolve(false);
@@ -607,7 +607,7 @@ async function register(message, bot, args) {
 				if (!rows[0]) {
 					await sqlConnectionDiscord.query(`UPDATE registration SET modRoleName="${modRole}" WHERE guild_id=${guild_id};`)
 						.then(async result => {
-							console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [ROLE-REGISTRATION] Role {{modRole}} on {{guild_name}} added to database", {
+							helper.myLogger.log(helper.GetTimestamp() + i18n.__("[ADMIN] [ROLE-REGISTRATION] Role {{modRole}} on {{guild_name}} added to database", {
 								guild_name: guild_name,
 								modRole: modRole
 							}));
@@ -631,7 +631,7 @@ async function register(message, bot, args) {
 				if (!rows[0]) {
 					await sqlConnectionDiscord.query(`UPDATE registration SET adminRoleName="${adminRole}" WHERE guild_id=${guild_id};`)
 						.then(async result => {
-							console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [ROLE-REGISTRATION] Role {{adminRole}} on {{guild_name}} added to database", {
+							helper.myLogger.log(helper.GetTimestamp() + i18n.__("[ADMIN] [ROLE-REGISTRATION] Role {{adminRole}} on {{guild_name}} added to database", {
 								guild_name: guild_name,
 								adminRole: adminRole
 							}));
@@ -656,7 +656,7 @@ async function register(message, bot, args) {
 				if (!rows[0]) {
 					await sqlConnectionDiscord.query(`UPDATE registration SET mainChannelID = ${channelID} WHERE \`guild_id\`="${guild_id}"`)
 						.then(async result => {
-							console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [CHANNEL-REGISTRATION] Channel added to database"));
+							helper.myLogger.log(helper.GetTimestamp() + i18n.__("[ADMIN] [CHANNEL-REGISTRATION] Channel added to database"));
 							c.send(i18n.__("🎉 Channel has been registered!", {
 								adminRole: adminRole
 							}));
@@ -674,10 +674,10 @@ async function register(message, bot, args) {
 				if (!rows[0]) {
 					let values = guild_id + ',\''
 						+ guild_name + '\''
-					console.log(values);
+					helper.myLogger.log(values);
 					await sqlConnectionDiscord.query(`INSERT INTO registration (\`guild_id\`, \`guild_name\`) VALUES(${values});`)
 						.then(async result => {
-							console.log(helper.GetTimestamp() + i18n.__("[ADMIN] [SERVER-REGISTRATION] {{guild_name}} {{guild_id}} added to database", {
+							helper.myLogger.log(helper.GetTimestamp() + i18n.__("[ADMIN] [SERVER-REGISTRATION] {{guild_name}} {{guild_id}} added to database", {
 								guild_name: guild_name,
 								guild_id: guild_id
 							}));
@@ -692,7 +692,7 @@ async function register(message, bot, args) {
 				}
 			})
 			.catch(err => {
-				console.error(helper.GetTimestamp() + `[InitDB] Failed to execute query in Server registration: (${err})`);
+				helper.myLogger.error(helper.GetTimestamp() + `[InitDB] Failed to execute query in Server registration: (${err})`);
 				return;
 			});
 	}
