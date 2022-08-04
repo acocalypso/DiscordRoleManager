@@ -1,4 +1,3 @@
-#lets see if this is working
 name: publish
 
 on: [push]
