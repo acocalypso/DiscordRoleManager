@@ -379,6 +379,10 @@ async function check(message, args, bot) {
   const g = message.channel.guild;
   const m = message.member;
   const msg = message.content;
+
+  const roleID = message.mentions.roles.first().id;
+  const daRole = message.member.guild.roles.cache.get(roleID);
+
   args = msg.split(' ').slice(1);
 
   if (!args[0]) {
