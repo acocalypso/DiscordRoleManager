@@ -98,8 +98,6 @@ You may want to use pm2 or systemd to run it as a service
 
 DiscordRoleManager is now also available as a docker image.
 
-on command line please authenticate with docker login and your dockerhub credentials
-
 docker-compose pull
 docker-compose up -d
 
