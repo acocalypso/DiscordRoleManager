@@ -1,4 +1,11 @@
 const bcrypt = require('bcrypt');
+const { Console } = require('console');
+const fs = require('fs');
+
+const myLogger = new Console({
+	stdout: fs.createWriteStream("./logs/info.log"),
+	stderr: fs.createWriteStream("./logs/error.log"),
+});
 
 function GetTimestamp() {
 	let now = new Date();
@@ -36,3 +43,4 @@ async function encryptPassword(password) {
 exports.encryptPassword = encryptPassword;
 exports.GetTimestamp = GetTimestamp;
 exports.formatTimeString = formatTimeString;
+exports.myLogger = myLogger;

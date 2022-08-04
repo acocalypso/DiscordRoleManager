@@ -14,7 +14,6 @@ const sqlConnectionDiscord = require('./module/database/database_discord');
 const helper = require('./module/helper');
 const routine = require('./module/routine');
 const discordcommands = require('./module/discordcommands');
-const log = require('log-to-file');
 
 if (config.webinterface.disabled === "no") {
 	web.website();
@@ -31,7 +30,7 @@ var i18n = new i18n_module(i18nconfig.lang, i18nconfig.langFile);
 bot.login(config.token);
 
 bot.on('ready', () => {
-	log('Bot started', 'info.log');
+	helper.myLogger.log('Bot started');
 	console.log(i18n.__(`Ready`));
 	sqlConnectionDiscord.InitDB();
 });
@@ -116,7 +115,7 @@ bot.on('guildMemberRemove', async member => {
 			}
 		})
 		.catch(err => {
-			console.error(helper.GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove: (${err})`);
+			helper.myLogger.error(helper.GetTimestamp() + `[InitDB] Failed to execute query in guildMemberRemove: (${err})`);
 			return;
 		});
 });
@@ -124,8 +123,7 @@ bot.on('guildMemberRemove', async member => {
 	function RestartBot(type) {
 		if (type == 'manual') { process.exit(1); }
 		else {
-			log(i18n.__("Unexpected error, bot stopping.", 'error.log'));
-			console.error(helper.GetTimestamp() + "Unexpected error, bot stopping.");
+			helper.myLogger.error("Unexpected error, bot stopping.");
 			process.exit(1);
 		}
 		return;
@@ -135,39 +133,35 @@ bot.on('guildMemberRemove', async member => {
 if (!config.debug == "yes") {
 	bot.on('error', function (err) {
 		if (typeof err == 'object') {
-			log('Uncaught error: ' + err, 'error.log');
-			console.error(helper.GetTimestamp() + 'Uncaught error: ' + err);
+			helper.myLogger.error('Uncaught error: ' + err, 'error.log');
 		}
 		RestartBot();
 		return;
 	});
 
 	process.on('unhandledRejection', (reason, p) => {
-		log('Unhandled Rejection at Promise: ', p, 'error.log');
-		console.error(helper.GetTimestamp() + 'Unhandled Rejection at Promise: ', p);
+		helper.myLogger.error('Unhandled Rejection at Promise: %s', p);
 	});
 
 	process.on('uncaughtException', err => {
 		if (err.code === "PROTOCOL_CONNECTION_LOST" || err.code === "ECONNRESET") {
-			log("Lost connection to the DB server. Waiting for activity before reconnecting...", 'error.log');
-			console.log(helper.GetTimestamp() + "Lost connection to the DB server. Waiting for activity before reconnecting...");
+			helper.myLogger.error(helper.GetTimestamp() + "Lost connection to the DB server. Waiting for activity before reconnecting...");
+
 			return;
 		}
 		else {
-			log("Uncaught Exception thrown: " + err, 'error.log');
-			console.error(helper.GetTimestamp() + 'Uncaught Exception thrown: ' + err);
+			helper.myLogger.error(helper.GetTimestamp() + "Uncaught Exception thrown: " + err);
 			process.exit(1);
 		}
 	});
 
 	bot.on('disconnect', (error) => {
-		log("Disconnected from Discord: " + error, 'error.log');
-		console.log(helper.GetTimestamp() + "Disconnected from Discord. %s ", error);
+		helper.myLogger.error(helper.GetTimestamp() + "Disconnected from Discord: " + error);
 		bot.connect();
 	});
 
 	bot.on('shardError', error => {
-		console.error('A websocket connection encountered an error:', error);
+		helper.myLogger.error(helper.GetTimestamp() + "A websocket connection encountered an error: %s", error);
 	});
 
 }
