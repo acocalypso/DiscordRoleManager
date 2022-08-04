@@ -37,7 +37,7 @@ sqlConnectionDiscord.getConnection((err, connection) => {
 
 async function query(sql, args) {
   return new Promise((resolve, reject) => {
-    sqlConnectionDiscord.query(sql, args, (error, results, fields) => {
+    sqlConnectionDiscord.query(sql, args, (error, results) => {
       if (error) {
         if (error.code === 'PROTOCOL_CONNECTION_LOST' || error.code === 'PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR') {
           helper.myLogger.log(helper.GetTimestamp() + 'Reconnecting to DB server...');
