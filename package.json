@@ -11,6 +11,7 @@
   "author": "AcoVanConis",
   "license": "ISC",
   "dependencies": {
+    "@mollie/api-client": "^3.6.0",
     "bcrypt": "^5.0.1",
     "better-sqlite3": "^7.4.3",
     "body-parser": "^1.19.0",

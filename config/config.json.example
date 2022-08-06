@@ -32,6 +32,13 @@
     "mysql_db": "rolemanager", // mysql database for rolemanager
     "mysql_user": "dummy", // mysql username
     "mysql_pass": "dummy" // mysql password
+  },
+"autopayment": {
+    "enabled": "no",
+    "provider": "mollie",
+    "apiToken": "",
+    "webhookUrl": "https://webshop.example.org/webhook",
+    "redirectUrl": "https://webshop.example.org/order"
   }
 }
 
