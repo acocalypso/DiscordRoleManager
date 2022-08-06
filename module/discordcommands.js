@@ -545,8 +545,8 @@ async function getMember(bot, userID, guildID) {
           // If it still doesn't exist, return an error
           if (!member) {
             helper.myLogger.error(helper.GetTimestamp() + 'Failed to find a user for ID: ' + member.id + '. They may have left the server.');
-            bot.channels.cache.get(result[0].mainChannelID).send('**:x: Could not find a user for ID: ' +
-            member.id + ' <@' + member.id + '>. They may have left the server.**')
+            bot.channels.cache.get(result[0].mainChannelID).send('**:x: Could not find a user for ID: '
+            + member.id + ' <@' + member.id + '>. They may have left the server.**')
               .catch((err) => { helper.myLogger.error(helper.GetTimestamp() + err); });
             member = { guild: { id: guildID }, id: member.id };
             await guildMemberRemove(bot, member, guildID);
