@@ -39,7 +39,8 @@
     "provider": "mollie",
     "apiToken": "",
     "webhookUrl": "https://webshop.example.org/webhook",
-    "redirectUrl": "https://webshop.example.org/order"
+    "redirectUrl": "https://webshop.example.org/order",
+    "shopUrl": "https://webshop.example.org/"
   }
 }
 
