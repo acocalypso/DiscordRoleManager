@@ -1,6 +1,10 @@
 const bcrypt = require('bcrypt');
+const { createMollieClient } = require('@mollie/api-client');
 const sqlConnectionDiscord = require('../../module/database/database_discord');
 const helper = require('../../module/helper');
+const config = require('../../config/config.json');
+
+const mollieClient = createMollieClient({ apiKey: config.autopayment.apiToken });
 
 exports.view = (req, res) => {
   const sess = req.session;
@@ -138,4 +142,40 @@ exports.auth = (req, res) => {
         }
       });
   }
+};
+
+exports.pay = (req, res) => {
+  const orderId = new Date().getTime();
+  mollieClient.payments.create({
+    amount: { value: '10.00', currency: 'EUR' },
+    description: 'New payment',
+    redirectUrl: `${config.autopayment.redirectUrl}?orderId=${orderId}`,
+    webhookUrl: `${config.autopayment.webhookUrl}?orderId=${orderId}`,
+    metadata: { orderId },
+  }).then((payment) => {
+    // Redirect the consumer to complete the payment using `payment.getPaymentUrl()`.
+    res.redirect(payment.getCheckoutUrl());
+  }).catch((error) => {
+    // Do some proper error handling.
+    res.send(error);
+  });
+};
+
+exports.webhook = (req, res) => {
+  mollieClient.payments
+    .get(req.body.id)
+    .then((payment) => {
+      if (payment.isPaid()) {
+        // Hooray, you've received a payment! You can start shipping to the consumer.
+        // TODO: save webhook response to DB
+        // sent Mail with verification id
+      } else if (!payment.isOpen()) {
+        // The payment isn't paid and has expired. We can assume it was aborted.
+      }
+      res.send(payment.status);
+    })
+    .catch((error) => {
+      // Do some proper error handling.
+      res.send(error);
+    });
 };
