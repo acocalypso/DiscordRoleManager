@@ -1,13 +1,10 @@
-FROM node:14
+FROM node:16-alpine
 
-# Create the bot's directory
-RUN mkdir -p /usr/src/bot
-WORKDIR /usr/src/bot
-
-COPY package.json /usr/src/bot
+#define WORKDIR
+WORKDIR /usr/src/app
+ADD . ./
 RUN npm install
-
-COPY . /usr/src/bot
-
+# Expose ports for bot and webinterface
+EXPOSE 9000 40444
 # Start the bot.
 CMD ["node", "start.js"]

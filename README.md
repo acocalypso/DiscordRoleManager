@@ -9,7 +9,7 @@
 	- Check the boxes for the needed permissions
 	- Minimum requirements: manage roles and send messages
 	- Manage roles, it will only be able to manage roles that are below his role/permissions
-	- Enable PRESENCE INTENT and SERVER MEMBERS INTENT
+	- Enable PRESENCE INTENT, SERVER MEMBERS INTENT and MESSAGE CONTENT INTENT
 	- Use the URL that page generates and go to it, and you will be asked to log into your discord. You will need Admin access in order to get the bot to join that server.
 - Rename config.json.example to config.json
 - Edit config.json and fill out the required infos.
@@ -94,6 +94,13 @@ node start.js
 
 You may want to use pm2 or systemd to run it as a service
 
+## Docker
+
+DiscordRoleManager is now also available as a docker image.
+
+docker-compose pull
+docker-compose up -d
+
 ## Usage example
 
 ```
@@ -105,10 +112,10 @@ User commands:
 
 Admin / Mod commands:
 
-(prefix)temprole @mention <DAYS> <ROLE-NAME> » to assign a temporary roles
-(prefix)temprole add @mention <DAYS> <ROLE-NAME> » to add more time to a temporary role assignment
-(prefix)temprole remove @mention <ROLE-NAME> » to remove a temporary role assignment
-(prefix)temprole check @mention <ROLE-NAME> » to check the time left on a temporary role assignment
+(prefix)temprole @mention <DAYS> @rolename » to assign a temporary roles
+(prefix)temprole add @mention <DAYS> @rolename » to add more time to a temporary role assignment
+(prefix)temprole remove @mention @rolename » to remove a temporary role assignment
+(prefix)temprole check @mention @rolename » to check the time left on a temporary role assignment
 
 Help commands:
 
@@ -118,7 +125,7 @@ Help commands:
 
 ## Grafana 8.x Support
 
-![alt text](https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/backend/grafana_donators.PNG)
+![alt text](https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/master/grafana_donators.PNG)
 
 ## Contribution:
 
