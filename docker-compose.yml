@@ -3,7 +3,7 @@ services:
   discordrolebot:
    #build:
    #   context: ./
-    image: ghcr.io/acocalypso/acocalypso/DiscordRoleManager:master
+    image: ghcr.io/acocalypso/DiscordRoleManager:master
     ports:
       - "9000:9000"
       - "40444:40444"
