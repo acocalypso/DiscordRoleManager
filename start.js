@@ -64,11 +64,11 @@ bot.on('messageCreate', async (message) => {
 
   // REMOVE LETTER CASE (MAKE ALL LOWERCASE)
   let command = msg.toLowerCase();
-  command = command.split(' ')[0];
+  command = command.split(/\s+/)[0];
   command = command.slice(config.cmdPrefix.length);
 
   // GET ARGUMENTS
-  const args = msg.split(' ').slice(1);
+  const args = msg.split(/\s+/).slice(1);
 
   if (command.startsWith('temprole') || command === 'tr' || command === 'trole') {
     discordcommands.temprole(message, command, args, bot);

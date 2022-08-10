@@ -40,7 +40,7 @@ async function temprole(message, command, args, bot) {
 
         // REMOVE LETTER CASE (MAKE ALL LOWERCASE)
         command = msg.toLowerCase();
-        command = command.split(' ')[0];
+        command = command.split(/\s+/)[0];
         command = command.slice(config.cmdPrefix.length);
 
         // GET ROLES FROM CONFIG
