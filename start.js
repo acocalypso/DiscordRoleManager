@@ -37,16 +37,15 @@ bot.on('ready', () => {
   sqlConnectionDiscord.InitDB();
 });
 
+const checkIntervall = config.checkIntervall * 60000;
+
 // ##########################################################################
 // ############################# SERVER LISTENER ############################
 // ##########################################################################
 // DATABASE TIMER FOR TEMPORARY ROLES
 setInterval(async () => {
   routine.housekeeping(bot);
-}, 3600000);
-// 86400000 = 1day
-// 3600000 = 1hr
-// 60000 = 1min
+}, checkIntervall);
 
 bot.on('messageCreate', async (message) => {
 // MAKE SURE ITS A COMMAND
