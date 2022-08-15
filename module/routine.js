@@ -122,7 +122,7 @@ async function housekeeping(bot) {
               });
             }
             // CHECK IF THERE ARE ONLY HAVE 5 DAYS LEFT
-            if (daysLeft < 432000000 && notify === '0' && !leftServer) {
+            if (daysLeft < 432000000 && notify === 0 && !leftServer) {
               const endDateVal = new Date();
               endDateVal.setTime(dbTime);
               const finalDate = await helper.formatTimeString(endDateVal);
