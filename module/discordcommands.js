@@ -18,7 +18,7 @@ const i18n = new i18n_module(i18nconfig.lang, i18nconfig.langFile);
 let adminRoleName = '';
 let modRoleName = '';
 
-async function temprole(message, command, args, bot) {
+async function temprole(message, command, args) {
   /// GET CHANNEL INFO
   const g = message.guild;
   const c = message.channel;
@@ -185,11 +185,10 @@ async function temprole(message, command, args, bot) {
 
                     const name = mentioned.username.replace(/[^a-zA-Z0-9]/g, '');
                     await sqlConnectionDiscord.query(`UPDATE temporary_roles SET endDate="${Math.round(finalDate / 1000)}", notified=0, username="${name}" WHERE userID="${mentioned.id}" AND temporaryRole="${daRole.name}" AND guild_id="${g.id}"`)
-                      .then(async (result) => {
+                      .then(async () => {
                         const endDateVal = new Date();
                         endDateVal.setTime(finalDate);
                         finalDate = await helper.formatTimeString(endDateVal);
-                        const dmFinalDate = finalDate;
                         helper.myLogger.log(helper.GetTimestamp() + i18n.__('[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given {{days}} days by: {{mUserUsername}} ({{mID}}) for the role: {{daRole}}', {
                           mentionedUsername: mentioned.username,
                           mentionedID: mentioned.id,
@@ -245,10 +244,10 @@ async function temprole(message, command, args, bot) {
                                + name + '\', 0 ,'
                                + g.id;
                     await sqlConnectionDiscord.query(`INSERT INTO temporary_roles VALUES(${values});`)
-                      .then(async (result) => {
+                      .then(async () => {
                         const theirRole = g.roles.cache.find((role) => role.name === daRole.name);
                         mentioned.roles.add(theirRole).catch((err) => { console.error(helper.GetTimestamp() + err); });
-                        helper.myLogger.error(helper.GetTimestamp() + i18n.__('[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given the {{daRole}} role by {{mUserUsername}} ({{mID}})', {
+                        helper.myLogger.info(helper.GetTimestamp() + i18n.__('[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given the {{daRole}} role by {{mUserUsername}} ({{mID}})', {
                           mentionedUsername: mentioned.user.username,
                           mentionedID: mentioned.id,
                           daRole: daRole.name,
@@ -297,7 +296,7 @@ async function temprole(message, command, args, bot) {
     });
 }
 
-async function help(message, command, bot) {
+async function help(message, command) {
   /// GET CHANNEL INFO
   const g = message.channel.guild;
   const c = message.channel;
@@ -362,7 +361,7 @@ async function help(message, command, bot) {
     });
 }
 
-async function paypal(message, bot) {
+async function paypal(message) {
   /// GET CHANNEL INFO
   const c = message.channel;
 
@@ -379,7 +378,7 @@ async function paypal(message, bot) {
   }
 }
 
-async function check(message, args, bot) {
+async function check(message, args) {
   const c = message.channel;
   const g = message.channel.guild;
   const m = message.member;
@@ -438,10 +437,9 @@ async function check(message, args, bot) {
   }
 }
 
-async function map(message, bot) {
+async function map(message) {
   /// GET CHANNEL INFO
   const c = message.channel;
-  const msg = message.content;
 
   if (config.mapMain.enabled === 'yes') {
     c.send(i18n.__('Our official webmap: {{configMapUrl}}', {
@@ -463,7 +461,7 @@ async function leftserver(bot, member, userID, guildID) {
             // Update all entries from the database
             if (rows[0]) {
               await sqlConnectionDiscord.query(`UPDATE temporary_roles SET leftServer = 1 WHERE userID="${userID}" AND guild_id="${guildID}"`)
-                .then(async (result) => {
+                .then(async () => {
                   const name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
                   helper.myLogger.error(helper.GetTimestamp() + i18n.__('[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) has left the server. All role assignments have been marked in the database.', {
                     name,
@@ -479,7 +477,7 @@ async function leftserver(bot, member, userID, guildID) {
             }
             if (rows[0]) {
               await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${userID}" AND guild_id="${guildID}"`)
-                .then(async (result) => {
+                .then(async () => {
                   const name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
                   helper.myLogger.error(helper.GetTimestamp() + i18n.__('[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) got removed from the database.', {
                     name,
@@ -514,12 +512,12 @@ async function guildMemberRemove(bot, member, guildID) {
       // Update all entries from the database
       if (rows[0]) {
         await sqlConnectionDiscord.query(`UPDATE temporary_roles SET leftServer = 1 WHERE userID="${member.id}" AND guild_id="${guild}"`)
-          .then(async (result) => {
+          .then(async () => {
             let name = 'Unknown';
             name = rows[0].username;
             helper.myLogger.error(helper.GetTimestamp() + '[ADMIN] [TEMPORARY-ROLE] "' + name + '" (' + member.id + ') has left the server. All temp role assignments have been marked in the database.');
             await sqlConnectionDiscord.query(`SELECT mainChannelID from registration WHERE guild_id="${guild}"`)
-              .then(async (result) => {
+              .then(async () => {
                 bot.channels.cache.get(rows[0].mainChannelID).send(':exclamation: ' + name + ' has left the server. All temp role assignments have been marked in the database.');
               })
               .catch((err) => {
@@ -582,7 +580,7 @@ async function register(message, bot, args) {
         // Update all entries from the database
         if (!rows[0]) {
           await sqlConnectionDiscord.query(`UPDATE registration SET modRoleName="${modRole}" WHERE guild_id=${guild_id};`)
-            .then(async (result) => {
+            .then(async () => {
               helper.myLogger.log(helper.GetTimestamp() + i18n.__('[ADMIN] [ROLE-REGISTRATION] Role {{modRole}} on {{guild_name}} added to database', {
                 guild_name,
                 modRole,
@@ -606,7 +604,7 @@ async function register(message, bot, args) {
         // Update all entries from the database
         if (!rows[0]) {
           await sqlConnectionDiscord.query(`UPDATE registration SET adminRoleName="${adminRole}" WHERE guild_id=${guild_id};`)
-            .then(async (result) => {
+            .then(async () => {
               helper.myLogger.log(helper.GetTimestamp() + i18n.__('[ADMIN] [ROLE-REGISTRATION] Role {{adminRole}} on {{guild_name}} added to database', {
                 guild_name,
                 adminRole,
@@ -631,7 +629,7 @@ async function register(message, bot, args) {
         // Update all entries from the database
         if (!rows[0]) {
           await sqlConnectionDiscord.query(`UPDATE registration SET mainChannelID = ${channelID} WHERE \`guild_id\`="${guild_id}"`)
-            .then(async (result) => {
+            .then(async () => {
               helper.myLogger.log(helper.GetTimestamp() + i18n.__('[ADMIN] [CHANNEL-REGISTRATION] Channel added to database'));
               c.send(i18n.__('🎉 Channel has been registered!', {
                 adminRole,
@@ -652,7 +650,7 @@ async function register(message, bot, args) {
                      + guild_name + '\'';
           helper.myLogger.log(values);
           await sqlConnectionDiscord.query(`INSERT INTO registration (\`guild_id\`, \`guild_name\`) VALUES(${values});`)
-            .then(async (result) => {
+            .then(async () => {
               helper.myLogger.log(helper.GetTimestamp() + i18n.__('[ADMIN] [SERVER-REGISTRATION] {{guild_name}} {{guild_id}} added to database', {
                 guild_name,
                 guild_id,
