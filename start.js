@@ -51,6 +51,7 @@ const checkIntervall = config.checkIntervall * 60000;
 setInterval(async () => {
   routine.housekeeping(bot);
 }, checkIntervall);
+
 if (config.specialmode.enabled === 'yes') {
   bot.on('guildMemberAdd', async (member) => {
     console.log('guildMemberAdd active!');

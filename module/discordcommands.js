@@ -133,6 +133,10 @@ async function temprole(message, command, args) {
 
                   const theirRole = g.roles.cache.find((daRole) => daRole.name.toLowerCase() === row[0].temporaryRole.toLowerCase());
                   mentioned.roles.remove(theirRole, 'Donation Expired').catch((err) => { helper.myLogger.error(err); });
+                  if (config.specialmode.enabled === 'yes') {
+                    const hideRole = config.specialmode.hideRole;
+                    mentioned.roles.add(hideRole).catch((err) => { console.error(helper.GetTimestamp() + err); });
+                  }
 
                   await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}" AND temporaryRole="${daRole.name}"`)
                     .then(async () => {
@@ -256,6 +260,10 @@ async function temprole(message, command, args) {
                     .then(async () => {
                       const theirRole = g.roles.cache.find((role) => role.name === daRole.name);
                       mentioned.roles.add(theirRole).catch((err) => { console.error(helper.GetTimestamp() + err); });
+                      if (config.specialmode.enabled === 'yes') {
+                        const hideRole = config.specialmode.hideRole;
+                        mentioned.roles.remove(hideRole).catch((err) => { console.error(helper.GetTimestamp() + err); });
+                      }
                       helper.myLogger.info(helper.GetTimestamp() + i18n.__('[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given the {{daRole}} role by {{mUserUsername}} ({{mID}})', {
                         mentionedUsername: mentioned.user.username,
                         mentionedID: mentioned.id,

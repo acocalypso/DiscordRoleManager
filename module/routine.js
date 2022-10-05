@@ -101,6 +101,10 @@ async function housekeeping(bot) {
                   configServerName: result[0].guild_name,
                   configPaypalUrl: config.paypal.url,
                 })).catch((err) => { console.log(err); }).catch((err) => { console.log(err); });
+                if (config.specialmode.enabled === 'yes') {
+                  const hideRole = config.specialmode.hideRole;
+                  member.roles.add(hideRole);
+                }
 
                 // REMOVE DATABASE ENTRY
                 await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${member.id}' AND temporaryRole='${rName.name}' AND guild_id="${member.guild.id}"`)
