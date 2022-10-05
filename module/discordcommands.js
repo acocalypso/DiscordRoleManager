@@ -294,10 +294,7 @@ async function temprole(message, command, args) {
               .catch((err) => {
                 helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 16: ' + err);
               });
-          } /* else {
-              c.send('Please mention a role').catch((err) => { helper.myLogger.error(helper.GetTimestamp() + err); });
-            } */
-          // }
+          }
         } else {
           c.send(i18n.__('you are **NOT** allowed to use this command!')).catch((err) => { helper.myLogger.error(helper.GetTimestamp() + err); });
         }
