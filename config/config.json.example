@@ -3,6 +3,7 @@
   "clientID": "", // bot client id
   "clientSecret": "", //bot client secret
   "ownerID": "", // Your discord id
+  "defaultDonatorRole": "1234567896548" // default donator role if you don't want to specify it in the command
   "language": "", // en, de, pt, nl, fr
   "cmdPrefix": "?", // choose your command prefix
   "checkIntervall": 60, // check every 60 min for expired or soon to expire users
@@ -36,8 +37,7 @@
   },
     "specialmode": {
     "enabled": "yes",
-    "hideRole": "1263456789", //define Role where users can't see channels
-    "defaultDonatorRole": "1234567896548" // default donator role if you don't want to specify it in the command
+    "hideRole": "1263456789" //define role which should be applied if user looses roles
   }
 }
 

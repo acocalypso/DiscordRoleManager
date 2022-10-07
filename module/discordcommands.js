@@ -17,7 +17,7 @@ const i18n = new i18n_module(i18nconfig.lang, i18nconfig.langFile);
 
 let adminRoleName = '';
 let modRoleName = '';
-const defaultDonatorRole = config.specialmode.defaultDonatorRole;
+const defaultDonatorRole = config.defaultDonatorRole;
 
 async function temprole(message, command, args) {
   /// GET CHANNEL INFO
@@ -59,10 +59,7 @@ async function temprole(message, command, args) {
             message.reply('syntax:\n `' + config.cmdPrefix + 'temprole @mention <DAYS> @<ROLE-NAME>`,\n or `' + config.cmdPrefix + 'temprole remove @mention @<ROLE-NAME>`\n or `' + config.cmdPrefix + 'temprole check @mention @<ROLE-NAME>`').catch((err) => { helper.myLogger.error(err); });
           } else if (!mentioned) {
             message.reply('please `@mention` a person you want me to give/remove `' + config.cmdPrefix + 'temprole` to...').catch((err) => { helper.myLogger.error(err); });
-          } /* else if (!args[2]) {
-            message.reply('incomplete data, please try: \n `' + config.cmdPrefix + 'temprole @mention <DAYS> <@ROLE-NAME>`,\n or `' + config.cmdPrefix + 'temprole remove @mention @<ROLE-NAME>`\n or `' + config.cmdPrefix + 'temprole check @mention @<ROLE-NAME>`').catch((err) => { helper.myLogger.error(err); });
-          } */
-          else {
+          } else {
             let days = 0;
             if (args[0] === 'add') {
               days = args[2];
@@ -79,14 +76,7 @@ async function temprole(message, command, args) {
               messageRoleID = defaultDonatorRole;
               daRole = message.member.guild.roles.cache.get(messageRoleID);
             }
-            /* if (config.specialmode.enabled === 'no') {
-              if (messageRoleID && typeof messageRoleID !== 'undefined' && messageRoleID !== 'null') {
-                roleID = message.mentions.roles.first().id;
-                daRole = message.member.guild.roles.cache.get(roleID);
-              }
-            } else {
-              c.send('Please mention a role').catch((err) => { helper.myLogger.error(helper.GetTimestamp() + err); });
-            } */
+
             // CHECK DATABASE FOR ROLES
             if (args[0] === 'check') {
               await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
