@@ -53,7 +53,7 @@ async function query(sql, args) {
 
 async function InitDB() {
   // Create MySQL tabels
-  const currVersion = 9;
+  const currVersion = 10;
   let dbVersion = 0;
   await query(`CREATE TABLE IF NOT EXISTS metadata (
                         \`key\` VARCHAR(50) PRIMARY KEY NOT NULL,
@@ -288,6 +288,21 @@ async function InitDB() {
                     process.exit(-1);
                   });
                 console.log(helper.GetTimestamp() + '[InitDB] Migration #9 complete.');
+              } else if (dbVersion === 9) {
+                console.log(helper.GetTimestamp() + '[InitDB] MIGRATION IS ABOUT TO START IN 30 SECONDS, PLEASE MAKE SURE YOU HAVE A BACKUP!!!');
+                await wait(30 * 1000);
+
+                await query('ALTER TABLE registration ADD COLUMN adminChannelID bigint(50);')
+                  .catch((err) => {
+                    console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}b: (${err})`);
+                    process.exit(-1);
+                  });
+                await query(`INSERT INTO metadata (\`key\`, \`value\`) VALUES("DB_VERSION", ${dbVersion + 1}) ON DUPLICATE KEY UPDATE \`value\` = ${dbVersion + 1};`)
+                  .catch((err) => {
+                    console.error(helper.GetTimestamp() + `[InitDB] Failed to execute migration query ${dbVersion}a: (${err})`);
+                    process.exit(-1);
+                  });
+                console.log(helper.GetTimestamp() + '[InitDB] Migration #10 complete.');
               }
             }
             console.log(helper.GetTimestamp() + '[InitDB] Migration process done.');

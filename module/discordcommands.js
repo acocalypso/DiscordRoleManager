@@ -580,7 +580,7 @@ async function getMember(bot, userID, guildID) {
   });
 }
 
-async function register(message, bot, args) {
+async function register(message, args) {
   const c = message.channel;
   const guild_id = message.guild.id;
   const guild_name = message.guild.name;
@@ -655,10 +655,31 @@ async function register(message, bot, args) {
       });
   }
 
-  if (!args[0]) {
+  if (args[0] === 'adminchannel') {
+    const channelID = message.mentions.channels.first().id;
+    console.log('inside adminchannel');
+    await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${guild_id}" AND mainChannelID="${channelID}"`)
+      .then(async (rows) => {
+        // Update all entries from the database
+        if (!rows[0]) {
+          await sqlConnectionDiscord.query(`UPDATE registration SET adminChannelID = ${channelID} WHERE \`guild_id\`="${guild_id}"`)
+            .then(async () => {
+              helper.myLogger.log(helper.GetTimestamp() + i18n.__('[ADMIN] [CHANNEL-REGISTRATION] Channel added to database'));
+              c.send(i18n.__('🎉 Admin Channel has been registered!', {
+                adminRole,
+              }));
+            });
+        } else {
+          c.send(i18n.__('🎉 Admin Channel has already been registered!'));
+        }
+      });
+  }
+
+  if (!args[0] || args === undefined || args.length === 0) {
     await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${guild_id}"`)
       .then(async (rows) => {
         // Update all entries from the database
+        console.log('no_args');
         if (!rows[0]) {
           const values = guild_id + ',\''
                      + guild_name + '\'';
