@@ -46,7 +46,6 @@ After that please register the Admin and Moderator Role with
   "ownerID": "", // Your discord id
   "language": "", // en, de, pt, nl
   "cmdPrefix": "?", // choose your command prefix
-  "checkIntervall": 60, // check every 60 min for expired or soon to expire users
   "migrateSQLITE": {
     "migrate": true, // do you want to migrate your user from sqlite?
     "path": "" // path to your sqlite file
@@ -107,7 +106,7 @@ docker-compose up -d
 ```
 User commands:
 
-(prefix)check @rolename » to check the time left on your subscription
+(prefix)check <ROLE-NAME> » to check the time left on your subscription
 (prefix)map » a link to our web map
 (prefix)subscribe or (prefix)paypal » for a link to your PayPal account
 

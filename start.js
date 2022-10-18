@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Partials } = require('discord.js');
+const { Client, GatewayIntentBits } = require('discord.js');
 
 const bot = new Client({
   intents: [
@@ -7,9 +7,6 @@ const bot = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.DirectMessages,
     GatewayIntentBits.MessageContent,
-  ],
-  partials: [
-    Partials.Channel,
   ],
 });
 // init internationalization / localization class
@@ -40,15 +37,16 @@ bot.on('ready', () => {
   sqlConnectionDiscord.InitDB();
 });
 
-const checkIntervall = config.checkIntervall * 60000;
-
 // ##########################################################################
 // ############################# SERVER LISTENER ############################
 // ##########################################################################
 // DATABASE TIMER FOR TEMPORARY ROLES
 setInterval(async () => {
   routine.housekeeping(bot);
-}, checkIntervall);
+}, 3600000);
+// 86400000 = 1day
+// 3600000 = 1hr
+// 60000 = 1min
 
 bot.on('messageCreate', async (message) => {
 // MAKE SURE ITS A COMMAND
@@ -67,35 +65,35 @@ bot.on('messageCreate', async (message) => {
 
   // REMOVE LETTER CASE (MAKE ALL LOWERCASE)
   let command = msg.toLowerCase();
-  command = command.split(/\s+/)[0];
+  command = command.split(' ')[0];
   command = command.slice(config.cmdPrefix.length);
 
   // GET ARGUMENTS
-  const args = msg.split(/\s+/).slice(1);
+  const args = msg.split(' ').slice(1);
 
   if (command.startsWith('temprole') || command === 'tr' || command === 'trole') {
-    discordcommands.temprole(message, command, args);
+    discordcommands.temprole(message, command, args, bot);
   }
 
   if (command === 'paypal' || command === 'subscribe') {
-    discordcommands.paypal(message);
+    discordcommands.paypal(message, bot);
   }
 
   if (command === 'command' || command === 'help') {
-    discordcommands.help(message, command);
+    discordcommands.help(message, command, bot);
   }
 
   // ############################## CHECK ##############################
   if (command === 'check') {
-    discordcommands.check(message, args);
+    discordcommands.check(message, args, bot);
   }
   // ######################### MAP ###################################
   if (command === 'map') {
-    discordcommands.map(message);
+    discordcommands.map(message, bot);
   }
 
   if (command === 'register') {
-    discordcommands.register(message, args);
+    discordcommands.register(message, bot, args);
   }
 });
 
@@ -114,21 +112,36 @@ bot.on('guildMemberRemove', async (member) => {
     });
 });
 
-bot.on('error', (err) => {
-  if (typeof err === 'object') {
-    helper.myLogger.error('Uncaught error: ' + err, 'error.log');
+function RestartBot(type) {
+  if (type === 'manual') { process.exit(1); } else {
+    helper.myLogger.error('Unexpected error, bot stopping.');
+    process.exit(1);
   }
-});
+}
 
-process.on('unhandledRejection', (reason, p) => {
-  helper.myLogger.error('Unhandled Rejection at Promise: %s', p);
-});
+if (!config.debug === 'yes') {
+  bot.on('error', (err) => {
+    if (typeof err === 'object') {
+      helper.myLogger.error('Uncaught error: ' + err, 'error.log');
+    }
+    RestartBot();
+  });
 
-process.on('unhandledRejection', (error) => {
-  helper.myLogger.error('Unhandled promise rejection:', error);
-});
+  process.on('unhandledRejection', (reason, p) => {
+    helper.myLogger.error('Unhandled Rejection at Promise: %s', p);
+  });
 
-bot.on('disconnect', (error) => {
-  helper.myLogger.error(helper.GetTimestamp() + 'Disconnected from Discord: ' + error);
-  bot.connect();
-});
+  process.on('uncaughtException', (err) => {
+    if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') {
+      helper.myLogger.error(helper.GetTimestamp() + 'Lost connection to the DB server. Waiting for activity before reconnecting...');
+    } else {
+      helper.myLogger.error(helper.GetTimestamp() + 'Uncaught Exception thrown: ' + err);
+      process.exit(1);
+    }
+  });
+
+  bot.on('disconnect', (error) => {
+    helper.myLogger.error(helper.GetTimestamp() + 'Disconnected from Discord: ' + error);
+    bot.connect();
+  });
+}
