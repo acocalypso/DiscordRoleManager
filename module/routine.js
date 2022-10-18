@@ -122,7 +122,7 @@ async function housekeeping(bot) {
               });
             }
             // CHECK IF THERE ARE ONLY HAVE 5 DAYS LEFT
-            if (daysLeft < 432000000 && notify === '0' && !leftServer) {
+            if (daysLeft < 432000000 && notify === 0 && !leftServer) {
               const endDateVal = new Date();
               endDateVal.setTime(dbTime);
               const finalDate = await helper.formatTimeString(endDateVal);
@@ -154,8 +154,9 @@ async function housekeeping(bot) {
                 });
               }
               // NOTIFY THE ADMINS OF THE PENDING EXPIRY
-              bot.channels.cache.get(result[0].mainChannelID).send(i18n.__('⚠ {{memberUsername}} will lose their role of: **{{rNameName}}** in less than 5 days on {{finalDate}}.', {
+              bot.channels.cache.get(result[0].mainChannelID).send(i18n.__('⚠ {{memberUsername}} - {{memberUserTag}} will lose their role of: **{{rNameName}}** in less than 5 days on {{finalDate}}.', {
                 memberUsername: member.user.username,
+                memberUserTag: member.user.tag,
                 rNameName: rName.name,
                 finalDate,
               })).catch((err) => { helper.myLogger.error(helper.GetTimestamp() + err); });

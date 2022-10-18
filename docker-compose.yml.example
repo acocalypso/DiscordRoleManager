@@ -3,7 +3,7 @@ services:
   discordrolebot:
    #build:
    #   context: ./
-    image: ghcr.io/acocalypso/acocalypso/DiscordRoleManager:master
+    image: ghcr.io/acocalypso/discordrolemanager:master
     ports:
       - "9000:9000"
       - "40444:40444"
@@ -11,5 +11,7 @@ services:
       - ./config/:/usr/src/app/config/
       - ./locale/:/usr/src/app/locale/
       - ./logs/:/usr/src/app/logs/
+    security_opt:
+      - no-new-privileges:true
     #if you host your db locally use network_mode
     #network_mode: "host"
