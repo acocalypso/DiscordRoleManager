@@ -31,7 +31,6 @@ async function temprole(message, command, args) {
       if (rows[0]) {
         adminRoleName = rows[0].adminRoleName;
         modRoleName = rows[0].modRoleName;
-        // const mainChannelID = rows[0].mainChannelID;
 
         // GET TAGGED USER
         let mentioned = '';
