@@ -3,9 +3,8 @@
   "clientID": "", // bot client id
   "clientSecret": "", //bot client secret
   "ownerID": "", // Your discord id
-  "language": "", // en, de, pt, nl, fr
+  "language": "", // en, de, pt, nl
   "cmdPrefix": "?", // choose your command prefix
-  "checkIntervall": 60, // check every 60 min for expired or soon to expire users
   "migrateSQLITE": {
     "migrate": true, // do you want to migrate your user from sqlite?
     "path": "" // path to your sqlite file

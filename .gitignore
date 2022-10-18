@@ -6,4 +6,3 @@ package-lock.json
 *.sqlite
 .env
 *.log
-docker-compose.yml
