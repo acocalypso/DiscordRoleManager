@@ -1,4 +1,6 @@
+
 const { Client, GatewayIntentBits, Partials } = require('discord.js');
+
 
 const bot = new Client({
   intents: [
@@ -49,6 +51,14 @@ const checkIntervall = config.checkIntervall * 60000;
 setInterval(async () => {
   routine.housekeeping(bot);
 }, checkIntervall);
+
+if (config.specialmode.enabled === 'yes') {
+  bot.on('guildMemberAdd', async (member) => {
+    console.log('guildMemberAdd active!');
+    const defaultRole = config.specialmode.hideRole;
+    member.roles.add(defaultRole).then(helper.myLogger.log('Hide Role added: ' + member.id));
+  });
+}
 
 bot.on('messageCreate', async (message) => {
 // MAKE SURE ITS A COMMAND
