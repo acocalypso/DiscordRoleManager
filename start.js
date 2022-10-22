@@ -50,6 +50,14 @@ setInterval(async () => {
   routine.housekeeping(bot);
 }, checkIntervall);
 
+if (config.specialmode.enabled === 'yes') {
+  bot.on('guildMemberAdd', async (member) => {
+    console.log('guildMemberAdd active!');
+    const defaultRole = config.specialmode.hideRole;
+    member.roles.add(defaultRole).then(helper.myLogger.log('Hide Role added: ' + member.id));
+  });
+}
+
 bot.on('messageCreate', async (message) => {
 // MAKE SURE ITS A COMMAND
   if (!message.content.startsWith(config.cmdPrefix)) {

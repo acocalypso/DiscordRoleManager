@@ -1,21 +1,21 @@
 # DiscordRoleManager
-> Manage Discord Roles the lazzyyy way
 
+> Manage Discord Roles the lazzyyy way
 
 ## Installation
 
 - Create a new discord Bot -> [GUIDE](https://discordpy.readthedocs.io/en/latest/discord.html)
 - Invite the Bot to your Discord Server
-	- Check the boxes for the needed permissions
-	- Minimum requirements: manage roles and send messages
-	- Manage roles, it will only be able to manage roles that are below his role/permissions
-	- Enable PRESENCE INTENT, SERVER MEMBERS INTENT and MESSAGE CONTENT INTENT
-	- Use the URL that page generates and go to it, and you will be asked to log into your discord. You will need Admin access in order to get the bot to join that server.
+  - Check the boxes for the needed permissions
+  - Minimum requirements: manage roles and send messages
+  - Manage roles, it will only be able to manage roles that are below his role/permissions
+  - Enable PRESENCE INTENT, SERVER MEMBERS INTENT and MESSAGE CONTENT INTENT
+  - Use the URL that page generates and go to it, and you will be asked to log into your discord. You will need Admin access in order to get the bot to join that server.
 - Rename config.json.example to config.json
 - Edit config.json and fill out the required infos.
 - Create a Mysql Database
-- If you used DiscordRoleManager before, backup your dataBase.sqlite 
-- update to latest master 
+- If you used DiscordRoleManager before, backup your dataBase.sqlite
+- update to latest master
 - copy your dataBase.sqlite file back. The Bot will migrate all users from sqlite to mysql.
 
 Even if you have this bot only on a single discord server you have to set the guild ID and register the bot.
@@ -25,15 +25,22 @@ As a Workaround to use the multiguild feature and not to crash the bot please ma
 
 ```update temporary_roles set guild_id = YOURGUILDID where guild_id is null;```
 
-For the first run please register the bot with
+For the first run please register the bot this will save guildID and guildName to DB
+
 ```
 (prefix)register
 ```
-After that please register the Admin and Moderator Role with
+
+After that please register the Admin and Moderator Role and channel + adminchannel
+
+channel: In this channel the bot accepts commands
+adminchannel: The bot will send information about expired or soon to expire users as well as additional information if issues occurs.
+
 ```
 (prefix)register adminrole @AdminRole
 (prefix)register modrole @ModRole
 (prefix)register channel #mainchannelforthebotinformation
+(prefix)register adminchannel #adminchannel
 ```
 
 ```sh
@@ -44,7 +51,8 @@ After that please register the Admin and Moderator Role with
   "clientID": "", // bot client id
   "clientSecret": "", //bot client secret
   "ownerID": "", // Your discord id
-  "language": "", // en, de, pt, nl
+  "defaultDonatorRole": "1234567896548" // default donator role if you don't want to specify it in the command
+  "language": "", // en, de, pt, nl, fr
   "cmdPrefix": "?", // choose your command prefix
   "checkIntervall": 60, // check every 60 min for expired or soon to expire users
   "migrateSQLITE": {
@@ -74,12 +82,16 @@ After that please register the Admin and Moderator Role with
     "mysql_db": "rolemanager", // mysql database for rolemanager
     "mysql_user": "dummy", // mysql username
     "mysql_pass": "dummy" // mysql password
+  },
+    "specialmode": {
+    "enabled": "yes",
+    "hideRole": "1263456789" //define role which should be applied if user looses role
   }
 }
 
-
 ```
-Install node dependecies
+
+## Install node dependecies
 
 Install NodeJS version 16.x!
 
@@ -128,7 +140,7 @@ Help commands:
 
 ![alt text](https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/master/grafana_donators.PNG)
 
-## Contribution:
+## Contribution
 
 You can find the local.json file in locale/local.json
 
@@ -141,7 +153,8 @@ if you want to add another langue you just need to add a new entry in the json f
   },
 ```
 
-## Additional IMPORTANT Infos:
-This is a port from https://github.com/Kneckter/DiscordRoleBot
+## Additional IMPORTANT Infos
+
+This is a port from <https://github.com/Kneckter/DiscordRoleBot>
 
 Many thanks to him for his original version.
