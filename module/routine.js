@@ -76,7 +76,7 @@ async function housekeeping(bot) {
                     helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 5: ' + err);
                     process.exit(-1);
                   });
-                bot.channels.cache.get(result[0].mainChannelID).send(i18n.__('⚠ {{rowUsername}} has **left** the server and **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭', {
+                bot.channels.cache.get(result[0].adminChannelID).send(i18n.__('⚠ {{rowUsername}} has **left** the server and **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭', {
                   rowUsername: rows[rowNumber].username,
                   rNameName: rName.name,
                 })).catch((err) => {
@@ -91,7 +91,7 @@ async function housekeeping(bot) {
               }
               // REMOVE ROLE FROM MEMBER IN GUILD
               member.roles.remove(rName).then(async (member) => {
-                bot.channels.cache.get(result[0].mainChannelID).send(i18n.__('⚠ {{memberUsername}} has **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭', {
+                bot.channels.cache.get(result[0].adminChannelID).send(i18n.__('⚠ {{memberUsername}} has **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭', {
                   memberUsername: member.user.username,
                   rNameName: rName.name,
                 })).catch((err) => { console.error(helper.GetTimestamp() + err); });
@@ -101,6 +101,10 @@ async function housekeeping(bot) {
                   configServerName: result[0].guild_name,
                   configPaypalUrl: config.paypal.url,
                 })).catch((err) => { console.log(err); }).catch((err) => { console.log(err); });
+                if (config.specialmode.enabled === 'yes') {
+                  const hideRole = config.specialmode.hideRole;
+                  member.roles.add(hideRole);
+                }
 
                 // REMOVE DATABASE ENTRY
                 await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${member.id}' AND temporaryRole='${rName.name}' AND guild_id="${member.guild.id}"`)
@@ -115,7 +119,7 @@ async function housekeeping(bot) {
                 }));
               }).catch((error) => {
                 helper.myLogger.error(helper.GetTimestamp() + error.message);
-                bot.channels.cache.get(result[0].mainChannelID).send(i18n.__('**⚠ Could not remove the {{rNameName}} role from {{memberUsername}}!**', {
+                bot.channels.cache.get(result[0].adminChannelID).send(i18n.__('**⚠ Could not remove the {{rNameName}} role from {{memberUsername}}!**', {
                   rNameName: rName.name,
                   memberUsername: member.user.username,
                 })).catch((err) => { console.error(helper.GetTimestamp() + err); });
@@ -154,7 +158,7 @@ async function housekeeping(bot) {
                 });
               }
               // NOTIFY THE ADMINS OF THE PENDING EXPIRY
-              bot.channels.cache.get(result[0].mainChannelID).send(i18n.__('⚠ {{memberUsername}} - {{memberUserTag}} will lose their role of: **{{rNameName}}** in less than 5 days on {{finalDate}}.', {
+              bot.channels.cache.get(result[0].adminChannelID).send(i18n.__('⚠ {{memberUsername}} - {{memberUserTag}} will lose their role of: **{{rNameName}}** in less than 5 days on {{finalDate}}.', {
                 memberUsername: member.user.username,
                 memberUserTag: member.user.tag,
                 rNameName: rName.name,

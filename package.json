@@ -22,6 +22,7 @@
     "fs": "0.0.1-security",
     "i18n-nodejs": "^3.0.0",
     "log-to-file": "^3.0.0",
+    "moment": "^2.29.4",
     "mysql": "^2.18.1",
     "node": "^18.7.0",
     "nodemon": "^2.0.19",

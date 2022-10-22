@@ -1,16 +1,20 @@
 const bcrypt = require('bcrypt');
 const { Console } = require('console');
 const fs = require('fs');
+const moment = require('moment');
+
+// const timeDate = moment(Date()).format('YYYYMMDDHHmmss');
+const momentnow = moment().format('YYYY-MM-DD-HHmmss');
+console.log(momentnow);
 
 function GetTimestamp() {
   const now = new Date();
-
   return '[' + now.toLocaleString() + ']';
 }
 
 const myLogger = new Console({
-  stdout: fs.createWriteStream('./logs/info.' + Date.now() + '.log'),
-  stderr: fs.createWriteStream('./logs/error.' + Date.now() + '.log'),
+  stdout: fs.createWriteStream('./logs/info.' + momentnow + '.log'),
+  stderr: fs.createWriteStream('./logs/error.' + momentnow + '.log'),
 });
 
 async function formatTimeString(date) {

@@ -1,4 +1,6 @@
-const { Client, GatewayIntentBits } = require('discord.js');
+const {
+  Client, GatewayIntentBits, Partials,
+} = require('discord.js');
 
 const bot = new Client({
   intents: [
@@ -7,6 +9,9 @@ const bot = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.DirectMessages,
     GatewayIntentBits.MessageContent,
+  ],
+  partials: [
+    Partials.Channel,
   ],
 });
 // init internationalization / localization class
@@ -47,6 +52,14 @@ setInterval(async () => {
   routine.housekeeping(bot);
 }, checkIntervall);
 
+if (config.specialmode.enabled === 'yes') {
+  bot.on('guildMemberAdd', async (member) => {
+    console.log('guildMemberAdd active!');
+    const defaultRole = config.specialmode.hideRole;
+    member.roles.add(defaultRole).then(helper.myLogger.log('Hide Role added: ' + member.id));
+  });
+}
+
 bot.on('messageCreate', async (message) => {
 // MAKE SURE ITS A COMMAND
   if (!message.content.startsWith(config.cmdPrefix)) {
@@ -71,28 +84,28 @@ bot.on('messageCreate', async (message) => {
   const args = msg.split(/\s+/).slice(1);
 
   if (command.startsWith('temprole') || command === 'tr' || command === 'trole') {
-    discordcommands.temprole(message, command, args, bot);
+    discordcommands.temprole(message, command, args);
   }
 
   if (command === 'paypal' || command === 'subscribe') {
-    discordcommands.paypal(message, bot);
+    discordcommands.paypal(message);
   }
 
   if (command === 'command' || command === 'help') {
-    discordcommands.help(message, command, bot);
+    discordcommands.help(message, command);
   }
 
   // ############################## CHECK ##############################
   if (command === 'check') {
-    discordcommands.check(message, args, bot);
+    discordcommands.check(message, args);
   }
   // ######################### MAP ###################################
   if (command === 'map') {
-    discordcommands.map(message, bot);
+    discordcommands.map(message);
   }
 
   if (command === 'register') {
-    discordcommands.register(message, bot, args);
+    discordcommands.register(message, args);
   }
 });
 
@@ -111,36 +124,21 @@ bot.on('guildMemberRemove', async (member) => {
     });
 });
 
-function RestartBot(type) {
-  if (type === 'manual') { process.exit(1); } else {
-    helper.myLogger.error('Unexpected error, bot stopping.');
-    process.exit(1);
+bot.on('error', (err) => {
+  if (typeof err === 'object') {
+    helper.myLogger.error('Uncaught error: ' + err, 'error.log');
   }
-}
+});
 
-if (!config.debug === 'yes') {
-  bot.on('error', (err) => {
-    if (typeof err === 'object') {
-      helper.myLogger.error('Uncaught error: ' + err, 'error.log');
-    }
-    RestartBot();
-  });
+process.on('unhandledRejection', (reason, p) => {
+  helper.myLogger.error('Unhandled Rejection at Promise: %s', p);
+});
 
-  process.on('unhandledRejection', (reason, p) => {
-    helper.myLogger.error('Unhandled Rejection at Promise: %s', p);
-  });
+process.on('unhandledRejection', (error) => {
+  helper.myLogger.error('Unhandled promise rejection:', error);
+});
 
-  process.on('uncaughtException', (err) => {
-    if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'ECONNRESET') {
-      helper.myLogger.error(helper.GetTimestamp() + 'Lost connection to the DB server. Waiting for activity before reconnecting...');
-    } else {
-      helper.myLogger.error(helper.GetTimestamp() + 'Uncaught Exception thrown: ' + err);
-      process.exit(1);
-    }
-  });
-
-  bot.on('disconnect', (error) => {
-    helper.myLogger.error(helper.GetTimestamp() + 'Disconnected from Discord: ' + error);
-    bot.connect();
-  });
-}
+bot.on('disconnect', (error) => {
+  helper.myLogger.error(helper.GetTimestamp() + 'Disconnected from Discord: ' + error);
+  bot.connect();
+});
