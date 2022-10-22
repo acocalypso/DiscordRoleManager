@@ -1,6 +1,4 @@
-
 const { Client, GatewayIntentBits, Partials } = require('discord.js');
-
 
 const bot = new Client({
   intents: [
