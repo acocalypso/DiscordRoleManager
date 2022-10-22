@@ -59,6 +59,8 @@ async function temprole(message, command, args) {
             message.reply('syntax:\n `' + config.cmdPrefix + 'temprole @mention <DAYS> @<ROLE-NAME>`,\n or `' + config.cmdPrefix + 'temprole remove @mention @<ROLE-NAME>`\n or `' + config.cmdPrefix + 'temprole check @mention @<ROLE-NAME>`').catch((err) => { helper.myLogger.error(err); });
           } else if (!mentioned) {
             message.reply('please `@mention` a person you want me to give/remove `' + config.cmdPrefix + 'temprole` to...').catch((err) => { helper.myLogger.error(err); });
+          } else if (!args[2]) {
+            message.reply('incomplete data, please try: \n `' + config.cmdPrefix + 'temprole @mention <DAYS> <@ROLE-NAME>`,\n or `' + config.cmdPrefix + 'temprole remove @mention @<ROLE-NAME>`\n or `' + config.cmdPrefix + 'temprole check @mention @<ROLE-NAME>`').catch((err) => { helper.myLogger.error(err); });
           } else {
             let days = 0;
             if (args[0] === 'add') {
@@ -83,8 +85,40 @@ async function temprole(message, command, args) {
                 .then(async (row) => {
                   if (!row[0]) {
                     c.send(i18n.__('⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}', {
+            const messageRoleID = message.mentions.roles.first();
+
+            if (messageRoleID && typeof messageRoleID !== 'undefined' && messageRoleID !== 'null') {
+              const roleID = message.mentions.roles.first().id;
+              const daRole = message.member.guild.roles.cache.get(roleID);
+
+              /* if (!daRole) {
+              message.reply(i18n.__("I couldn't find such role, please check the spelling and try again."));
+              return;
+            } */
+
+              // CHECK DATABASE FOR ROLES
+              if (args[0] === 'check') {
+                await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
+                  .then(async (row) => {
+                    if (!row[0]) {
+                      c.send(i18n.__('⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}', {
+                        mentionedUsername: mentioned.username,
+                        daRole: daRole.name,
+                      })).catch((err) => { helper.myLogger.error(err); });
+                      return;
+                    }
+                    const startDateVal = new Date();
+                    startDateVal.setTime(row[0].startDate * 1000);
+                    const startDateTime = await helper.formatTimeString(startDateVal);
+                    const endDateVal = new Date();
+                    endDateVal.setTime(row[0].endDate * 1000);
+                    const finalDate = await helper.formatTimeString(endDateVal);
+
+                    c.send(i18n.__('✅ {{mentionedUsername}} will lose the role: **{{rowTempRole}}** on: `{{finalDate}}`! They were added on: `{{startDateTime}}`', {
                       mentionedUsername: mentioned.username,
-                      daRole: daRole.name,
+                      rowTempRole: row[0].temporaryRole,
+                      finalDate,
+                      startDateTime,
                     })).catch((err) => { helper.myLogger.error(err); });
                     return;
                   }
@@ -127,41 +161,52 @@ async function temprole(message, command, args) {
                     const hideRole = config.specialmode.hideRole;
                     mentioned.roles.add(hideRole).catch((err) => { console.error(helper.GetTimestamp() + err); });
                   }
+                  }).catch((err) => {
+                    helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 9:' + err);
+                  });
+                return;
+                // eslint-disable-next-line brace-style
+              }
 
-                  await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}" AND temporaryRole="${daRole.name}"`)
-                    .then(async () => {
-                      helper.myLogger.log(helper.GetTimestamp() + i18n.__('[ADMIN] [TEMPORARY-ROLE] {{mUserUsername}} ({{mID}}) removed the access from {{mentionedUsername}} ({{mentionedID}}', {
-                        mUserUsername: m.user.username,
-                        mID: m.id,
+              // REMOVE MEMBER FROM DATABASE
+              else if (args[0] === 'remove') {
+                mentioned = message.mentions.members.first();
+                await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}" AND temporaryRole="${daRole.name}"`)
+                  .then(async (row) => {
+                    if (!row[0]) {
+                      c.send(i18n.__('⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}', {
                         mentionedUsername: mentioned.user.username,
-                        mentionedID: mentioned.id,
-                      }));
-                      c.send(i18n.__('⚠ {{mentionedUsername}} has **lost** their role of: **{{theirRoleName}}** and has been removed from the database', {
-                        mentionedUsername: mentioned.user.username,
-                        theirRoleName: theirRole.name,
+                        daRole: daRole.name,
                       })).catch((err) => { helper.myLogger.error(err); });
-                    })
-                    .catch((err) => {
-                      helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 11 :' + err);
-                    });
-                })
-                .catch((err) => {
-                  helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 10 :' + err);
-                });
-              return;
-            }
+                      return;
+                    }
 
-            // ADD TIME TO A USER
-            else if (args[0] === 'add') {
-              if (!Number(args[2])) {
-                message.reply(i18n.__('Error: second value has to be **X** number of days, IE:\n `{{configCMDPrefix}}{{command}} add @{{mentionedUsername}} 90 {{daRole}}`', {
-                  configCMDPrefix: config.cmdPrefix,
-                  command,
-                  mentionedUsername: mentioned.username,
-                  daRole: daRole.name,
-                })).catch((err) => { helper.myLogger.error(err); });
+                    const theirRole = g.roles.cache.find((daRole) => daRole.name.toLowerCase() === row[0].temporaryRole.toLowerCase());
+                    mentioned.roles.remove(theirRole, 'Donation Expired').catch((err) => { helper.myLogger.error(err); });
+
+                    await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}" AND temporaryRole="${daRole.name}"`)
+                      .then(async () => {
+                        helper.myLogger.log(helper.GetTimestamp() + i18n.__('[ADMIN] [TEMPORARY-ROLE] {{mUserUsername}} ({{mID}}) removed the access from {{mentionedUsername}} ({{mentionedID}}', {
+                          mUserUsername: m.user.username,
+                          mID: m.id,
+                          mentionedUsername: mentioned.user.username,
+                          mentionedID: mentioned.id,
+                        }));
+                        c.send(i18n.__('⚠ {{mentionedUsername}} has **lost** their role of: **{{theirRoleName}}** and has been removed from the database', {
+                          mentionedUsername: mentioned.user.username,
+                          theirRoleName: theirRole.name,
+                        })).catch((err) => { helper.myLogger.error(err); });
+                      })
+                      .catch((err) => {
+                        helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 11 :' + err);
+                      });
+                  })
+                  .catch((err) => {
+                    helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 10 :' + err);
+                  });
                 return;
               }
+
 
               if (args[1] && !mentioned) {
                 message.reply(i18n.__('please `@mention` a person you want me to add time to...')).catch((err) => { helper.myLogger.error(err); });
@@ -206,39 +251,94 @@ async function temprole(message, command, args) {
                         startDateTime,
                       }));
 
-                      mentioned.send(i18n.__('Hello {{mentionedUsername}}!\n\n🎉Your access has been extended🎉.\nIt is now valid till {{finalDate}}.\n\nThanks for your support', {
-                        mentionedUsername: mentioned.username,
-                        finalDate,
-                      })).catch((error) => {
-                        helper.myLogger.error(helper.GetTimestamp() + i18n.__('Failed to send a DM to user: {{mentionedID}} ' + error, {
-                          mentionedID: mentioned.id,
-                        }));
-                      }).catch((err) => { helper.myLogger.error(err); });
-                    })
-                    .catch((err) => {
-                      helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 14: ' + err);
-                    });
-                })
-                .catch((err) => {
-                  helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 13: ' + err);
-                });
-              return;
-            } else if (!Number(args[1])) {
-              message.reply('Error: second value has to be **X** number of days, IE:\n`!' + command + ' @' + mentioned.username + ' 90 ' + daRole + '`').catch((err) => { console.log(err); });
-            }
+              // ADD TIME TO A USER
+              else if (args[0] === 'add') {
+                if (!Number(args[2])) {
+                  message.reply(i18n.__('Error: second value has to be **X** number of days, IE:\n `{{configCMDPrefix}}{{command}} add @{{mentionedUsername}} 90 {{daRole}}`', {
+                    configCMDPrefix: config.cmdPrefix,
+                    command,
+                    mentionedUsername: mentioned.username,
+                    daRole: daRole.name,
+                  })).catch((err) => { helper.myLogger.error(err); });
+                  return;
+                }
 
-            // ADD MEMBER TO DATASE, AND ADD THE ROLE TO MEMBER
-            await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND temporaryRole="${daRole.name}" AND guild_id="${g.id}"`)
-              .then(async (row) => {
-                mentioned = message.mentions.members.first();
-                if (!row[0]) {
-                  const curDate = new Date().getTime();
-                  let finalDateDisplay = new Date();
-                  const finalDate = curDate + (Number(args[1]) * dateMultiplier);
-                  finalDateDisplay.setTime(finalDate);
-                  finalDateDisplay = await helper.formatTimeString(finalDateDisplay);
-                  const name = mentioned.user.username.replace(/[^a-zA-Z0-9]/g, '');
-                  const values = mentioned.user.id + ',\''
+                if (args[1] && !mentioned) {
+                  message.reply(i18n.__('please `@mention` a person you want me to add time to...')).catch((err) => { helper.myLogger.error(err); });
+                  return;
+                }
+                if (!args[2]) {
+                  message.reply(i18n.__('for how **many** days do you want {{mentionedUsername}} to have to have this role?', {
+                    mentionedUsername: mentioned.username,
+                  })).catch((err) => { helper.myLogger.error(err); });
+                  return;
+                }
+                await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
+                  .then(async (row) => {
+                    if (!row[0]) {
+                      message.reply(i18n.__('⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the database', {
+                        mentionedUsername: mentioned.username,
+                      })).catch((err) => { helper.myLogger.error(err); });
+                      return;
+                    }
+                    const startDateVal = new Date();
+                    startDateVal.setTime(row[0].startDate * 1000);
+                    const startDateTime = await helper.formatTimeString(startDateVal);
+                    let finalDate = Number(row[0].endDate * 1000) + Number(days * dateMultiplier);
+
+                    const name = mentioned.username.replace(/[^a-zA-Z0-9]/g, '');
+                    await sqlConnectionDiscord.query(`UPDATE temporary_roles SET endDate="${Math.round(finalDate / 1000)}", notified=0, username="${name}" WHERE userID="${mentioned.id}" AND temporaryRole="${daRole.name}" AND guild_id="${g.id}"`)
+                      .then(async () => {
+                        const endDateVal = new Date();
+                        endDateVal.setTime(finalDate);
+                        finalDate = await helper.formatTimeString(endDateVal);
+                        helper.myLogger.log(helper.GetTimestamp() + i18n.__('[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given {{days}} days by: {{mUserUsername}} ({{mID}}) for the role: {{daRole}}', {
+                          mentionedUsername: mentioned.username,
+                          mentionedID: mentioned.id,
+                          days,
+                          mUserUsername: m.user.username,
+                          mID: m.id,
+                          daRole: daRole.name,
+                        }));
+                        c.send(i18n.__('✅ {{mentionedUsername}} has had time added until: `{{finalDate}}`! They were added on: `{{startDateTime}}`', {
+                          mentionedUsername: mentioned.username,
+                          finalDate,
+                          startDateTime,
+                        }));
+
+                        mentioned.send(i18n.__('Hello {{mentionedUsername}}!\n\n🎉Your access has been extended🎉.\nIt is now valid till {{finalDate}}.\n\nThanks for your support', {
+                          mentionedUsername: mentioned.username,
+                          finalDate,
+                        })).catch((error) => {
+                          helper.myLogger.error(helper.GetTimestamp() + i18n.__('Failed to send a DM to user: {{mentionedID}} ' + error, {
+                            mentionedID: mentioned.id,
+                          }));
+                        }).catch((err) => { helper.myLogger.error(err); });
+                      })
+                      .catch((err) => {
+                        helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 14: ' + err);
+                      });
+                  })
+                  .catch((err) => {
+                    helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 13: ' + err);
+                  });
+                return;
+              } else if (!Number(args[1])) {
+                message.reply('Error: second value has to be **X** number of days, IE:\n`!' + command + ' @' + mentioned.username + ' 90 ' + daRole + '`').catch((err) => { console.log(err); });
+              }
+
+              // ADD MEMBER TO DATASE, AND ADD THE ROLE TO MEMBER
+              await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND temporaryRole="${daRole.name}" AND guild_id="${g.id}"`)
+                .then(async (row) => {
+                  mentioned = message.mentions.members.first();
+                  if (!row[0]) {
+                    const curDate = new Date().getTime();
+                    let finalDateDisplay = new Date();
+                    const finalDate = curDate + (Number(args[1]) * dateMultiplier);
+                    finalDateDisplay.setTime(finalDate);
+                    finalDateDisplay = await helper.formatTimeString(finalDateDisplay);
+                    const name = mentioned.user.username.replace(/[^a-zA-Z0-9]/g, '');
+                    const values = mentioned.user.id + ',\''
                                + daRole.name + '\','
                                + Math.round(curDate / 1000) + ','
                                + Math.round(finalDate / 1000) + ','
@@ -246,6 +346,7 @@ async function temprole(message, command, args) {
                                + ', 0 ,\''
                                + name + '\', 0 ,'
                                + g.id;
+
                   await sqlConnectionDiscord.query(`INSERT INTO temporary_roles VALUES(${values});`)
                     .then(async () => {
                       const theirRole = g.roles.cache.find((role) => role.name === daRole.name);
@@ -274,24 +375,52 @@ async function temprole(message, command, args) {
                         map: config.mapMain.url,
                       })).catch((error) => {
                         helper.myLogger.error(helper.GetTimestamp() + i18n.__('Failed to send a DM to user: {{mentionedID}} ' + error, {
+
+                    await sqlConnectionDiscord.query(`INSERT INTO temporary_roles VALUES(${values});`)
+                      .then(async () => {
+                        const theirRole = g.roles.cache.find((role) => role.name === daRole.name);
+                        mentioned.roles.add(theirRole).catch((err) => { console.error(helper.GetTimestamp() + err); });
+                        helper.myLogger.info(helper.GetTimestamp() + i18n.__('[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given the {{daRole}} role by {{mUserUsername}} ({{mID}})', {
+                          mentionedUsername: mentioned.user.username,
                           mentionedID: mentioned.id,
+                          daRole: daRole.name,
+                          mUserUsername: m.user.username,
+                          mID: m.id,
                         }));
-                      }).catch((err) => { helper.myLogger.error(err); });
-                    })
-                    .catch((err) => {
-                      helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 16: ' + err);
-                    });
-                } else {
-                  c.send(i18n.__('This user already has the role **{{daRole}}** try using `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` if you want to reset their role.', {
-                    daRole,
-                    configCMDPrefix: config.cmdPrefix,
-                    mentionedUsername: mentioned.user.username,
-                  }));
-                }
-              })
-              .catch((err) => {
-                helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 16: ' + err);
-              });
+                        helper.myLogger.info(helper.GetTimestamp() + 'User has been added to DB: %s %s', mentioned.user.username, daRole.name);
+                        c.send(i18n.__('🎉 {{mentionedUsername}} has been given a **temporary** role of: **{{daRole}}**, enjoy! They will lose this role on: `{{finalDateDisplay}}`', {
+                          mentionedUsername: mentioned.user.username,
+                          daRole: daRole.name,
+                          finalDateDisplay,
+                        }));
+
+                        mentioned.send(i18n.__('Hello {{mentionedUsername}}!\n\nYour access expires at {{finalDateDisplay}}.\n\nThanks for your support.\n\nLiveMap: {{map}}.', {
+                          mentionedUsername: mentioned.user.username,
+                          finalDateDisplay,
+                          map: config.mapMain.url,
+                        })).catch((error) => {
+                          helper.myLogger.error(helper.GetTimestamp() + i18n.__('Failed to send a DM to user: {{mentionedID}} ' + error, {
+                            mentionedID: mentioned.id,
+                          }));
+                        }).catch((err) => { helper.myLogger.error(err); });
+                      })
+                      .catch((err) => {
+                        helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 16: ' + err);
+                      });
+                  } else {
+                    c.send(i18n.__('This user already has the role **{{daRole}}** try using `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` if you want to reset their role.', {
+                      daRole,
+                      configCMDPrefix: config.cmdPrefix,
+                      mentionedUsername: mentioned.user.username,
+                    }));
+                  }
+                })
+                .catch((err) => {
+                  helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 16: ' + err);
+                });
+            } else {
+              c.send('Please mention a role').catch((err) => { helper.myLogger.error(helper.GetTimestamp() + err); });
+            }
           }
         } else {
           c.send(i18n.__('you are **NOT** allowed to use this command!')).catch((err) => { helper.myLogger.error(helper.GetTimestamp() + err); });

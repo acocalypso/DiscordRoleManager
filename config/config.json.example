@@ -38,6 +38,7 @@
     "specialmode": {
     "enabled": "yes",
     "hideRole": "1263456789" //define role which should be applied if user looses roles
+
   }
 }
 
