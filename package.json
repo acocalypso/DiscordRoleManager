@@ -1,6 +1,6 @@
 {
   "name": "discordrolebot",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "rolebot",
   "main": "start.js",
   "scripts": {
