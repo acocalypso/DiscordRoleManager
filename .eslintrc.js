@@ -29,5 +29,6 @@ module.exports = {
     'no-param-reassign': 0,
     'no-else-return': 0,
     'no-async-promise-executor': 0,
+    'brace-style': 0,
   },
 };

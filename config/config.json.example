@@ -3,8 +3,10 @@
   "clientID": "", // bot client id
   "clientSecret": "", //bot client secret
   "ownerID": "", // Your discord id
-  "language": "", // en, de, pt, nl
+  "defaultDonatorRole": "1234567896548" // default donator role if you don't want to specify it in the command
+  "language": "", // en, de, pt, nl, fr
   "cmdPrefix": "?", // choose your command prefix
+  "checkIntervall": 60, // check every 60 min for expired or soon to expire users
   "migrateSQLITE": {
     "migrate": true, // do you want to migrate your user from sqlite?
     "path": "" // path to your sqlite file
@@ -33,13 +35,9 @@
     "mysql_user": "dummy", // mysql username
     "mysql_pass": "dummy" // mysql password
   },
-"autopayment": {
-    "enabled": "no",
-    "provider": "mollie",
-    "apiToken": "",
-    "webhookUrl": "https://webshop.example.org/webhook",
-    "redirectUrl": "https://webshop.example.org/order",
-    "shopUrl": "https://webshop.example.org/"
+    "specialmode": {
+    "enabled": "yes",
+    "hideRole": "1263456789" //define role which should be applied if user looses roles
   }
 }
 
