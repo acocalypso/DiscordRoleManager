@@ -51,7 +51,7 @@ adminchannel: The bot will send information about expired or soon to expire user
   "clientID": "", // bot client id
   "clientSecret": "", //bot client secret
   "ownerID": "", // Your discord id
-  "defaultDonatorRole": "1234567896548" // default donator role if you don't want to specify it in the command
+  "defaultDonatorRole": "1234567896548", // default donator role if you don't want to specify it in the command
   "language": "", // en, de, pt, nl, fr
   "cmdPrefix": "?", // choose your command prefix
   "checkIntervall": 60, // check every 60 min for expired or soon to expire users
