@@ -5,7 +5,6 @@ const moment = require('moment');
 
 // const timeDate = moment(Date()).format('YYYYMMDDHHmmss');
 const momentnow = moment().format('YYYY-MM-DD-HHmmss');
-console.log(momentnow);
 
 function GetTimestamp() {
   const now = new Date();
