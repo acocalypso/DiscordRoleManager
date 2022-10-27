@@ -380,58 +380,60 @@ async function check(message, args) {
   const g = message.channel.guild;
   const m = message.member;
   const msg = message.content;
-  const messageRoleID = message.mentions.roles.first();
+  let messageRoleID = '';
+  let daRole = '';
 
-  if (messageRoleID && typeof messageRoleID !== 'undefined' && messageRoleID !== 'null') {
-    const roleID = message.mentions.roles.first().id;
-    const daRole = message.member.guild.roles.cache.get(roleID);
-
-    args = msg.split(' ').slice(1);
-
-    if (!args[0]) {
-      c.send(i18n.__('Please enter the role you want to check like `{{configCMDPrefix}}check @<ROLE-NAME>`', {
-        configCMDPrefix: config.cmdPrefix,
-      }));
-      return;
-    }
-
-    // CHECK ROLE EXIST
-    const rName = g.roles.cache.find((rName) => rName.name === daRole.name);
-    if (!rName) {
-      c.send(i18n.__("I couldn't find such role, please check the spelling and try again."));
-      return;
-    }
-
-    // CHECK DATABASE FOR ROLES
-    await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${m.id}" AND temporaryRole="${daRole.name}" AND guild_id="${g.id}"`)
-      .then(async (row) => {
-        if (!row[0]) {
-          c.send(i18n.__('⚠ [ERROR] {{mAuthorUsername}} is __NOT__ in the database for the role {{daRole}}.', {
-            mAuthorUsername: message.author.username,
-            daRole: daRole.name,
-          })).catch((err) => { helper.myLogger.error(err); });
-          return;
-        }
-
-        const startDateVal = new Date();
-        startDateVal.setTime(row[0].startDate * 1000);
-        const startDateTime = await helper.formatTimeString(startDateVal);
-        const endDateVal = new Date();
-        endDateVal.setTime(row[0].endDate * 1000);
-        const finalDate = await helper.formatTimeString(endDateVal);
-
-        c.send(i18n.__('✅ You will lose the role: **{{rowTempRole}}** on: `{{finalDate}}`! The role was added on: `{{startDateTime}}`', {
-          rowTempRole: row[0].temporaryRole,
-          finalDate,
-          startDateTime,
-        })).catch((err) => { helper.myLogger.error(err); });
-      })
-      .catch((err) => {
-        helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 8: ' + err);
-      });
+  if (message.mentions.roles.first()) {
+    messageRoleID = message.mentions.roles.first().id;
+    daRole = message.member.guild.roles.cache.get(messageRoleID);
   } else {
-    c.send('Please mention a role').catch((err) => { helper.myLogger.error(helper.GetTimestamp() + err); });
+    messageRoleID = defaultDonatorRole;
+    daRole = message.member.guild.roles.cache.get(messageRoleID);
   }
+
+  args = msg.split(' ').slice(1);
+
+  if (!args[0] && defaultDonatorRole === '') {
+    c.send(i18n.__('Please enter the role you want to check like `{{configCMDPrefix}}check @<ROLE-NAME>`', {
+      configCMDPrefix: config.cmdPrefix,
+    }));
+    return;
+  }
+
+  // CHECK ROLE EXIST
+  const rName = g.roles.cache.find((rName) => rName.name === daRole.name);
+  if (!rName) {
+    c.send(i18n.__("I couldn't find such role, please check the spelling and try again."));
+    return;
+  }
+
+  // CHECK DATABASE FOR ROLES
+  await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${m.id}" AND temporaryRole="${daRole.name}" AND guild_id="${g.id}"`)
+    .then(async (row) => {
+      if (!row[0]) {
+        c.send(i18n.__('⚠ [ERROR] {{mAuthorUsername}} is __NOT__ in the database for the role {{daRole}}.', {
+          mAuthorUsername: message.author.username,
+          daRole: daRole.name,
+        })).catch((err) => { helper.myLogger.error(err); });
+        return;
+      }
+
+      const startDateVal = new Date();
+      startDateVal.setTime(row[0].startDate * 1000);
+      const startDateTime = await helper.formatTimeString(startDateVal);
+      const endDateVal = new Date();
+      endDateVal.setTime(row[0].endDate * 1000);
+      const finalDate = await helper.formatTimeString(endDateVal);
+
+      c.send(i18n.__('✅ You will lose the role: **{{rowTempRole}}** on: `{{finalDate}}`! The role was added on: `{{startDateTime}}`', {
+        rowTempRole: row[0].temporaryRole,
+        finalDate,
+        startDateTime,
+      })).catch((err) => { helper.myLogger.error(err); });
+    })
+    .catch((err) => {
+      helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 8: ' + err);
+    });
 }
 
 async function map(message) {
