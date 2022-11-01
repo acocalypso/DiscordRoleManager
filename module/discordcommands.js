@@ -360,7 +360,7 @@ async function help(message, command) {
 
 async function paypal(message) {
   /// GET CHANNEL INFO
-  const c = message.channel;
+  const m = message.member;
 
   const paypal_description = i18n.__('Thank you! \nYour support is greatly appreciated');
   const paypal_title = i18n.__('Click HERE to Subscribe');
@@ -371,8 +371,9 @@ async function paypal(message) {
       .setURL(config.paypal.url)
       .setThumbnail(config.paypal.img)
       .setDescription(paypal_description);
-    c.send({ embeds: [embedMSG] }).catch((err) => { helper.myLogger.error(err); });
+    m.send({ embeds: [embedMSG] }).catch((err) => { helper.myLogger.error(err); });
   }
+  message.delete();
 }
 
 async function check(message, args) {
@@ -424,8 +425,8 @@ async function check(message, args) {
       const endDateVal = new Date();
       endDateVal.setTime(row[0].endDate * 1000);
       const finalDate = await helper.formatTimeString(endDateVal);
-
-      c.send(i18n.__('✅ You will lose the role: **{{rowTempRole}}** on: `{{finalDate}}`! The role was added on: `{{startDateTime}}`', {
+      message.delete();
+      m.send(i18n.__('✅ You will lose the role: **{{rowTempRole}}** on: `{{finalDate}}`! The role was added on: `{{startDateTime}}`', {
         rowTempRole: row[0].temporaryRole,
         finalDate,
         startDateTime,
@@ -438,10 +439,11 @@ async function check(message, args) {
 
 async function map(message) {
   /// GET CHANNEL INFO
-  const c = message.channel;
+  const m = message.member;
 
   if (config.mapMain.enabled === 'yes') {
-    c.send(i18n.__('Our official webmap: {{configMapUrl}}', {
+    message.delete();
+    m.send(i18n.__('Our official webmap: {{configMapUrl}}', {
       configMapUrl: config.mapMain.url,
     })).catch((err) => { helper.myLogger.error(helper.GetTimestamp() + err); });
   }
@@ -688,6 +690,7 @@ async function register(message, args) {
         helper.myLogger.error(helper.GetTimestamp() + '[InitDB] Failed to execute query in Server registration: ' + err);
       });
   }
+  message.delete();
 }
 
 exports.temprole = temprole;
