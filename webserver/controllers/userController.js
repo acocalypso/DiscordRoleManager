@@ -20,14 +20,7 @@ exports.home = (req, res) => {
   console.log(sess.username);
 
   if (sess.username && sess.loggedin === true) {
-    sqlConnectionDiscord.query('SELECT UserID, username, temporaryRole, FROM_UNIXTIME(endDate,"%d.%m.%Y %H:%i:%S") as endDate FROM temporary_roles where notified = 1 ORDER BY endDate asc')
-      .then(async (rows) => {
-        if (!rows[0]) {
-          console.info(helper.GetTimestamp() + 'No one is in the DataBase');
-        } else {
-          res.render('home', { rows, username: sess.username });
-        }
-      });
+    res.render('home', { username: sess.username });
   } else {
     console.log('Invalid access');
     res.render('login');
