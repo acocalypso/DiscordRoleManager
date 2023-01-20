@@ -1,3 +1,9 @@
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+</head>
+<form>
 <div class="form-floating mb-3">
     <input type="text" class="form-control" id="floatingInput" placeholder="Discord Username" value="{{this.username}}" name="d_username" required>
     <label for="floatingInput">Discord Username</label>
@@ -20,22 +26,22 @@
     </div>
 </div>
 <div class="container">
-    <div class="row">
-        <div class='col-sm-6'>
+        <form>
             <div class="form-group">
-                <div class='input-group date' id='datetimepicker1'>
-                    <input type='text' class="form-control" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                </div>
+                <label for="datepicker">Select Date:</label>
+                <input type="text" class="form-control" id="datepicker">
             </div>
-        </div>
-        <script type="text/javascript">
-         $(function () {
-             $('#datetimepicker1').datetimepicker();
-         });
-        </script>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $("#datepicker").datepicker({
+                format: "yyyy-mm-dd",
+                autoclose: true
+            });
+        });
+    </script>
     </div>
 </div>
 <div class="form-floating mb-3">
@@ -49,3 +55,5 @@
 <div class="form-floating d-grid">
     <button class="btn btn-primary" type="submit">Save</button>
 </div>
+
+</form>
