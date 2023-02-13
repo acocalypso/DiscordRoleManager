@@ -64,11 +64,6 @@ bot.on('messageCreate', async (message) => {
     return;
   }
 
-  // STOP SCRIPT IF DM/PM
-  if (message.channel.type === 'dm') {
-    return;
-  }
-
   // GET CHANNEL INFO
   let msg = message.content;
   msg = msg.toLowerCase();
@@ -80,6 +75,17 @@ bot.on('messageCreate', async (message) => {
 
   // GET ARGUMENTS
   const args = msg.split(/\s+/).slice(1);
+
+  if (message.channel.type === 1) {
+    if (command.startsWith('verify'))
+    {
+      discordcommands.verifyOrderNumber(args, message);
+    }
+    if (command.startsWith('promo'))
+    {
+      discordcommands.createPromoCodes(args, message);
+    }
+  }
 
   if (command.startsWith('temprole') || command === 'tr' || command === 'trole') {
     discordcommands.temprole(message, command, args);
