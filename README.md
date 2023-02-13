@@ -2,6 +2,14 @@
 
 > Manage Discord Roles the lazzyyy way
 
+THIS IS IN PREPREPREALPHA thinkering stadium - not usable in case don't even look at it.
+
+Main Goal.
+
+Integration of Wordpress Woocommerce and mollie Payment to receive a semi automated payment and role system.
+Create PromoCode for giveaways.
+Users can assign their roles themselfe after purchasing a certain timeperiod.
+
 ## Installation
 
 - Create a new discord Bot -> [GUIDE](https://discordpy.readthedocs.io/en/latest/discord.html)

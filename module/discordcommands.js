@@ -5,6 +5,7 @@ const config = require('../config/config.json');
 const dateMultiplier = 86400000;
 const sqlConnectionDiscord = require('./database/database_discord');
 const helper = require('./helper');
+const UniqueStringGenerator = require('unique-string-generator');
 
 const wait = async (ms) => new Promise((done) => setTimeout(done, ms));
 
@@ -693,6 +694,43 @@ async function register(message, args) {
   message.delete();
 }
 
+async function verifyOrderNumber(args, message) {
+  if (args.length === 1)
+  {
+    message.channel.send('Your order ID is: %s', args[0]);
+  }
+  else {
+    message.channel.send('You have to provide a valid ordernumber');
+  }
+}
+
+async function createPromoCodes(args, message)
+{
+  if (args.length === 2) {
+    const codeAmount = args[0];
+    const duration = args[1];
+    const used = 0;
+    const timestamp = Date.Now();
+    for (let i = 1; i <= codeAmount; i++) {
+      const uniqueCode = UniqueStringGenerator.UniqueStringId();
+      await sqlConnectionDiscord.query(`SELECT * FROM promo_codes WHERE promo_code="${uniqueCode}"`)
+        .then(async (rows) => {
+        // Update all entries from the database
+          if (!rows[0]) {
+            const values = uniqueCode + ',\''
+                               + duration + '\','
+                               + used + ','
+                               + timestamp;
+            await sqlConnectionDiscord.query(`INSERT INTO temporary_roles VALUES(${values});`)
+              .then(async () => {
+                message.channel.send('Code generated: %s', uniqueCode);
+              });
+          }
+        });
+    }
+  }
+}
+
 exports.temprole = temprole;
 exports.paypal = paypal;
 exports.help = help;
@@ -702,3 +740,5 @@ exports.leftserver = leftserver;
 exports.guildMemberRemove = guildMemberRemove;
 exports.getMember = getMember;
 exports.register = register;
+exports.verifyOrderNumber = verifyOrderNumber;
+exports.createPromoCodes = createPromoCodes;
