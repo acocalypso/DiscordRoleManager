@@ -71,6 +71,10 @@ adminchannel: The bot will send information about expired or soon to expire user
     "enabled": "yes", // enable link to your map
     "url": "https://yourmap.com" // your map link
   },
+  "alertsMain": {
+    "enabled": "yes", // enable link to your alerts website
+    "url": "https://youralerts.com" // your alerts website link
+  },
   "paypal": {
     "enabled": "yes", // enable paypal link
     "url": "https://www.paypal.me/xyz", // your paypal url
