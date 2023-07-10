@@ -25,7 +25,7 @@
     "moment": "^2.29.4",
     "mysql": "^2.18.1",
     "node": "^20.2.0",
-    "nodemon": "^2.0.19",
+    "nodemon": "^3.0.1",
     "regexp": "^1.0.0"
   },
   "repository": {
