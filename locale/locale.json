@@ -215,7 +215,7 @@
 	"nl": "Hallo {{mentionedUsername}}!\n\n🎉 Je toegang is verlegnd🎉..\n Het is nu geldig tot {{finalDate}}.\n\n Bedankt voor je lid bent!",
 	"fr": "Bonjour {{mentionedUsername}}!\n\n🎉Votre accès a été prolongé🎉.\nIl est maintenant valide jusqu'au {{finalDate}}.\n\nMerci pour votre soutien"
   },
-  "Hello {{mentionedUsername}}!\n\nYour access expires at {{finalDateDisplay}}.\n\nThanks for your support.\n\nLiveMapMap: {{map}}\n\nAlerts: {{alerts}}": {
+  "Hello {{mentionedUsername}}!\n\nYour access expires at {{finalDateDisplay}}.\n\nThanks for your support.\n\nLiveMap: {{map}}\n\nAlerts: {{alerts}}": {
     "de": "Hallo {{mentionedUsername}}!\n\nDein Zugriff verfällt am {{finalDateDisplay}}.\n\nDanke für deine Unterstützung.\n\nLiveMap: {{map}}\n\nBenachrichtigung: {{alerts}}",
     "pt": "Olá {{mentionedUsername}}!\n\nO teu acesso expira em {{finalDateDisplay}}.\n\nObrigado pelo teu apoio.\n\nLiveMap: {{map}}\n\nNotificações: {{alerts}}",
 	"nl": "Hallo {{mentionedUsername}} Je toegang zal verlopen op {{finalDateDisplay}}.\n\n Bedankt voor lidmaatschap.\n\n LiveMap: {{map}}\n\nKennisgeving: {{alerts}}",
