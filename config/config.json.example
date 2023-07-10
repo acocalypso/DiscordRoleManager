@@ -23,6 +23,10 @@
     "enabled": "yes", // enable link to your map
     "url": "https://yourmap.com" // your map link
   },
+  "alertsMain": {
+    "enabled": "yes", // enable link to your map
+    "url": "https://youralerts.com" // your alerts link
+  },
   "paypal": {
     "enabled": "yes", // enable paypal link
     "url": "https://www.paypal.me/xyz", // your paypal url
