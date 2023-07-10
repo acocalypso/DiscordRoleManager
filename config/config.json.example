@@ -24,7 +24,7 @@
     "url": "https://yourmap.com" // your map link
   },
   "alertsMain": {
-    "enabled": "yes", // enable link to your map
+    "enabled": "yes", // enable link to your alerts
     "url": "https://youralerts.com" // your alerts link
   },
   "paypal": {
