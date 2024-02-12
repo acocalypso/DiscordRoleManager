@@ -151,7 +151,7 @@ async function temprole(message, command, args) {
                 return;
               }
 
-              const days = parseInt(args[1]); // Change here
+              const days = parseInt(args[1]);
 
               // Fetch existing temporary role information for the user
               await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}"`)
