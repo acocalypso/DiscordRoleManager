@@ -5,6 +5,6 @@ WORKDIR /usr/src/app
 ADD . ./
 RUN npm install
 # Expose ports for bot and webinterface
-EXPOSE 9000 40444
+EXPOSE 40444
 # Start the bot.
 CMD ["node", "start.js"]

@@ -12,13 +12,6 @@
     "path": "" // path to your sqlite file
   },
   "debug": "no", // enable / disable debug infos
-  "webinterface": {
-    "disabled": "yes", //enable webinterface
-    "backendPort": 9000, // interface port
-    "username": "admin", // your login username - This can be removed afterwards
-    "password": "SuperSecretPW", // your login password - This can be removed afterwards
-    "secret": "ThisShouldBeChanged" // session secret
-  },
   "mapMain": {
     "enabled": "yes", // enable link to your map
     "url": "https://yourmap.com" // your map link
@@ -40,7 +33,7 @@
     "mysql_pass": "dummy" // mysql password
   },
     "specialmode": {
-    "enabled": "yes",
+    "enabled": "no",
     "hideRole": "1263456789" //define role which should be applied if user looses roles
 
   }
