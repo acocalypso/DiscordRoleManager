@@ -215,11 +215,11 @@
 	"nl": "Hallo {{mentionedUsername}}!\n\n🎉 Je toegang is verlegnd🎉..\n Het is nu geldig tot {{finalDate}}.\n\n Bedankt voor je lid bent!",
 	"fr": "Bonjour {{mentionedUsername}}!\n\n🎉Votre accès a été prolongé🎉.\nIl est maintenant valide jusqu'au {{finalDate}}.\n\nMerci pour votre soutien"
   },
-  "Hello {{mentionedUsername}}!\n\nYour access expires at {{finalDateDisplay}}.\n\nThanks for your support.\n\nLiveMap: {{map}}.": {
-    "de": "Hallo {{mentionedUsername}}!\n\nDein Zugriff verfällt am {{finalDateDisplay}}.\n\nDanke für deine Unterstützung.\n\nLiveMap: {{map}}.",
-    "pt": "Olá {{mentionedUsername}}!\n\nO teu acesso expira em {{finalDateDisplay}}.\n\nObrigado pelo teu apoio.\n\nLiveMap: {{map}}.",
-	"nl": "Hallo {{mentionedUsername}} Je toegang zal verlopen op {{finalDateDisplay}}.\n\n Bedankt voor lidmaatschap.\n\n LiveMap: {{map}}.",
-	"fr": "BOnjour {{mentionedUsername}}!\n\nVotre accès expire à {{finalDateDisplay}}.\n\nMerci pour votre soutien.\n\nLiveMap : {{map}}."
+  "Hello {{mentionedUsername}}!\n\nYour access expires at {{finalDateDisplay}}.\n\nThanks for your support.\n\nLiveMap: {{map}}\n\nAlerts: {{alerts}}": {
+    "de": "Hallo {{mentionedUsername}}!\n\nDein Zugriff verfällt am {{finalDateDisplay}}.\n\nDanke für deine Unterstützung.\n\nLiveMap: {{map}}\n\nBenachrichtigung: {{alerts}}",
+    "pt": "Olá {{mentionedUsername}}!\n\nO teu acesso expira em {{finalDateDisplay}}.\n\nObrigado pelo teu apoio.\n\nLiveMap: {{map}}\n\nNotificações: {{alerts}}",
+	"nl": "Hallo {{mentionedUsername}} Je toegang zal verlopen op {{finalDateDisplay}}.\n\n Bedankt voor lidmaatschap.\n\n LiveMap: {{map}}\n\nKennisgeving: {{alerts}}",
+	"fr": "Bonjour {{mentionedUsername}}!\n\nVotre accès expire à {{finalDateDisplay}}.\n\nMerci pour votre soutien.\n\nLiveMap : {{map}}\n\nNotifications: {{alerts}}"
   },
   "Please enter the role you want to check like `{{configCMDPrefix}}check <ROLE-NAME>`": {
     "de": "Bitte gib die Rolle an die du prüfen willst: `{{configCMDPrefix}}check <ROLE-NAME>`",
@@ -244,6 +244,12 @@
     "pt": "O nosso mapa online: {{configMapUrl}}",
 	"nl": "Onze link naar de map is: {{configMapUrl}}",
 	"fr": "Lien vers la carte en direct : {{configMapUrl}}"
+  },
+  "Our official alerts website: {{configAlertsUrl}}": {
+    "de": "Linke auf die Konfiguration von Benachrichtigungen: {{configAlertsUrl}}",
+    "pt": "Accesso a configuração das notificações: {{configAlertsUrl}}",
+	"nl": "Link voor het instellen van meldingen: {{configAlertsUrl}}",
+	"fr": "Lien vers la configuration des notifications: {{configAlertsUrl}}"
   },
   ":exclamation: {{name}} has left the server.": {
     "de": ":exclamation: {{name}} hat den Server verlassen.",

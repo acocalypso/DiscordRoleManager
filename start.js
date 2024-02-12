@@ -97,9 +97,13 @@ bot.on('messageCreate', async (message) => {
   if (command === 'check') {
     discordcommands.check(message, args);
   }
-  // ######################### MAP ###################################
+  // ######################### MAP & Alerts ###################################
   if (command === 'map') {
     discordcommands.map(message);
+  }
+  
+  if (command === 'alerts') {
+    discordcommands.alerts(message);
   }
 
   if (command === 'register') {

@@ -1,4 +1,4 @@
-﻿const { MessageEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const i18n_module = require('i18n-nodejs');
 const config = require('../config/config.json');
 
@@ -261,10 +261,11 @@ async function temprole(message, command, args) {
                         finalDateDisplay,
                       }));
 
-                      mentioned.send(i18n.__('Hello {{mentionedUsername}}!\n\nYour access expires at {{finalDateDisplay}}.\n\nThanks for your support.\n\nLiveMap: {{map}}.', {
+                      mentioned.send(i18n.__('Hello {{mentionedUsername}}!\n\nYour access expires at {{finalDateDisplay}}.\n\nThanks for your support.\n\nLiveMap: {{map}}\n\nAlerts: {{alerts}}', {
                         mentionedUsername: mentioned.user.username,
                         finalDateDisplay,
                         map: config.mapMain.url,
+						            alerts: config.alertsMain.url,
                       })).catch((error) => {
                         helper.myLogger.error(helper.GetTimestamp() + i18n.__('Failed to send a DM to user: {{mentionedID}} ' + error, {
                           mentionedID: mentioned.id,
@@ -348,6 +349,9 @@ async function help(message, command) {
           let cmds = '`' + config.cmdPrefix + 'check @<Role-NAME>`   \\\u00BB   to check the time left on your subscription\n';
           if (config.mapMain.enabled === 'yes') {
             cmds += '`' + config.cmdPrefix + 'map`   \\\u00BB   a link to our web map\n';
+          }
+		  if (config.alertsMain.enabled === 'yes') {
+            cmds += '`' + config.cmdPrefix + 'alerts`   \\\u00BB   a link to our alerts server\n';
           }
           if (config.paypal.enabled === 'yes') {
             cmds += '`' + config.cmdPrefix + 'subscribe`/`' + config.cmdPrefix + 'paypal`   \\\u00BB   for a link to our PayPal\n';
@@ -445,6 +449,18 @@ async function map(message) {
     message.delete();
     m.send(i18n.__('Our official webmap: {{configMapUrl}}', {
       configMapUrl: config.mapMain.url,
+    })).catch((err) => { helper.myLogger.error(helper.GetTimestamp() + err); });
+  }
+}
+
+async function alerts(message) {
+  /// GET CHANNEL INFO
+  const m = message.member;
+
+  if (config.alertsMain.enabled === 'yes') {
+    message.delete();
+    m.send(i18n.__('Our official alerts website: {{configAlertsUrl}}', {
+      configAlertsUrl: config.alertsMain.url,
     })).catch((err) => { helper.myLogger.error(helper.GetTimestamp() + err); });
   }
 }
@@ -698,6 +714,7 @@ exports.paypal = paypal;
 exports.help = help;
 exports.check = check;
 exports.map = map;
+exports.alerts = alerts;
 exports.leftserver = leftserver;
 exports.guildMemberRemove = guildMemberRemove;
 exports.getMember = getMember;
