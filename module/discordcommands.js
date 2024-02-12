@@ -28,7 +28,6 @@ async function temprole(message, command, args) {
   await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id="${g.id}" AND mainChannelID="${c.id}"`)
     .then(async (rows) => {
       // Update all entries from the database
-      console.log(rows)
       if (rows[0]) {
         adminRoleName = rows[0].adminRoleName;
         modRoleName = rows[0].modRoleName;
