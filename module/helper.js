@@ -1,4 +1,3 @@
-const bcrypt = require('bcrypt');
 const { Console } = require('console');
 const fs = require('fs');
 const moment = require('moment');
@@ -11,9 +10,11 @@ function GetTimestamp() {
   return '[' + now.toLocaleString() + ']';
 }
 
+const logStream = fs.createWriteStream('./logs/' + momentnow + '.log', { flags: 'a' });
+
 const myLogger = new Console({
-  stdout: fs.createWriteStream('./logs/info.' + momentnow + '.log'),
-  stderr: fs.createWriteStream('./logs/error.' + momentnow + '.log'),
+  stdout: logStream,
+  stderr: logStream,
 });
 
 async function formatTimeString(date) {
@@ -36,13 +37,6 @@ async function formatTimeString(date) {
   });
 }
 
-async function encryptPassword(password) {
-  const saltRounds = 10;
-  const encPW = await bcrypt.hash(password, saltRounds);
-  return encPW;
-}
-
-exports.encryptPassword = encryptPassword;
 exports.GetTimestamp = GetTimestamp;
 exports.formatTimeString = formatTimeString;
 exports.myLogger = myLogger;

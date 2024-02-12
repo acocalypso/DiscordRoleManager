@@ -15,15 +15,10 @@ const bot = new Client({
 // init internationalization / localization class
 const i18nModule = require('i18n-nodejs');
 const config = require('./config/config.json');
-const web = require('./module/backend');
 const sqlConnectionDiscord = require('./module/database/database_discord');
 const helper = require('./module/helper');
 const routine = require('./module/routine');
 const discordcommands = require('./module/discordcommands');
-
-if (config.webinterface.disabled === 'no') {
-  web.website();
-}
 
 const i18nconfig = {
   lang: config.language,
@@ -101,7 +96,7 @@ bot.on('messageCreate', async (message) => {
   if (command === 'map') {
     discordcommands.map(message);
   }
-  
+
   if (command === 'alerts') {
     discordcommands.alerts(message);
   }
