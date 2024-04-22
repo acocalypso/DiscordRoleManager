@@ -37,7 +37,7 @@
   },
   "homepage": "https://github.com/acocalypso/DiscordRoleManager#readme",
   "devDependencies": {
-    "eslint": "^8.21.0",
+    "eslint": "^9.1.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0"
   }
