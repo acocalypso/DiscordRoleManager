@@ -88,7 +88,7 @@ The /register flow is interactive (select menus). It will ask for:
 
 ## Install node dependecies
 
-Install NodeJS version 16.x!
+Install NodeJS version 22.x!
 
 ```
 npm install
