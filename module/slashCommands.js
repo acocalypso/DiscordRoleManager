@@ -570,7 +570,29 @@ async function handleInteraction(interaction) {
         return;
       }
 
+      if (!interaction.replied && !interaction.deferred) {
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+      }
+
+      const respond = async (payload) => {
+        if (interaction.deferred || interaction.replied) {
+          await interaction.editReply(payload);
+          return;
+        }
+        await interaction.reply(payload);
+      };
+
       const mentioned = await g.members.fetch(userId);
+
+      const notifyMember = async (content) => {
+        await mentioned.send(content).catch((err) => {
+          helper.myLogger.error(helper.GetTimestamp() + i18n.__('errors.dmFailed', {
+            memberID: mentioned.id,
+            err,
+          }));
+        });
+      };
+
       const row = await sqlConnectionDiscord.query(`SELECT * FROM temporary_roles WHERE userID="${mentioned.id}" AND temporaryRole="${role.name}" AND guild_id="${g.id}"`);
       const now = new Date().getTime();
 
@@ -584,11 +606,17 @@ async function handleInteraction(interaction) {
           await mentioned.roles.add(role).catch((err) => { helper.myLogger.error(err); });
         } catch (error) {
           helper.myLogger.error(helper.GetTimestamp() + `[TEMPOROLE] Insert failed: ${error}`);
-          await interaction.reply({ content: i18n.__('temprole.saveFailed'), flags: MessageFlags.Ephemeral });
+          await respond({ content: i18n.__('temprole.saveFailed'), flags: MessageFlags.Ephemeral });
           return;
         }
 
-        await interaction.reply({ content: i18n.__('temprole.assigned', {
+        await notifyMember(i18n.__('messages.tempRoleAssigned', {
+          mentionedUsername: mentioned.user.username,
+          daRole: role.name,
+          finalDateDisplay,
+        }));
+
+        await respond({ content: i18n.__('temprole.assigned', {
           mentionedUsername: mentioned.user.username,
           daRole: role.name,
           finalDateDisplay,
@@ -600,11 +628,17 @@ async function handleInteraction(interaction) {
           await sqlConnectionDiscord.query(`UPDATE temporary_roles SET endDate="${Math.round(finalDate / 1000)}", notified=0, username="${name}" WHERE userID="${mentioned.id}" AND temporaryRole="${role.name}" AND guild_id="${g.id}"`);
         } catch (error) {
           helper.myLogger.error(helper.GetTimestamp() + `[TEMPOROLE] Update failed: ${error}`);
-          await interaction.reply({ content: i18n.__('temprole.saveFailed'), flags: MessageFlags.Ephemeral });
+          await respond({ content: i18n.__('temprole.saveFailed'), flags: MessageFlags.Ephemeral });
           return;
         }
         finalDate = await helper.formatTimeString(new Date(finalDate));
-        await interaction.reply({ content: i18n.__('temprole.extended', {
+
+        await notifyMember(i18n.__('dm.accessExtended', {
+          mentionedUsername: mentioned.user.username,
+          finalDate,
+        }));
+
+        await respond({ content: i18n.__('temprole.extended', {
           mentionedUsername: mentioned.user.username,
           daRole: role.name,
           finalDate,
