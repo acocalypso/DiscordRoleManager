@@ -87,7 +87,7 @@
     "serverAlreadyRegistered": "🎉 {{guild_name}} is al geregistreerd!",
     "webmap": "Onze link naar de map is: {{configMapUrl}}",
     "paypalLink": "PayPal: {{configPaypalUrl}}",
-    "helpMods": "/temprole add <user> <days> [role] — tijdelijke rol toewijzen\n/temprole check <user> [role] — status controleren\n/temprole remove <user> [role] — tijdelijke rol verwijderen\n/temprole add <user> <days> [role] — tijd toevoegen",
+    "helpMods": "/temprole add — formulier openen (toewijzen of verlengen)\n/temprole check — controleformulier openen\n/temprole remove — verwijderformulier openen",
     "helpUser": "/check [role] — abonnement controleren\n/map — maplink\n/paypal — PayPal-link"
   },
   "register": {
@@ -110,6 +110,34 @@
     "success": "Registratie voltooid.",
     "updated": "Registratie bijgewerkt.",
     "slashRegistered": "Slash-opdrachten geregistreerd."
+  },
+  "temprole": {
+    "instructions": "Selecteer de gebruiker en rol, stel het aantal dagen in en klik op Opslaan.",
+    "instructionsAdd": "Selecteer de gebruiker en rol, stel het aantal dagen in en klik op Opslaan.",
+    "instructionsRemove": "Selecteer de gebruiker en rol en klik op Verwijderen.",
+    "instructionsCheck": "Selecteer de gebruiker en rol en klik op Controleren.",
+    "userPlaceholder": "Gebruiker selecteren",
+    "rolePlaceholder": "Rol selecteren (optioneel)",
+    "setDays": "Dagen instellen",
+    "daysPlaceholder": "Dagen selecteren",
+    "customDays": "Aangepaste dagen",
+    "save": "Opslaan",
+    "remove": "Verwijderen",
+    "check": "Controleren",
+    "cancel": "Annuleren",
+    "cancelled": "Tijdelijke rol ingesteld geannuleerd.",
+    "sessionExpired": "Sessie verlopen. Voer /temprole add opnieuw uit.",
+    "missingRequired": "Selecteer een gebruiker en stel het aantal dagen in.",
+    "missingUser": "Selecteer een gebruiker.",
+    "missingRole": "Geen rol geselecteerd en geen standaardrol geconfigureerd.",
+    "saveFailed": "Opslaan van tijdelijke rol mislukt. Controleer de logs.",
+    "daysTitle": "Duur van tijdelijke rol",
+    "daysLabel": "Dagen",
+    "invalidDays": "Voer een geldig aantal dagen in.",
+    "daysSaved": "Dagen ingesteld op {{days}}.",
+    "modalFailed": "Kon het dagenformulier niet openen. Probeer opnieuw.",
+    "assigned": "🎉 {{mentionedUsername}} kreeg **{{daRole}}** tot `{{finalDateDisplay}}`.",
+    "extended": "✅ **{{daRole}}** van {{mentionedUsername}} is verlengd tot `{{finalDate}}`."
   },
   "paypal": {
     "thanks": "Hartelijk dank. \n Uw bijdrage is belangrijk voor ons.",

@@ -87,7 +87,7 @@
     "serverAlreadyRegistered": "🎉 {{guild_name}} ist bereits registriert!",
     "webmap": "Linke zur Livemap: {{configMapUrl}}",
     "paypalLink": "PayPal: {{configPaypalUrl}}",
-    "helpMods": "/temprole add <user> <days> [role] — temporäre Rolle vergeben\n/temprole check <user> [role] — Status prüfen\n/temprole remove <user> [role] — temporäre Rolle entfernen\n/temprole add <user> <days> [role] — Zeit hinzufügen",
+    "helpMods": "/temprole add — Formular öffnen (vergeben oder verlängern)\n/temprole check — Formular zum Prüfen öffnen\n/temprole remove — Formular zum Entfernen öffnen",
     "helpUser": "/check [role] — Zugriff prüfen\n/map — Link zur Map\n/paypal — PayPal-Link"
   },
   "register": {
@@ -110,6 +110,34 @@
     "success": "Registrierung abgeschlossen.",
     "updated": "Registrierung aktualisiert.",
     "slashRegistered": "Slash-Commands registriert."
+  },
+  "temprole": {
+    "instructions": "Wähle Benutzer und Rolle aus, setze die Tage und klicke Speichern.",
+    "instructionsAdd": "Wähle Benutzer und Rolle aus, setze die Tage und klicke Speichern.",
+    "instructionsRemove": "Wähle Benutzer und Rolle aus und klicke Entfernen.",
+    "instructionsCheck": "Wähle Benutzer und Rolle aus und klicke Prüfen.",
+    "userPlaceholder": "Benutzer auswählen",
+    "rolePlaceholder": "Rolle auswählen (optional)",
+    "setDays": "Tage setzen",
+    "daysPlaceholder": "Tage auswählen",
+    "customDays": "Benutzerdefinierte Tage",
+    "save": "Speichern",
+    "remove": "Entfernen",
+    "check": "Prüfen",
+    "cancel": "Abbrechen",
+    "cancelled": "Temprole-Einrichtung abgebrochen.",
+    "sessionExpired": "Sitzung abgelaufen. Bitte /temprole add erneut ausführen.",
+    "missingRequired": "Bitte Benutzer auswählen und die Anzahl der Tage festlegen.",
+    "missingUser": "Bitte einen Benutzer auswählen.",
+    "missingRole": "Keine Rolle ausgewählt und keine Standardrolle konfiguriert.",
+    "saveFailed": "Speichern der temporären Rolle fehlgeschlagen. Bitte Logs prüfen.",
+    "daysTitle": "Temporäre Rollen-Dauer",
+    "daysLabel": "Tage",
+    "invalidDays": "Bitte eine gültige Anzahl an Tagen eingeben.",
+    "daysSaved": "Tage auf {{days}} gesetzt.",
+    "modalFailed": "Das Tage-Formular konnte nicht geöffnet werden. Bitte erneut versuchen.",
+    "assigned": "🎉 {{mentionedUsername}} erhielt **{{daRole}}** bis `{{finalDateDisplay}}`.",
+    "extended": "✅ **{{daRole}}** von {{mentionedUsername}} wurde bis `{{finalDate}}` verlängert."
   },
   "paypal": {
     "thanks": "Vielen Dank.\n Deine Unterstützung ist mir wichtig.",

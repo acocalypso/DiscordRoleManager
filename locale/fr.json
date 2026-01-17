@@ -87,7 +87,7 @@
     "serverAlreadyRegistered": "🎉 {{guild_name}} a déjà été enregistré!",
     "webmap": "Lien vers la carte en direct : {{configMapUrl}}",
     "paypalLink": "PayPal : {{configPaypalUrl}}",
-    "helpMods": "/temprole add <user> <days> [role] — attribuer un rôle temporaire\n/temprole check <user> [role] — vérifier un rôle temporaire\n/temprole remove <user> [role] — retirer un rôle temporaire\n/temprole add <user> <days> [role] — ajouter du temps",
+    "helpMods": "/temprole add — ouvrir le formulaire (attribuer ou prolonger)\n/temprole check — ouvrir le formulaire de vérification\n/temprole remove — ouvrir le formulaire de suppression",
     "helpUser": "/check [role] — vérifier votre abonnement\n/map — lien de la carte\n/paypal — lien PayPal"
   },
   "register": {
@@ -110,6 +110,34 @@
     "success": "Enregistrement terminé.",
     "updated": "Enregistrement mis à jour.",
     "slashRegistered": "Commandes slash enregistrées."
+  },
+  "temprole": {
+    "instructions": "Sélectionnez l'utilisateur et le rôle, définissez les jours puis cliquez sur Enregistrer.",
+    "instructionsAdd": "Sélectionnez l'utilisateur et le rôle, définissez les jours puis cliquez sur Enregistrer.",
+    "instructionsRemove": "Sélectionnez l'utilisateur et le rôle, puis cliquez sur Retirer.",
+    "instructionsCheck": "Sélectionnez l'utilisateur et le rôle, puis cliquez sur Vérifier.",
+    "userPlaceholder": "Sélectionner un utilisateur",
+    "rolePlaceholder": "Sélectionner un rôle (optionnel)",
+    "setDays": "Définir les jours",
+    "daysPlaceholder": "Sélectionner les jours",
+    "customDays": "Jours personnalisés",
+    "save": "Enregistrer",
+    "remove": "Retirer",
+    "check": "Vérifier",
+    "cancel": "Annuler",
+    "cancelled": "Configuration du rôle temporaire annulée.",
+    "sessionExpired": "Session expirée. Relancez /temprole add.",
+    "missingRequired": "Veuillez sélectionner un utilisateur et indiquer le nombre de jours.",
+    "missingUser": "Veuillez sélectionner un utilisateur.",
+    "missingRole": "Aucun rôle sélectionné et aucun rôle par défaut configuré.",
+    "saveFailed": "Échec de l'enregistrement du rôle temporaire. Consultez les logs.",
+    "daysTitle": "Durée du rôle temporaire",
+    "daysLabel": "Jours",
+    "invalidDays": "Veuillez saisir un nombre de jours valide.",
+    "daysSaved": "Jours définis sur {{days}}.",
+    "modalFailed": "Impossible d'ouvrir le formulaire des jours. Réessayez.",
+    "assigned": "🎉 {{mentionedUsername}} a reçu **{{daRole}}** jusqu'au `{{finalDateDisplay}}`.",
+    "extended": "✅ Le rôle **{{daRole}}** de {{mentionedUsername}} a été prolongé jusqu'au `{{finalDate}}`."
   },
   "paypal": {
     "thanks": "Merci! \nVotre soutien est grandement apprécié",

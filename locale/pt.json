@@ -87,7 +87,7 @@
     "serverAlreadyRegistered": "🎉 {{guild_name}} já está registado!",
     "webmap": "O nosso mapa online: {{configMapUrl}}",
     "paypalLink": "PayPal: {{configPaypalUrl}}",
-    "helpMods": "/temprole add <user> <days> [role] — atribuir um perfil temporário\n/temprole check <user> [role] — verificar perfil temporário\n/temprole remove <user> [role] — remover perfil temporário\n/temprole add <user> <days> [role] — adicionar tempo",
+    "helpMods": "/temprole add — abrir formulário (atribuir ou prolongar)\n/temprole check — abrir formulário de verificação\n/temprole remove — abrir formulário de remoção",
     "helpUser": "/check [role] — verificar subscrição\n/map — link do mapa\n/paypal — link PayPal"
   },
   "register": {
@@ -110,6 +110,34 @@
     "success": "Registo concluído.",
     "updated": "Registo atualizado.",
     "slashRegistered": "Comandos slash registados."
+  },
+  "temprole": {
+    "instructions": "Seleciona o utilizador e o cargo, define os dias e clica em Guardar.",
+    "instructionsAdd": "Seleciona o utilizador e o cargo, define os dias e clica em Guardar.",
+    "instructionsRemove": "Seleciona o utilizador e o cargo e clica em Remover.",
+    "instructionsCheck": "Seleciona o utilizador e o cargo e clica em Verificar.",
+    "userPlaceholder": "Selecionar utilizador",
+    "rolePlaceholder": "Selecionar cargo (opcional)",
+    "setDays": "Definir dias",
+    "daysPlaceholder": "Selecionar dias",
+    "customDays": "Dias personalizados",
+    "save": "Guardar",
+    "remove": "Remover",
+    "check": "Verificar",
+    "cancel": "Cancelar",
+    "cancelled": "Configuração de cargo temporário cancelada.",
+    "sessionExpired": "Sessão expirada. Executa /temprole add novamente.",
+    "missingRequired": "Seleciona um utilizador e define o número de dias.",
+    "missingUser": "Seleciona um utilizador.",
+    "missingRole": "Nenhum cargo selecionado e nenhum cargo padrão configurado.",
+    "saveFailed": "Falha ao guardar o cargo temporário. Verifica os logs.",
+    "daysTitle": "Duração do cargo temporário",
+    "daysLabel": "Dias",
+    "invalidDays": "Introduz um número de dias válido.",
+    "daysSaved": "Dias definidos para {{days}}.",
+    "modalFailed": "Não foi possível abrir o formulário de dias. Tenta novamente.",
+    "assigned": "🎉 {{mentionedUsername}} recebeu **{{daRole}}** até `{{finalDateDisplay}}`.",
+    "extended": "✅ **{{daRole}}** de {{mentionedUsername}} foi prolongado até `{{finalDate}}`."
   },
   "paypal": {
     "thanks": "Obrigado! \nAgradecemos o teu apoio",

@@ -87,7 +87,7 @@
     "serverAlreadyRegistered": "🎉 {{guild_name}} has already been registered!",
     "webmap": "Our official webmap: {{configMapUrl}}",
     "paypalLink": "PayPal: {{configPaypalUrl}}",
-    "helpMods": "/temprole add <user> <days> [role] — assign a temporary role\n/temprole check <user> [role] — check a user's temp role\n/temprole remove <user> [role] — remove a temp role\n/temprole add <user> <days> [role] — add more time",
+    "helpMods": "/temprole add — open the temp role form (assign or extend)\n/temprole check — open the temp role check form\n/temprole remove — open the temp role remove form",
     "helpUser": "/check [role] — check your subscription\n/map — web map link\n/paypal — PayPal link"
   },
   "register": {
@@ -110,6 +110,34 @@
     "success": "Registration complete.",
     "updated": "Registration updated.",
     "slashRegistered": "Slash commands registered."
+  },
+  "temprole": {
+    "instructions": "Select the user and role, then set the days and click Save.",
+    "instructionsAdd": "Select the user and role, then set the days and click Save.",
+    "instructionsRemove": "Select the user and role, then click Remove.",
+    "instructionsCheck": "Select the user and role, then click Check.",
+    "userPlaceholder": "Select a user",
+    "rolePlaceholder": "Select a role (optional)",
+    "setDays": "Set days",
+    "daysPlaceholder": "Select days",
+    "customDays": "Custom days",
+    "save": "Save",
+    "remove": "Remove",
+    "check": "Check",
+    "cancel": "Cancel",
+    "cancelled": "Temporary role setup cancelled.",
+    "sessionExpired": "Session expired. Run /temprole add again.",
+    "missingRequired": "Please select a user and set the number of days.",
+    "missingUser": "Please select a user.",
+    "missingRole": "No role selected and no default role configured.",
+    "saveFailed": "Failed to save the temporary role. Check logs for details.",
+    "daysTitle": "Temporary role duration",
+    "daysLabel": "Days",
+    "invalidDays": "Please enter a valid number of days.",
+    "daysSaved": "Days set to {{days}}.",
+    "modalFailed": "Could not open the days form. Try again.",
+    "assigned": "🎉 {{mentionedUsername}} was given **{{daRole}}** until `{{finalDateDisplay}}`.",
+    "extended": "✅ {{mentionedUsername}}'s **{{daRole}}** was extended until `{{finalDate}}`."
   },
   "paypal": {
     "thanks": "Thank you! \nYour support is greatly appreciated",

@@ -31,11 +31,11 @@ For the first run please register the bot via slash command. This saves guild se
 /register
 ```
 
-The /register flow is interactive (modal). It will ask for:
-- Admin role ID
-- Mod role ID
-- Main channel ID (where the bot accepts commands)
-- Admin channel ID (expiry alerts and admin info)
+The /register flow is interactive (select menus). It will ask for:
+- Admin role
+- Mod role (optional)
+- Main channel (where the bot accepts commands)
+- Admin channel (expiry alerts and admin info)
 
 ```sh
 #Please remove all comments as this is currently not handled by the bot!
@@ -122,15 +122,19 @@ User commands:
 
 Admin / Mod commands:
 
-/temprole add <user> <days> [role] » assign a temporary role
-/temprole remove <user> [role] » remove a temporary role assignment
-/temprole check <user> [role] » check a temporary role assignment
+/temprole add » opens a form to assign or extend a temporary role
+/temprole remove » opens a form to remove a temporary role
+/temprole check » opens a form to check a temporary role
 
 Help commands:
 
 /help » display help commands
 /help scope:mods » display mod commands
 ```
+
+Notes:
+- Slash commands are the only supported command flow (legacy prefix commands are not used).
+- /temprole add uses a form with user/role selectors and a days selector. Use “Custom days” to enter an exact value.
 
 ## Grafana 8.x Support
 
