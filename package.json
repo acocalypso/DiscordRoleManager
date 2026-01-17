@@ -17,6 +17,7 @@
     "discord.js": "^14.2.0",
     "express": "5.2.1",
     "express-session": "^1.17.3",
+    "express-rate-limit": "^7.3.1",
     "lusca": "^1.7.0",
     "log-to-file": "^3.0.0",
     "date-fns": "^4.1.0",
