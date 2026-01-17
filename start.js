@@ -23,7 +23,7 @@ const discordcommands = require('./module/discordcommands');
 const slashCommands = require('./module/slashCommands');
 
 if (config.webinterface.disabled === 'no') {
-  web.website();
+  web.website(bot);
 }
 
 bot.login(config.token);

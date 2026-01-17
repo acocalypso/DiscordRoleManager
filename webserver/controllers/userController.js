@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const sqlConnectionDiscord = require('../../module/database/database_discord');
 const helper = require('../../module/helper');
+const i18n = require('../../module/i18n');
 const config = require('../../config/config.json');
 
 exports.csrf = (req, res) => {
@@ -56,6 +57,80 @@ exports.logout = (req, res) => {
     }
     res.json({ ok: true });
   });
+};
+
+exports.listGuilds = async (req, res) => {
+  try {
+    const results = await sqlConnectionDiscord.query(
+      'SELECT guild_id as guildId, guild_name as guildName FROM registration;'
+    );
+    res.json({ guilds: results });
+  } catch (err) {
+    helper.myLogger.error(helper.GetTimestamp() + `[Guilds] Failed to list guilds: ${err}`);
+    res.status(500).json({ error: 'Failed to load guilds' });
+  }
+};
+
+exports.listMembers = async (req, res) => {
+  const bot = req.app.get('discordBot');
+  if (!bot) {
+    res.status(500).json({ error: 'Discord client unavailable' });
+    return;
+  }
+
+  const { guildId } = req.params;
+  try {
+    const guild = bot.guilds.cache.get(guildId);
+    if (!guild) {
+      res.status(404).json({ error: 'Guild not found' });
+      return;
+    }
+
+    await guild.members.fetch();
+    const members = guild.members.cache.map((member) => ({
+      id: member.id,
+      username: member.user.username,
+      tag: member.user.tag,
+      displayName: member.displayName,
+      bot: member.user.bot,
+    }));
+
+    res.json({ members });
+  } catch (err) {
+    helper.myLogger.error(helper.GetTimestamp() + `[GuildMembers] Failed to list members: ${err}`);
+    res.status(500).json({ error: 'Failed to load members' });
+  }
+};
+
+exports.listRoles = async (req, res) => {
+  const bot = req.app.get('discordBot');
+  if (!bot) {
+    res.status(500).json({ error: 'Discord client unavailable' });
+    return;
+  }
+
+  const { guildId } = req.params;
+  try {
+    const guild = bot.guilds.cache.get(guildId);
+    if (!guild) {
+      res.status(404).json({ error: 'Guild not found' });
+      return;
+    }
+
+    const roles = guild.roles.cache
+      .filter((role) => role.id !== guild.id && !role.managed)
+      .sort((a, b) => b.position - a.position)
+      .map((role) => ({
+        id: role.id,
+        name: role.name,
+        color: role.color,
+      }));
+
+    res.json({ roles });
+  } catch (err) {
+    helper.myLogger.error(helper.GetTimestamp() + `[GuildRoles] Failed to list roles: ${err}`);
+    res.status(500).json({ error: 'Failed to load roles' });
+  }
 };
 
 exports.listUsers = async (req, res) => {
@@ -131,5 +206,94 @@ exports.deleteUser = async (req, res) => {
   } catch (err) {
     helper.myLogger.error(helper.GetTimestamp() + `[DeleteUser] Failed to delete user: ${err}`);
     res.status(500).json({ error: 'Failed to delete user' });
+  }
+};
+
+exports.assignTempRole = async (req, res) => {
+  const bot = req.app.get('discordBot');
+  if (!bot) {
+    res.status(500).json({ error: 'Discord client unavailable' });
+    return;
+  }
+
+  const { guildId, userId, roleId, days } = req.body;
+  const parsedDays = Number(days);
+  if (!guildId || !userId || !roleId || !Number.isInteger(parsedDays) || parsedDays <= 0) {
+    res.status(400).json({ error: 'Missing or invalid fields' });
+    return;
+  }
+
+  try {
+    const guild = bot.guilds.cache.get(guildId);
+    if (!guild) {
+      res.status(404).json({ error: 'Guild not found' });
+      return;
+    }
+
+    const role = guild.roles.cache.get(roleId);
+    if (!role) {
+      res.status(404).json({ error: 'Role not found' });
+      return;
+    }
+
+    const member = await guild.members.fetch(userId);
+    const now = Date.now();
+
+    const existing = await sqlConnectionDiscord.query(
+      'SELECT * FROM temporary_roles WHERE userID = ? AND temporaryRole = ? AND guild_id = ?;',
+      [member.id, role.name, guild.id]
+    );
+
+    let endDate;
+    if (!existing[0]) {
+      endDate = now + (parsedDays * 86400000);
+      const name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
+      await sqlConnectionDiscord.query(
+        'INSERT INTO temporary_roles (userID, temporaryRole, startDate, endDate, addedBy, notified, username, leftServer, guild_id) VALUES (?, ?, ?, ?, 0, 0, ?, 0, ?);',
+        [member.id, role.name, Math.round(now / 1000), Math.round(endDate / 1000), name, guild.id]
+      );
+    } else {
+      endDate = (Number(existing[0].endDate) * 1000) + (parsedDays * 86400000);
+      const name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
+      await sqlConnectionDiscord.query(
+        'UPDATE temporary_roles SET endDate = ?, notified = 0, username = ? WHERE userID = ? AND temporaryRole = ? AND guild_id = ?;',
+        [Math.round(endDate / 1000), name, member.id, role.name, guild.id]
+      );
+    }
+
+    if (!member.roles.cache.has(role.id)) {
+      await member.roles.add(role).catch((err) => {
+        helper.myLogger.error(helper.GetTimestamp() + `[TempRole] Failed to add role: ${err}`);
+      });
+    }
+
+    const finalDate = await helper.formatTimeString(new Date(endDate));
+
+    if (!existing[0]) {
+      await member.send(i18n.__('messages.tempRoleAssigned', {
+        mentionedUsername: member.user.username,
+        daRole: role.name,
+        finalDateDisplay: finalDate,
+      })).catch((err) => {
+        helper.myLogger.error(helper.GetTimestamp() + i18n.__('errors.dmFailed', {
+          memberID: member.id,
+          err,
+        }));
+      });
+    } else {
+      await member.send(i18n.__('dm.accessExtended', {
+        mentionedUsername: member.user.username,
+        finalDate,
+      })).catch((err) => {
+        helper.myLogger.error(helper.GetTimestamp() + i18n.__('errors.dmFailed', {
+          memberID: member.id,
+          err,
+        }));
+      });
+    }
+    res.json({ ok: true, finalDate });
+  } catch (err) {
+    helper.myLogger.error(helper.GetTimestamp() + `[TempRole] Failed to assign role: ${err}`);
+    res.status(500).json({ error: 'Failed to assign role' });
   }
 };

@@ -22,7 +22,10 @@ const App = () => {
   const [session, setSession] = useState({ loading: true, loggedIn: false, username: '' });
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
   const [users, setUsers] = useState([]);
-  const [form, setForm] = useState({ userId: '', username: '', role: '', guildId: '' });
+  const [guilds, setGuilds] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [form, setForm] = useState({ guildId: '', userId: '', roleId: '', days: '' });
   const [editTarget, setEditTarget] = useState(null);
   const [status, setStatus] = useState({ type: 'info', message: '' });
   const [loadingUsers, setLoadingUsers] = useState(false);
@@ -59,6 +62,7 @@ const App = () => {
     setSession({ loading: false, ...sessionData });
     if (sessionData.loggedIn) {
       await loadUsers();
+      await loadGuilds();
     }
   };
 
@@ -71,6 +75,45 @@ const App = () => {
       setStatus({ type: 'error', message: err.message });
     } finally {
       setLoadingUsers(false);
+    }
+  };
+
+  const loadGuilds = async () => {
+    try {
+      const data = await apiFetch('/api/guilds', { method: 'GET' });
+      const list = data?.guilds || [];
+      setGuilds(list);
+      if (list.length > 0) {
+        setForm((prev) => ({ ...prev, guildId: prev.guildId || list[0].guildId }));
+      }
+    } catch (err) {
+      setStatus({ type: 'error', message: err.message });
+    }
+  };
+
+  const loadGuildMembers = async (guildId) => {
+    if (!guildId) {
+      setMembers([]);
+      return;
+    }
+    try {
+      const data = await apiFetch(`/api/guilds/${guildId}/members`, { method: 'GET' });
+      setMembers(data?.members || []);
+    } catch (err) {
+      setStatus({ type: 'error', message: err.message });
+    }
+  };
+
+  const loadGuildRoles = async (guildId) => {
+    if (!guildId) {
+      setRoles([]);
+      return;
+    }
+    try {
+      const data = await apiFetch(`/api/guilds/${guildId}/roles`, { method: 'GET' });
+      setRoles(data?.roles || []);
+    } catch (err) {
+      setStatus({ type: 'error', message: err.message });
     }
   };
 
@@ -100,6 +143,7 @@ const App = () => {
       setLoginForm({ username: '', password: '' });
       setStatus({ type: 'success', message: 'Welcome back. Session started.' });
       await loadUsers();
+      await loadGuilds();
     } catch (err) {
       setStatus({ type: 'error', message: err.message });
     }
@@ -110,6 +154,10 @@ const App = () => {
       await apiFetch('/api/logout', { method: 'POST' });
       setSession({ loading: false, loggedIn: false, username: '' });
       setUsers([]);
+      setGuilds([]);
+      setMembers([]);
+      setRoles([]);
+      setForm({ guildId: '', userId: '', roleId: '', days: '' });
       setStatus({ type: 'info', message: 'Logged out.' });
     } catch (err) {
       setStatus({ type: 'error', message: err.message });
@@ -117,7 +165,12 @@ const App = () => {
   };
 
   const resetForm = () => {
-    setForm({ userId: '', username: '', role: '', guildId: '' });
+    setForm((prev) => ({
+      guildId: prev.guildId,
+      userId: '',
+      roleId: '',
+      days: '',
+    }));
     setEditTarget(null);
   };
 
@@ -125,36 +178,22 @@ const App = () => {
     event.preventDefault();
     setStatus({ type: 'info', message: '' });
 
-    const payload = {
-      userId: form.userId.trim(),
-      username: form.username.trim(),
-      role: form.role.trim(),
-      guildId: form.guildId.trim() || null,
-    };
-
-    if (!payload.userId || !payload.username || !payload.role) {
-      setStatus({ type: 'error', message: 'Please fill in user ID, username, and role.' });
+    if (!form.guildId || !form.userId || !form.roleId || !form.days) {
+      setStatus({ type: 'error', message: 'Please select a guild, user, role, and days.' });
       return;
     }
 
     try {
-      if (editTarget) {
-        await apiFetch('/api/users', {
-          method: 'PUT',
-          body: JSON.stringify({
-            ...payload,
-            originalUserId: editTarget.userId,
-            originalRole: editTarget.role,
-          }),
-        });
-        setStatus({ type: 'success', message: 'User updated successfully.' });
-      } else {
-        await apiFetch('/api/users', {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        });
-        setStatus({ type: 'success', message: 'User added successfully.' });
-      }
+      await apiFetch('/api/temprole/assign', {
+        method: 'POST',
+        body: JSON.stringify({
+          guildId: form.guildId,
+          userId: form.userId,
+          roleId: form.roleId,
+          days: Number(form.days),
+        }),
+      });
+      setStatus({ type: 'success', message: editTarget ? 'Role extended.' : 'Role assigned.' });
       resetForm();
       await loadUsers();
     } catch (err) {
@@ -163,13 +202,17 @@ const App = () => {
   };
 
   const handleEdit = (row) => {
+    if (!form.guildId) {
+      setStatus({ type: 'error', message: 'Select a guild first.' });
+      return;
+    }
     setEditTarget({ userId: row.userID, role: row.temporaryRole });
-    setForm({
+    setForm((prev) => ({
+      ...prev,
       userId: row.userID,
-      username: row.username || '',
-      role: row.temporaryRole,
-      guildId: row.guildId || '',
-    });
+      roleId: roles.find((role) => role.name === row.temporaryRole)?.id || '',
+      days: '',
+    }));
   };
 
   const handleDelete = async (row) => {
@@ -185,6 +228,18 @@ const App = () => {
       setStatus({ type: 'error', message: err.message });
     }
   };
+
+  useEffect(() => {
+    if (!form.guildId || !session.loggedIn) {
+      return;
+    }
+    loadGuildMembers(form.guildId);
+    loadGuildRoles(form.guildId);
+  }, [form.guildId, session.loggedIn]);
+
+  const filteredUsers = form.guildId
+    ? users.filter((row) => row.guildId === form.guildId)
+    : users;
 
   if (session.loading) {
     return html`<div className="min-h-screen flex items-center justify-center">
@@ -281,11 +336,11 @@ const App = () => {
               </tr>
             </thead>
             <tbody className="text-slate-200">
-              ${users.length === 0
+              ${filteredUsers.length === 0
                 ? html`<tr>
                     <td className="py-6 text-center text-slate-400" colSpan="6">No entries yet</td>
                   </tr>`
-                : users.map((row) => html`<tr className="border-t border-slate-800/70">
+                : filteredUsers.map((row) => html`<tr className="border-t border-slate-800/70">
                     <td className="py-4 pr-2">${row.userID}</td>
                     <td className="py-4 pr-2">${row.username || '-'}</td>
                     <td className="py-4 pr-2">${row.temporaryRole}</td>
@@ -296,7 +351,7 @@ const App = () => {
                         className="rounded-lg border border-slate-800 px-3 py-1 text-xs font-semibold text-slate-200 hover:border-slate-500"
                         onClick=${() => handleEdit(row)}
                       >
-                        Edit
+                        Extend
                       </button>
                       <button
                         className="rounded-lg border border-rose-500/40 px-3 py-1 text-xs font-semibold text-rose-200 hover:border-rose-400"
@@ -312,43 +367,56 @@ const App = () => {
       </div>
 
       <div className="glass gradient-border rounded-2xl p-6">
-        <h2 className="text-lg font-semibold text-white">${editTarget ? 'Update entry' : 'Add entry'}</h2>
-        <p className="text-sm text-slate-400">Manual adjustments for temporary roles</p>
+        <h2 className="text-lg font-semibold text-white">${editTarget ? 'Extend temporary role' : 'Assign temporary role'}</h2>
+        <p className="text-sm text-slate-400">Pick a guild, user, role, and duration</p>
 
         <form className="mt-6 space-y-4" onSubmit=${handleSubmitUser}>
           <div>
-            <label className="text-xs uppercase tracking-wide text-slate-400">User ID</label>
-            <input
+            <label className="text-xs uppercase tracking-wide text-slate-400">Guild</label>
+            <select
               className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
-              value=${form.userId}
-              onInput=${(event) => setForm((prev) => ({ ...prev, userId: event.target.value }))}
+              value=${form.guildId}
+              onChange=${(event) => setForm((prev) => ({ ...prev, guildId: event.target.value, userId: '', roleId: '' }))}
               required
-            />
+            >
+              <option value="">Select a guild</option>
+              ${guilds.map((guild) => html`<option value=${guild.guildId}>${guild.guildName || guild.guildId}</option>`)}
+            </select>
           </div>
           <div>
-            <label className="text-xs uppercase tracking-wide text-slate-400">Username</label>
-            <input
+            <label className="text-xs uppercase tracking-wide text-slate-400">User</label>
+            <select
               className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
-              value=${form.username}
-              onInput=${(event) => setForm((prev) => ({ ...prev, username: event.target.value }))}
+              value=${form.userId}
+              onChange=${(event) => setForm((prev) => ({ ...prev, userId: event.target.value }))}
               required
-            />
+            >
+              <option value="">Select a user</option>
+              ${members.map((member) => html`<option value=${member.id}>${member.displayName} (${member.tag})</option>`)}
+            </select>
           </div>
           <div>
             <label className="text-xs uppercase tracking-wide text-slate-400">Role</label>
-            <input
+            <select
               className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
-              value=${form.role}
-              onInput=${(event) => setForm((prev) => ({ ...prev, role: event.target.value }))}
+              value=${form.roleId}
+              onChange=${(event) => setForm((prev) => ({ ...prev, roleId: event.target.value }))}
               required
-            />
+            >
+              <option value="">Select a role</option>
+              ${roles.map((role) => html`<option value=${role.id}>${role.name}</option>`)}
+            </select>
           </div>
           <div>
-            <label className="text-xs uppercase tracking-wide text-slate-400">Guild ID (optional)</label>
+            <label className="text-xs uppercase tracking-wide text-slate-400">Days</label>
             <input
+              type="number"
+              min="1"
               className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
-              value=${form.guildId}
-              onInput=${(event) => setForm((prev) => ({ ...prev, guildId: event.target.value }))}
+              value=${form.days}
+              onInput=${(event) => setForm((prev) => ({ ...prev, days: event.target.value }))}
+              placeholder="30"
+              required
             />
           </div>
           <div className="flex items-center gap-3">
@@ -356,7 +424,7 @@ const App = () => {
               type="submit"
               className="flex-1 rounded-xl bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400 px-4 py-2 text-sm font-semibold text-slate-900 shadow-lg shadow-emerald-500/30"
             >
-              ${editTarget ? 'Save changes' : 'Add user'}
+              ${editTarget ? 'Extend role' : 'Assign role'}
             </button>
             ${editTarget
               ? html`<button

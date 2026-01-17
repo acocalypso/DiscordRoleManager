@@ -10,7 +10,10 @@ const PORT = config.webinterface.backendPort || 9900;
 
 const routes = require('../webserver/routes/user');
 
-function website() {
+function website(bot) {
+  if (bot) {
+    backend.set('discordBot', bot);
+  }
   backend.use(session({
     name: 'rolebot',
     cookie: {
