@@ -136,6 +136,36 @@ Notes:
 - Slash commands are the only supported command flow (legacy prefix commands are not used).
 - /temprole add uses a form with user/role selectors and a days selector. Use “Custom days” to enter an exact value.
 
+## Webinterface (React)
+
+The webinterface is a single-page React app served by the built-in Express backend.
+
+### Enable / configure
+
+Set these fields in config.json:
+
+- webinterface.disabled: "no"
+- webinterface.backendPort: port to listen on (default 9000)
+- webinterface.username / password: login credentials
+- webinterface.secret: session secret (change this)
+
+Start the bot and open:
+
+http://localhost:<backendPort>
+
+### What it can do
+
+- Select a registered guild (from /register)
+- Load members and roles from Discord
+- Assign or extend a temporary role with a days value
+- Remove entries from the temporary_roles table
+
+### Requirements
+
+- The bot must be in the guild and have the GUILD_MEMBERS intent enabled.
+- Run /register at least once per guild so it appears in the guild dropdown.
+- Users must allow DMs from the server if you want them to receive extension/assignment messages.
+
 ## Grafana 8.x Support
 
 ![alt text](https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/master/grafana_donators.PNG)
