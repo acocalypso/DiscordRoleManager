@@ -20,6 +20,7 @@ const sqlConnectionDiscord = require('./module/database/database_discord');
 const helper = require('./module/helper');
 const routine = require('./module/routine');
 const discordcommands = require('./module/discordcommands');
+const slashCommands = require('./module/slashCommands');
 
 if (config.webinterface.disabled === 'no') {
   web.website();
@@ -31,6 +32,7 @@ bot.on('clientReady', () => {
   helper.myLogger.log('Bot started');
   console.log(i18n.__('app.ready'));
   sqlConnectionDiscord.InitDB();
+  slashCommands.registerSlashCommands();
 });
 
 const checkIntervall = config.checkIntervall * 60000;
@@ -51,53 +53,8 @@ if (config.specialmode.enabled === 'yes') {
   });
 }
 
-bot.on('messageCreate', async (message) => {
-// MAKE SURE ITS A COMMAND
-  if (!message.content.startsWith(config.cmdPrefix)) {
-    return;
-  }
-
-  // STOP SCRIPT IF DM/PM
-  if (message.channel.type === 'dm') {
-    return;
-  }
-
-  // GET CHANNEL INFO
-  let msg = message.content;
-  msg = msg.toLowerCase();
-
-  // REMOVE LETTER CASE (MAKE ALL LOWERCASE)
-  let command = msg.toLowerCase();
-  command = command.split(/\s+/)[0];
-  command = command.slice(config.cmdPrefix.length);
-
-  // GET ARGUMENTS
-  const args = msg.split(/\s+/).slice(1);
-
-  if (command.startsWith('temprole') || command === 'tr' || command === 'trole') {
-    discordcommands.temprole(message, command, args);
-  }
-
-  if (command === 'paypal' || command === 'subscribe') {
-    discordcommands.paypal(message);
-  }
-
-  if (command === 'command' || command === 'help') {
-    discordcommands.help(message, command);
-  }
-
-  // ############################## CHECK ##############################
-  if (command === 'check') {
-    discordcommands.check(message, args);
-  }
-  // ######################### MAP ###################################
-  if (command === 'map') {
-    discordcommands.map(message);
-  }
-
-  if (command === 'register') {
-    discordcommands.register(message, args);
-  }
+bot.on('interactionCreate', async (interaction) => {
+  await slashCommands.handleInteraction(interaction);
 });
 
 // Check for bot events other than messages

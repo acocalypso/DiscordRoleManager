@@ -1,6 +1,7 @@
 {
   "token": "", // Bot token
   "clientID": "", // bot client id
+  "guildID": "", // optional: guild id for instant slash command updates
   "clientSecret": "", //bot client secret
   "ownerID": "", // Your discord id
   "defaultDonatorRole": "1234567896548", // default donator role if you don't want to specify it in the command

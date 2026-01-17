@@ -30,7 +30,13 @@
     "userAlreadyHasRole": "Deze gebruiker heeft al de rol **{{daRole}}** probeer `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` te gebruiken als je zijn rol wilt resetten.",
     "dmFailed": "Kan geen DM sturen naar gebruiker {{memberID}} - {{err}}",
     "removeRoleFailed": "**⚠ Kan niet de rol: {{rNameName}} van {{memberUsername}} verwijderen!**",
-    "checkRolePromptMention": "Voer de rol in die u wilt controleren, zoals `{{configCMDPrefix}}check @<ROLE-NAME>`"
+    "checkRolePromptMention": "Voer de rol in die u wilt controleren, zoals `{{configCMDPrefix}}check @<ROLE-NAME>`",
+    "registerRequired": "Voer eerst /register uit om deze server in te stellen.",
+    "guildOnly": "Deze opdracht kan alleen in een server worden gebruikt.",
+    "mapDisabled": "De map is uitgeschakeld in de configuratie.",
+    "paypalDisabled": "PayPal is uitgeschakeld in de configuratie.",
+    "missingClientId": "clientID ontbreekt in config.json.",
+    "slashRegisterFailed": "Kon slash-opdrachten niet registreren: {{err}}"
   },
   "admin": {
     "tempRole": {
@@ -52,8 +58,8 @@
     "registration": {
       "modRoleAdded": "[ADMIN] [ROLE-REGISTRATION] Rol {{modRole}} op {{guild_name}} toegevoegd aan de database",
       "adminRoleAdded": "[ADMIN] [ROLE-REGISTRATION] Rol {{adminRole}} op {{guild_name}} toegevoegd aan de database",
-      "channelAdded": "[ADMIN] [CHANNEL-REGISTRATION] Channel toegevoegd aan de database",
-      "adminChannelAdded": "[ADMIN] [CHANNEL-REGISTRATION] AdminChannel toegevoegd aan de database",
+      "channelAdded": "[ADMIN] [CHANNEL-REGISTRATION] Kanaal toegevoegd aan de database",
+      "adminChannelAdded": "[ADMIN] [CHANNEL-REGISTRATION] Admin-kanaal toegevoegd aan de database",
       "serverAdded": "[ADMIN] [SERVER-REGISTRATION] {{guild_name}} {{guild_id}} toegevoegd aan de database"
     }
   },
@@ -79,7 +85,31 @@
     "adminChannelAlreadyRegistered": "🎉 AdminChannel is al geregistreerd!",
     "serverRegistered": "🎉 {{guild_name}} is geregistreerd!",
     "serverAlreadyRegistered": "🎉 {{guild_name}} is al geregistreerd!",
-    "webmap": "Onze link naar de map is: {{configMapUrl}}"
+    "webmap": "Onze link naar de map is: {{configMapUrl}}",
+    "paypalLink": "PayPal: {{configPaypalUrl}}",
+    "helpMods": "/temprole add <user> <days> [role] — tijdelijke rol toewijzen\n/temprole check <user> [role] — status controleren\n/temprole remove <user> [role] — tijdelijke rol verwijderen\n/temprole add <user> <days> [role] — tijd toevoegen",
+    "helpUser": "/check [role] — abonnement controleren\n/map — maplink\n/paypal — PayPal-link"
+  },
+  "register": {
+    "title": "Serverconfiguratie",
+    "adminRoleLabel": "Admin-rol ID",
+    "adminRolePlaceholder": "Plak de admin-rol ID",
+    "modRoleLabel": "Mod-rol ID",
+    "modRolePlaceholder": "Plak de mod-rol ID",
+    "mainChannelLabel": "Hoofdkanaal ID",
+    "mainChannelPlaceholder": "Plak het hoofdkanaal ID",
+    "adminChannelLabel": "Admin-kanaal ID",
+    "adminChannelPlaceholder": "Plak het admin-kanaal ID",
+    "instructions": "Selecteer hieronder de rollen en kanalen en klik daarna op Opslaan.",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "missingRequired": "Selecteer de admin-rol, het hoofdkanaal en het admin-kanaal.",
+    "sessionExpired": "Sessie verlopen. Voer /register opnieuw uit.",
+    "cancelled": "Registratie geannuleerd.",
+    "invalidInput": "Een of meer IDs zijn ongeldig. Controleer rol- en kanaal-IDs.",
+    "success": "Registratie voltooid.",
+    "updated": "Registratie bijgewerkt.",
+    "slashRegistered": "Slash-opdrachten geregistreerd."
   },
   "paypal": {
     "thanks": "Hartelijk dank. \n Uw bijdrage is belangrijk voor ons.",

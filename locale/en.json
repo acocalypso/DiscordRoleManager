@@ -30,7 +30,13 @@
     "userAlreadyHasRole": "This user already has the role **{{daRole}}** try using `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` if you want to reset their role.",
     "dmFailed": "Failed to send a DM to user: {{memberID}} - {{err}}",
     "removeRoleFailed": "**⚠ Could not remove the {{rNameName}} role from {{memberUsername}}!**",
-    "checkRolePromptMention": "Please enter the role you want to check like `{{configCMDPrefix}}check @<ROLE-NAME>`"
+    "checkRolePromptMention": "Please enter the role you want to check like `{{configCMDPrefix}}check @<ROLE-NAME>`",
+    "registerRequired": "Please run /register first to set up this server.",
+    "guildOnly": "This command can only be used in a server.",
+    "mapDisabled": "Map is disabled in the configuration.",
+    "paypalDisabled": "PayPal is disabled in the configuration.",
+    "missingClientId": "Missing clientID in config.json.",
+    "slashRegisterFailed": "Failed to register slash commands: {{err}}"
   },
   "admin": {
     "tempRole": {
@@ -79,7 +85,31 @@
     "adminChannelAlreadyRegistered": "🎉 AdminChannel has already been registered!",
     "serverRegistered": "🎉 {{guild_name}} has been registered!",
     "serverAlreadyRegistered": "🎉 {{guild_name}} has already been registered!",
-    "webmap": "Our official webmap: {{configMapUrl}}"
+    "webmap": "Our official webmap: {{configMapUrl}}",
+    "paypalLink": "PayPal: {{configPaypalUrl}}",
+    "helpMods": "/temprole add <user> <days> [role] — assign a temporary role\n/temprole check <user> [role] — check a user's temp role\n/temprole remove <user> [role] — remove a temp role\n/temprole add <user> <days> [role] — add more time",
+    "helpUser": "/check [role] — check your subscription\n/map — web map link\n/paypal — PayPal link"
+  },
+  "register": {
+    "title": "Server setup",
+    "adminRoleLabel": "Admin role ID",
+    "adminRolePlaceholder": "Paste the admin role ID",
+    "modRoleLabel": "Mod role ID",
+    "modRolePlaceholder": "Paste the mod role ID",
+    "mainChannelLabel": "Main channel ID",
+    "mainChannelPlaceholder": "Paste the main channel ID",
+    "adminChannelLabel": "Admin channel ID",
+    "adminChannelPlaceholder": "Paste the admin channel ID",
+    "instructions": "Select the roles and channels below, then click Save.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "missingRequired": "Please select the admin role, main channel, and admin channel.",
+    "sessionExpired": "Setup session expired. Run /register again.",
+    "cancelled": "Registration cancelled.",
+    "invalidInput": "One or more IDs are invalid. Please check the role and channel IDs.",
+    "success": "Registration complete.",
+    "updated": "Registration updated.",
+    "slashRegistered": "Slash commands registered."
   },
   "paypal": {
     "thanks": "Thank you! \nYour support is greatly appreciated",

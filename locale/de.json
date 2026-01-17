@@ -30,7 +30,13 @@
     "userAlreadyHasRole": "Der Benutzer hat bereits die Rolle **{{daRole}}** versuche `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` wenn du die Rolle entfernen willst.",
     "dmFailed": "Die Nachricht konnte nicht zugestellt werden: {{memberID}} - {{err}}",
     "removeRoleFailed": "**⚠ Die Rolle {{rNameName}} konnte nicht vom Benutzer {{memberUsername}} entfernt werden!**",
-    "checkRolePromptMention": "Bitte gib die Rolle an die du prüfen willst: `{{configCMDPrefix}}check @<ROLE-NAME>`"
+    "checkRolePromptMention": "Bitte gib die Rolle an die du prüfen willst: `{{configCMDPrefix}}check @<ROLE-NAME>`",
+    "registerRequired": "Bitte zuerst /register ausführen, um diesen Server einzurichten.",
+    "guildOnly": "Dieser Befehl kann nur auf einem Server verwendet werden.",
+    "mapDisabled": "Die Map ist in der Konfiguration deaktiviert.",
+    "paypalDisabled": "PayPal ist in der Konfiguration deaktiviert.",
+    "missingClientId": "clientID fehlt in config.json.",
+    "slashRegisterFailed": "Slash-Commands konnten nicht registriert werden: {{err}}"
   },
   "admin": {
     "tempRole": {
@@ -79,7 +85,31 @@
     "adminChannelAlreadyRegistered": "🎉 AdminChannel ist bereits registriert!",
     "serverRegistered": "🎉 {{guild_name}} wurde registriert!",
     "serverAlreadyRegistered": "🎉 {{guild_name}} ist bereits registriert!",
-    "webmap": "Linke zur Livemap: {{configMapUrl}}"
+    "webmap": "Linke zur Livemap: {{configMapUrl}}",
+    "paypalLink": "PayPal: {{configPaypalUrl}}",
+    "helpMods": "/temprole add <user> <days> [role] — temporäre Rolle vergeben\n/temprole check <user> [role] — Status prüfen\n/temprole remove <user> [role] — temporäre Rolle entfernen\n/temprole add <user> <days> [role] — Zeit hinzufügen",
+    "helpUser": "/check [role] — Zugriff prüfen\n/map — Link zur Map\n/paypal — PayPal-Link"
+  },
+  "register": {
+    "title": "Server-Setup",
+    "adminRoleLabel": "Admin-Rollen-ID",
+    "adminRolePlaceholder": "Admin-Rollen-ID einfügen",
+    "modRoleLabel": "Mod-Rollen-ID",
+    "modRolePlaceholder": "Mod-Rollen-ID einfügen",
+    "mainChannelLabel": "Hauptkanal-ID",
+    "mainChannelPlaceholder": "Hauptkanal-ID einfügen",
+    "adminChannelLabel": "Admin-Kanal-ID",
+    "adminChannelPlaceholder": "Admin-Kanal-ID einfügen",
+    "instructions": "Wähle unten Rollen und Kanäle aus und klicke dann Speichern.",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "missingRequired": "Bitte Admin-Rolle, Hauptkanal und Admin-Kanal auswählen.",
+    "sessionExpired": "Setup-Sitzung abgelaufen. Bitte /register erneut ausführen.",
+    "cancelled": "Registrierung abgebrochen.",
+    "invalidInput": "Eine oder mehrere IDs sind ungültig. Bitte Rollen- und Kanal-IDs prüfen.",
+    "success": "Registrierung abgeschlossen.",
+    "updated": "Registrierung aktualisiert.",
+    "slashRegistered": "Slash-Commands registriert."
   },
   "paypal": {
     "thanks": "Vielen Dank.\n Deine Unterstützung ist mir wichtig.",

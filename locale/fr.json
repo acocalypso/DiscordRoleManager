@@ -30,7 +30,13 @@
     "userAlreadyHasRole": "Cet utilisateur a déjà le rôle **{{daRole}}** essayez d'utiliser `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` si vous souhaitez réinitialiser son rôle.",
     "dmFailed": "Échec de l'envoi d'un MP à l'utilisateur: {{memberID}} - {{err}}",
     "removeRoleFailed": "**⚠ Impossible de supprimer le rôle {{rNameName}} de {{memberUsername}}!**",
-    "checkRolePromptMention": "Veuillez entrer le rôle que vous souhaitez vérifier comme `{{configCMDPrefix}}check @<ROLE-NAME>`"
+    "checkRolePromptMention": "Veuillez entrer le rôle que vous souhaitez vérifier comme `{{configCMDPrefix}}check @<ROLE-NAME>`",
+    "registerRequired": "Veuillez d'abord exécuter /register pour configurer ce serveur.",
+    "guildOnly": "Cette commande ne peut être utilisée que sur un serveur.",
+    "mapDisabled": "La carte est désactivée dans la configuration.",
+    "paypalDisabled": "PayPal est désactivé dans la configuration.",
+    "missingClientId": "clientID manquant dans config.json.",
+    "slashRegisterFailed": "Échec de l'enregistrement des commandes slash : {{err}}"
   },
   "admin": {
     "tempRole": {
@@ -79,7 +85,31 @@
     "adminChannelAlreadyRegistered": "🎉 AdminChannel a déjà été enregistré!",
     "serverRegistered": "🎉 {{guild_name}} a été enregistré!",
     "serverAlreadyRegistered": "🎉 {{guild_name}} a déjà été enregistré!",
-    "webmap": "Lien vers la carte en direct: {{configMapUrl}}"
+    "webmap": "Lien vers la carte en direct : {{configMapUrl}}",
+    "paypalLink": "PayPal : {{configPaypalUrl}}",
+    "helpMods": "/temprole add <user> <days> [role] — attribuer un rôle temporaire\n/temprole check <user> [role] — vérifier un rôle temporaire\n/temprole remove <user> [role] — retirer un rôle temporaire\n/temprole add <user> <days> [role] — ajouter du temps",
+    "helpUser": "/check [role] — vérifier votre abonnement\n/map — lien de la carte\n/paypal — lien PayPal"
+  },
+  "register": {
+    "title": "Configuration du serveur",
+    "adminRoleLabel": "ID du rôle admin",
+    "adminRolePlaceholder": "Coller l'ID du rôle admin",
+    "modRoleLabel": "ID du rôle mod",
+    "modRolePlaceholder": "Coller l'ID du rôle mod",
+    "mainChannelLabel": "ID du canal principal",
+    "mainChannelPlaceholder": "Coller l'ID du canal principal",
+    "adminChannelLabel": "ID du canal admin",
+    "adminChannelPlaceholder": "Coller l'ID du canal admin",
+    "instructions": "Sélectionnez les rôles et canaux ci-dessous, puis cliquez sur Enregistrer.",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "missingRequired": "Veuillez sélectionner le rôle admin, le canal principal et le canal admin.",
+    "sessionExpired": "Session expirée. Exécutez /register à nouveau.",
+    "cancelled": "Enregistrement annulé.",
+    "invalidInput": "Une ou plusieurs IDs sont invalides. Vérifiez les IDs des rôles et canaux.",
+    "success": "Enregistrement terminé.",
+    "updated": "Enregistrement mis à jour.",
+    "slashRegistered": "Commandes slash enregistrées."
   },
   "paypal": {
     "thanks": "Merci! \nVotre soutien est grandement apprécié",

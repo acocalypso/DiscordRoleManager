@@ -12,7 +12,7 @@
   - Enable PRESENCE INTENT, SERVER MEMBERS INTENT and MESSAGE CONTENT INTENT
   - Use the URL that page generates and go to it, and you will be asked to log into your discord. You will need Admin access in order to get the bot to join that server.
 - Rename config.json.example to config.json
-- Edit config.json and fill out the required infos.
+- Edit config.json and fill out the required infos (token + clientID required). Set guildID for instant slash command updates.
 - Create a Mysql Database
 - If you used DiscordRoleManager before, backup your dataBase.sqlite
 - update to latest master
@@ -25,35 +25,30 @@ As a Workaround to use the multiguild feature and not to crash the bot please ma
 
 ```update temporary_roles set guild_id = YOURGUILDID where guild_id is null;```
 
-For the first run please register the bot this will save guildID and guildName to DB
+For the first run please register the bot via slash command. This saves guild setup to the DB.
 
 ```
-(prefix)register
+/register
 ```
 
-After that please register the Admin and Moderator Role and channel + adminchannel
-
-channel: In this channel the bot accepts commands
-adminchannel: The bot will send information about expired or soon to expire users as well as additional information if issues occurs.
-
-```
-(prefix)register adminrole @AdminRole
-(prefix)register modrole @ModRole
-(prefix)register channel #mainchannelforthebotinformation
-(prefix)register adminchannel #adminchannel
-```
+The /register flow is interactive (modal). It will ask for:
+- Admin role ID
+- Mod role ID
+- Main channel ID (where the bot accepts commands)
+- Admin channel ID (expiry alerts and admin info)
 
 ```sh
 #Please remove all comments as this is currently not handled by the bot!
 
 {
   "token": "", // Bot token
-  "clientID": "", // bot client id
+  "clientID": "", // bot client id (required for slash commands)
+  "guildID": "", // optional: guild id for instant slash command updates
   "clientSecret": "", //bot client secret
   "ownerID": "", // Your discord id
   "defaultDonatorRole": "1234567896548" // default donator role if you don't want to specify it in the command
   "language": "", // en, de, pt, nl, fr
-  "cmdPrefix": "?", // choose your command prefix
+  "cmdPrefix": "?", // legacy only (slash commands are used now)
   "checkIntervall": 60, // check every 60 min for expired or soon to expire users
   "migrateSQLITE": {
     "migrate": true, // do you want to migrate your user from sqlite?
@@ -116,26 +111,25 @@ docker-compose pull
 docker-compose up -d
 ```
 
-## Usage example
+## Usage example (Slash Commands)
 
 ```
 User commands:
 
-(prefix)check @rolename » to check the time left on your subscription
-(prefix)map » a link to our web map
-(prefix)subscribe or (prefix)paypal » for a link to your PayPal account
+/check [role] » check the time left on your subscription
+/map » a link to the web map
+/paypal » link to PayPal
 
 Admin / Mod commands:
 
-(prefix)temprole @mention <DAYS> @rolename » to assign a temporary roles
-(prefix)temprole add @mention <DAYS> @rolename » to add more time to a temporary role assignment
-(prefix)temprole remove @mention @rolename » to remove a temporary role assignment
-(prefix)temprole check @mention @rolename » to check the time left on a temporary role assignment
+/temprole add <user> <days> [role] » assign a temporary role
+/temprole remove <user> [role] » remove a temporary role assignment
+/temprole check <user> [role] » check a temporary role assignment
 
 Help commands:
 
-(prefix)help » display help commands
-(prefix)help mods >> display mod commands
+/help » display help commands
+/help scope:mods » display mod commands
 ```
 
 ## Grafana 8.x Support
@@ -144,16 +138,9 @@ Help commands:
 
 ## Contribution
 
-You can find the local.json file in locale/local.json
+You can find language files in locale/<lang>.json
 
-if you want to add another langue you just need to add a new entry in the json file like:
-
-```
-  "Ready": {
-    "de": "Bereit!",
-    "cz": "připraven"
-  },
-```
+If you want to add another language, copy locale/en.json to locale/<lang>.json and translate values.
 
 ## Additional IMPORTANT Infos
 

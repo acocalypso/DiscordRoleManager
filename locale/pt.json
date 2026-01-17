@@ -30,7 +30,13 @@
     "userAlreadyHasRole": "Este utilizador já tem o perfil **{{daRole}}**. Tenta usar `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` se pretenderes fazer o reset do perfil.",
     "dmFailed": "Erro ao enviar mensagem privada ao utilizador. Detalhes:\n{{memberID}} - {{err}}",
     "removeRoleFailed": "****⚠ Não foi possivel remover o perfil {{rNameName}} de {{memberUsername}}!**",
-    "checkRolePromptMention": "Por favor introduz o nome do perfil que queres verificar. Exemplo: `{{configCMDPrefix}}check @<ROLE-NAME>`"
+    "checkRolePromptMention": "Por favor introduz o nome do perfil que queres verificar. Exemplo: `{{configCMDPrefix}}check @<ROLE-NAME>`",
+    "registerRequired": "Por favor executa /register primeiro para configurar este servidor.",
+    "guildOnly": "Este comando só pode ser usado num servidor.",
+    "mapDisabled": "O mapa está desativado na configuração.",
+    "paypalDisabled": "O PayPal está desativado na configuração.",
+    "missingClientId": "clientID em falta no config.json.",
+    "slashRegisterFailed": "Falha ao registar comandos slash: {{err}}"
   },
   "admin": {
     "tempRole": {
@@ -50,11 +56,11 @@
       "leftRemovedNotice": ":exclamation: {{name}} todo o acesso foi removido da base de dados."
     },
     "registration": {
-      "modRoleAdded": "[ADMIN] [ROLE-REGISTRATION] Role {{modRole}} on {{guild_name}} added to database",
-      "adminRoleAdded": "[ADMIN] [ROLE-REGISTRATION] Role {{adminRole}} on {{guild_name}} added to database",
-      "channelAdded": "[ADMIN] [CHANNEL-REGISTRATION] Channel added to database",
-      "adminChannelAdded": "[ADMIN] [CHANNEL-REGISTRATION] AdminChannel added to database",
-      "serverAdded": "[ADMIN] [SERVER-REGISTRATION] {{guild_name}} {{guild_id}} added to database"
+      "modRoleAdded": "[ADMIN] [ROLE-REGISTRATION] Role {{modRole}} em {{guild_name}} adicionada à base de dados",
+      "adminRoleAdded": "[ADMIN] [ROLE-REGISTRATION] Role {{adminRole}} em {{guild_name}} adicionada à base de dados",
+      "channelAdded": "[ADMIN] [CHANNEL-REGISTRATION] Channel adicionado à base de dados",
+      "adminChannelAdded": "[ADMIN] [CHANNEL-REGISTRATION] AdminChannel adicionado à base de dados",
+      "serverAdded": "[ADMIN] [SERVER-REGISTRATION] {{guild_name}} {{guild_id}} adicionado à base de dados"
     }
   },
   "dm": {
@@ -79,7 +85,31 @@
     "adminChannelAlreadyRegistered": "🎉 AdminChannel já está registado!",
     "serverRegistered": "🎉 {{guild_name}} foi registado!",
     "serverAlreadyRegistered": "🎉 {{guild_name}} já está registado!",
-    "webmap": "O nosso mapa online: {{configMapUrl}}"
+    "webmap": "O nosso mapa online: {{configMapUrl}}",
+    "paypalLink": "PayPal: {{configPaypalUrl}}",
+    "helpMods": "/temprole add <user> <days> [role] — atribuir um perfil temporário\n/temprole check <user> [role] — verificar perfil temporário\n/temprole remove <user> [role] — remover perfil temporário\n/temprole add <user> <days> [role] — adicionar tempo",
+    "helpUser": "/check [role] — verificar subscrição\n/map — link do mapa\n/paypal — link PayPal"
+  },
+  "register": {
+    "title": "Configuração do servidor",
+    "adminRoleLabel": "ID do cargo admin",
+    "adminRolePlaceholder": "Colar o ID do cargo admin",
+    "modRoleLabel": "ID do cargo mod",
+    "modRolePlaceholder": "Colar o ID do cargo mod",
+    "mainChannelLabel": "ID do canal principal",
+    "mainChannelPlaceholder": "Colar o ID do canal principal",
+    "adminChannelLabel": "ID do canal admin",
+    "adminChannelPlaceholder": "Colar o ID do canal admin",
+    "instructions": "Seleciona os cargos e canais abaixo e clica em Guardar.",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "missingRequired": "Seleciona o cargo admin, o canal principal e o canal admin.",
+    "sessionExpired": "Sessão expirada. Executa /register novamente.",
+    "cancelled": "Registo cancelado.",
+    "invalidInput": "Uma ou mais IDs são inválidas. Verifique as IDs de cargos e canais.",
+    "success": "Registo concluído.",
+    "updated": "Registo atualizado.",
+    "slashRegistered": "Comandos slash registados."
   },
   "paypal": {
     "thanks": "Obrigado! \nAgradecemos o teu apoio",
