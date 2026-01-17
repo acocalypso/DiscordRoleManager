@@ -3,15 +3,21 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 
-router.get('/', userController.login);
-router.post('/auth', userController.auth);
-router.get('/home', userController.home);
-router.get('/discorduser', userController.view);
-router.get('/addDiscordUser', userController.createDiscordForm);
-router.post('/addDiscordUser', userController.createDiscordUser);
-router.get('/editUser/:id', userController.edit);
-router.post('/editUser/:id', userController.update);
+const requireAuth = (req, res, next) => {
+	if (req.session && req.session.loggedin === true) {
+		return next();
+	}
+	return res.status(401).json({ error: 'Unauthorized' });
+};
 
-router.post('/deleteuser/:id', userController.delete);
+router.get('/api/csrf', userController.csrf);
+router.get('/api/session', userController.session);
+router.post('/api/login', userController.login);
+router.post('/api/logout', userController.logout);
+
+router.get('/api/users', requireAuth, userController.listUsers);
+router.post('/api/users', requireAuth, userController.createUser);
+router.put('/api/users', requireAuth, userController.updateUser);
+router.delete('/api/users', requireAuth, userController.deleteUser);
 
 module.exports = router;

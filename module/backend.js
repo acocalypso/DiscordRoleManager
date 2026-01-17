@@ -1,7 +1,8 @@
 const bodyParser = require('body-parser');
-const exphbs = require('express-handlebars');
 const session = require('express-session');
 const express = require('express');
+const lusca = require('lusca');
+const path = require('path');
 const config = require('../config/config.json');
 
 const backend = express();
@@ -24,14 +25,17 @@ function website() {
 
   backend.use(bodyParser.urlencoded({ extended: false }));
   backend.use(bodyParser.json());
-  // Static Files
-  backend.use(express.static('../public'));
 
-  // Template Engine
-  backend.engine('hbs', exphbs.engine({ extname: '.hbs' }));
-  backend.set('view engine', 'hbs');
+  backend.use(lusca.csrf());
+
+  // Static Files (React app)
+  backend.use(express.static(path.join(__dirname, '../public')));
 
   backend.use('/', routes);
+
+  backend.use((req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+  });
   backend.listen(PORT, () => {
     console.log(`Now listening to requests on Port ${PORT}`);
   });
