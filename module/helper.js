@@ -1,10 +1,10 @@
 const bcrypt = require('bcrypt');
 const { Console } = require('console');
 const fs = require('fs');
-const moment = require('moment');
+const { format } = require('date-fns');
 
-// const timeDate = moment(Date()).format('YYYYMMDDHHmmss');
-const momentnow = moment().format('YYYY-MM-DD-HHmmss');
+// const timeDate = format(new Date(), 'yyyyMMddHHmmss');
+const momentnow = format(new Date(), 'yyyy-MM-dd-HHmmss');
 
 function GetTimestamp() {
   const now = new Date();
