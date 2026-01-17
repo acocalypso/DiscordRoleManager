@@ -18,7 +18,6 @@
     "express": "5.2.1",
     "express-handlebars": "8.0.4",
     "express-session": "^1.17.3",
-    "i18n-nodejs": "^4.1.0",
     "log-to-file": "^3.0.0",
     "date-fns": "^4.1.0",
     "mysql": "^2.18.1"

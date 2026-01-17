@@ -1,0 +1,88 @@
+{
+  "app": {
+    "ready": "Bereit!"
+  },
+  "db": {
+    "noEntries": "Es wurden keine Einträge in der Datenbank gefunden",
+    "updateUsername": "Der Benutzername für {{memberID}} wurde zu {{name}} aktualisiert",
+    "updateGuildId": "Guild-ID für {{name}} wurde aktualisiert"
+  },
+  "errors": {
+    "initdb": {
+      "roleCheckQuery": "[InitDB] Fehler beim Ausführen der Rollenüberprüfungsabfrage",
+      "guildMemberRemove": "[InitDB] Fehler beim Ausführen der Abfrage in guildMemberRemove",
+      "mainChannelId": "[InitDB] Fehler beim Ausführen von mainChannelID"
+    },
+    "configAdminRoleMissing": "[ERROR] [CONFIG] Die Admin Rolle konnte nicht gefunden werden: {{configAdminRoleName}}",
+    "configModRoleMissing": "[ERROR] [CONFIG] Die Moderator Rolle konnte nicht gefunden werden: {{configModRoleName}}",
+    "notAllowedHelp": "du bist nicht berechtigt diesen Befehl zu verwenden!\nVersuche {{configCMDPrefix}}help",
+    "notAllowed": "du bist nicht berechtigt diesen Befehl zu verwenden!",
+    "roleNotFound": "Die Rolle konnte nicht gefunden werden, bitte prüfe ob der Name richtig geschrieben ist und versuch es erneut.",
+    "notInDbForRole": "⚠ [ERROR] {{mentionedUsername}} ist __NICHT__ in der `Datenbank` mit der Rolle {{daRole}} vorhanden",
+    "notInDb": "⚠ [ERROR] {{mentionedUsername}} ist __NICHT__ in der Datenbank",
+    "authorNotInDbForRole": "⚠ [FEHLER] {{mAuthorUsername}} ist __NICHT__ in der Datenbank mit der Rolle {{daRole}}.",
+    "invalidDays": "Fehler: der zweite Wert muss Anzahl **X** an Tagen sein, z.B.:\n `{{configCMDPrefix}}{{command}} add @{{mentionedUsername}} 90 {{daRole}}`",
+    "temproleSyntax": "syntax:\n `{{configCMDPrefix}}temprole @mention <DAYS> @<ROLE-NAME>`,\n oder `{{configCMDPrefix}}temprole remove @mention @<ROLE-NAME>`\n oder `{{configCMDPrefix}}temprole check @mention @<ROLE-NAME>`",
+    "temproleMentionRequired": "bitte markiere eine Person mit `@mention`, der ich `{{configCMDPrefix}}temprole` geben/entfernen soll...",
+    "temproleIncompleteData": "unvollständige Daten, bitte versuche: \n `{{configCMDPrefix}}temprole @mention <DAYS> <@ROLE-NAME>`,\n oder `{{configCMDPrefix}}temprole remove @mention @<ROLE-NAME>`\n oder `{{configCMDPrefix}}temprole check @mention @<ROLE-NAME>`",
+    "missingMentionAddTime": "bitte markiere eine person mit `@mention` um den Zugriff zu verlängern...",
+    "missingDays": "für wie viele Tage soll {{mentionedUsername}} die Rolle haben?",
+    "userAlreadyHasRole": "Der Benutzer hat bereits die Rolle **{{daRole}}** versuche `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` wenn du die Rolle entfernen willst.",
+    "dmFailed": "Die Nachricht konnte nicht zugestellt werden: {{memberID}} - {{err}}",
+    "removeRoleFailed": "**⚠ Die Rolle {{rNameName}} konnte nicht vom Benutzer {{memberUsername}} entfernt werden!**",
+    "checkRolePromptMention": "Bitte gib die Rolle an die du prüfen willst: `{{configCMDPrefix}}check @<ROLE-NAME>`"
+  },
+  "admin": {
+    "tempRole": {
+      "userLeftNotice": "⚠ {{rowUsername}} hat den Server **verlassen** und die Rolle **{{rNameName}}** verloren - Der **temporäre** Zugriff ist __Ausgelaufen__ 😭",
+      "userLeftLog": "[ADMIN] [TEMPORARY-ROLE] {{rowUsername}} - {{rowUserID}} hat den Server verlassen und die Rolle {{rNameName}} verloren... Zeit ABGELAUFEN",
+      "memberExpiredNotice": "⚠ {{memberUsername}} hat die Rolle **{{rNameName}}** verloren - der **temporäre** Zugriff ist __AUSGELAUFEN__ 😭",
+      "memberExpiredLog": "[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - {{memberId}} hat die Rolle: {{rNameName}} verloren ... Zeit ABGELAUFEN",
+      "memberExpiringAdminNotice": "⚠ {{memberUsername}} verliert die Rolle: **{{rNameName}}** in weniger als 5 Tagen am {{finalDate}}.",
+      "memberExpiringLog": "[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - ({{memberID}}) wurde informiert, dass seine Rolle {{rNameName}} in weniger als 5 Tage am {{finalDate}} ausläuft",
+      "removedAccessLog": "[ADMIN] [TEMPORARY-ROLE] {{mUserUsername}} ({{mID}}) hat die Rolle von {{mentionedUsername}} ({{mentionedID}}) entfernt",
+      "removedAccessNotice": "⚠ {{mentionedUsername}} hat die Rolle **{{theirRoleName}}** **verloren** und wurde aus der Datenbank entfernt",
+      "addedDaysLog": "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) hat {{days}} Tag/e erhalten von: {{mUserUsername}} ({{mID}}) für die Rolle: {{daRole}}",
+      "assignedRoleLog": "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) wurde die Rolle {{daRole}} von {{mUserUsername}} ({{mID}}) gegeben",
+      "leftMarkedLog": "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) hat den Server verlassen. Alle Rollen werden in der Datenbank markiert.",
+      "leftNotice": ":exclamation: {{name}} hat den Server verlassen.",
+      "leftRemovedLog": "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) wurde aus der Datenbank entfernt.",
+      "leftRemovedNotice": ":exclamation: {{name}} alle Zugriffe aus der Datenbank wurden entfernt."
+    },
+    "registration": {
+      "modRoleAdded": "[ADMIN] [ROLE-REGISTRATION] Rolle {{modRole}} auf {{guild_name}} wurde der Datenbank hinzugefügt",
+      "adminRoleAdded": "[ADMIN] [ROLE-REGISTRATION] Rolle {{adminRole}} auf {{guild_name}} wurde der Datenbank hinzugefügt",
+      "channelAdded": "[ADMIN] [CHANNEL-REGISTRATION] Channel zur Datenbank hinzugefügt",
+      "adminChannelAdded": "[ADMIN] [CHANNEL-REGISTRATION] AdminChannel zur Datenbank hinzugefügt",
+      "serverAdded": "[ADMIN] [SERVER-REGISTRATION] {{guild_name}} {{guild_id}} zur Datenbank hinzugefügt"
+    }
+  },
+  "dm": {
+    "accessRemovedWithPaypal": "Hallo {{memberUsername}}!\n\nDeine Rolle **{{rNameName}}** auf dem Server **{{configServerName}}** wurde entfernt.\nWenn du den Zugriff wieder haben möchtest, muss eine neue Spende getätigt werden.\n\nDanke.\nPaypal: {{configPaypalUrl}}",
+    "accessExpiringWithPaypal": "Hallo {{memberUsername}}!\n\nDeine Rolle **{{rNameName}}** auf dem Server **{{configServerName}}** wird am {{finalDate}} entfernt.\nWenn du den Zugriff behalten möchtest, muss eine neue Spende getätigt werden.\n\nDanke.\nPaypal: {{configPaypalUrl}}",
+    "accessExpiringNoPaypal": "Hallo {{memberUsername}}!\n\nDeine Rolle **{{rNameName}}** auf dem Server **{{configServerName}}** wird am {{finalDate}} entfernt.\nWenn du den Zugriff behalten möchtest, muss eine neue Spende getätigt werden.\n\nDanke.",
+    "accessExtended": "Hallo {{mentionedUsername}}!\n\n🎉Dein Zugriff wurde verlängert🎉.\nDer Zugriff ist bis zum {{finalDate}} gültig.\n\nDanke für deine Unterstützung.",
+    "accessExpiresWithMap": "Hallo {{mentionedUsername}}!\n\nDein Zugriff verfällt am {{finalDateDisplay}}.\n\nDanke für deine Unterstützung.\n\nLiveMap: {{map}}."
+  },
+  "messages": {
+    "roleExpiryInfo": "✅ {{mentionedUsername}} verliert die Rolle: **{{rowTempRole}}** am: `{{finalDate}}`! Diese wurde am `{{startDateTime}}` hinzugefügt.",
+    "selfRoleExpiryInfo": "✅ Deine Rolle: **{{rowTempRole}}** verfällt am: `{{finalDate}}`! Der Zugriff besteht seit: `{{startDateTime}}`",
+    "timeAdded": "✅ {{mentionedUsername}} wurde bis zum: `{{finalDate}}` verlängert! Der Zugriff besteht seit: `{{startDateTime}}`",
+    "tempRoleAssigned": "🎉 {{mentionedUsername}} wurde die **temporäre** Rolle **{{daRole}}** erteilt, Viel Spass! Der Zugriff verfällt am: `{{finalDateDisplay}}`",
+    "modRoleRegistered": "🎉 {{modRole}} wurde registriert!",
+    "modRoleAlreadyRegistered": "🎉 {{modRole}} ist bereits registriert!",
+    "adminRoleRegistered": "🎉 {{adminRole}} wurde registriert!",
+    "adminRoleAlreadyRegistered": "🎉 {{adminRole}} ist bereits registriert!",
+    "channelRegistered": "🎉 Channel wurde registriert!",
+    "channelAlreadyRegistered": "🎉 Channel ist bereits registriert!",
+    "adminChannelRegistered": "🎉 AdminChannel wurde registriert!",
+    "adminChannelAlreadyRegistered": "🎉 AdminChannel ist bereits registriert!",
+    "serverRegistered": "🎉 {{guild_name}} wurde registriert!",
+    "serverAlreadyRegistered": "🎉 {{guild_name}} ist bereits registriert!",
+    "webmap": "Linke zur Livemap: {{configMapUrl}}"
+  },
+  "paypal": {
+    "thanks": "Vielen Dank.\n Deine Unterstützung ist mir wichtig.",
+    "subscribe": "Klicke hier um zu unterstützen"
+  }
+}

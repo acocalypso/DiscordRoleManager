@@ -1,0 +1,88 @@
+{
+  "app": {
+    "ready": "Klaar!"
+  },
+  "db": {
+    "noEntries": "Niemand is in de database",
+    "updateUsername": "De gebruikersnaam voor {{memberID}} is bijgewerkt naar {{name}}",
+    "updateGuildId": "guild_id bijgewerkt voor {{name}}"
+  },
+  "errors": {
+    "initdb": {
+      "roleCheckQuery": "[InitDB] Rolcontrolequery kan niet worden uitgevoerd",
+      "guildMemberRemove": "[InitDB] Failed to execute query in guildMemberRemove",
+      "mainChannelId": "[InitDB] Kan mainChannelID niet uitvoeren"
+    },
+    "configAdminRoleMissing": "[ERROR] [CONFIG] De beheerdersrol (admin) kan niet worden gevonden: {{configAdminRoleName}}",
+    "configModRoleMissing": "[ERROR] [CONFIG] De moderatorrol kan niet worden gevonden {{configModRoleName}}",
+    "notAllowedHelp": "Je mag dit commando **NIET** gebruiken! \nProbeer: {{configCMDPrefix}}help",
+    "notAllowed": "Je mag dit commando **NIET** gebruiken!",
+    "roleNotFound": "De rol is niet gevonden, controleer of de naam correct is gespeld en probeer het opnieuw.",
+    "notInDbForRole": "⚠ [ERROR] {{mentionedUsername}} is __NIET__ aanwezig in `Database` met rol {{daRole}}",
+    "notInDb": "⚠ [ERROR] {{mentionedUsername}} is __NIET__ in de database",
+    "authorNotInDbForRole": "⚠ [FOUTMELDING] {{mAuthorUsername}} is __NIET__ in de database voor de rol {{daRole}}.",
+    "invalidDays": "Fout: tweede waarde moet **X** aantal dagen zijn, IE:\n `{{configCMDPrefix}}{{command}} add @{{mentionedUsername}} 90 {{daRole}}`",
+    "temproleSyntax": "syntax:\n `{{configCMDPrefix}}temprole @mention <DAYS> @<ROLE-NAME>`,\n of `{{configCMDPrefix}}temprole remove @mention @<ROLE-NAME>`\n of `{{configCMDPrefix}}temprole check @mention @<ROLE-NAME>`",
+    "temproleMentionRequired": "Tag iemand met `@vermelding` aan wie ik `{{configCMDPrefix}}temprole` moet geven/verwijderen...",
+    "temproleIncompleteData": "onvolledige gegevens, probeer: \n `{{configCMDPrefix}}temprole @mention <DAYS> <@ROLE-NAME>`,\n of `{{configCMDPrefix}}temprole remove @mention @<ROLE-NAME>`\n of `{{configCMDPrefix}}temprole check @mention @<ROLE-NAME>`",
+    "missingMentionAddTime": "Tag iemand met `@vermelding` om de toegang te verlengen...",
+    "missingDays": "voor hoeveel dagen moet de {{mentionedUsername}} de rol hebben?",
+    "userAlreadyHasRole": "Deze gebruiker heeft al de rol **{{daRole}}** probeer `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` te gebruiken als je zijn rol wilt resetten.",
+    "dmFailed": "Kan geen DM sturen naar gebruiker {{memberID}} - {{err}}",
+    "removeRoleFailed": "**⚠ Kan niet de rol: {{rNameName}} van {{memberUsername}} verwijderen!**",
+    "checkRolePromptMention": "Voer de rol in die u wilt controleren, zoals `{{configCMDPrefix}}check @<ROLE-NAME>`"
+  },
+  "admin": {
+    "tempRole": {
+      "userLeftNotice": "⚠ {{rowUsername}} heeft de server **verlaten** en **verliest** zijn rol: **{{rNameName}}** - hun **tijdelijke** toegang is __VERLOPEN__ 😭",
+      "userLeftLog": "[ADMIN] [TEMPORARY-ROLE] {{rowUsername}} - {{rowUserID}} heeft de server verlaten en de rol verloren {{rNameName}} ... tijd VERLOPEN",
+      "memberExpiredNotice": "⚠ {{memberUsername}} heeft zijn rol **verloren** zijn rol is: **{{rNameName}}** - de **tijdelijke** toegang is __VERLOPEN__ 😭",
+      "memberExpiredLog": "[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - {{memberId}} Heeft zijn rol verloren: {{rNameName}} ... tijd is VERLOPEN",
+      "memberExpiringAdminNotice": "⚠ {{memberUsername}} - {{memberUserTag}} zal zijn toegang verliezen: **{{rNameName}}** in minder dan vijf dagen op {{finalDate}}.",
+      "memberExpiringLog": "[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - ({{memberID}}) is op de hoogte gebracht dat zijn toegang {{rNameName}} in minder dan vijf dagen zal verlopen {{finalDate}}",
+      "removedAccessLog": "[ADMIN] [TEMPORARY-ROLE] {{mUserUsername}} ({{mID}}) de toegang is verwijderd van {{mentionedUsername}} ({{mentionedID}})",
+      "removedAccessNotice": "⚠ {{mentionedUsername}} heeft **verloren** de rol **{{theirRoleName}}** en is verwijderd uit de database",
+      "addedDaysLog": "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) heeft {{days}} dagen erbij gekregen van: {{mUserUsername}} ({{mID}}) voor de role: {{daRole}}",
+      "assignedRoleLog": "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) heeft de rol {{daRole}} gekregen van {{mUserUsername}} ({{mID}})",
+      "leftMarkedLog": "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) heeft de server verlaten. Alle rollen zijn gemarkeerd in de database",
+      "leftNotice": ":exclamation: {{name}} heeft de server verlaten.",
+      "leftRemovedLog": "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) is verwijderd uit de database.",
+      "leftRemovedNotice": ":exclamation: {{name}} alle toegang is verwijderd uit de database"
+    },
+    "registration": {
+      "modRoleAdded": "[ADMIN] [ROLE-REGISTRATION] Rol {{modRole}} op {{guild_name}} toegevoegd aan de database",
+      "adminRoleAdded": "[ADMIN] [ROLE-REGISTRATION] Rol {{adminRole}} op {{guild_name}} toegevoegd aan de database",
+      "channelAdded": "[ADMIN] [CHANNEL-REGISTRATION] Channel toegevoegd aan de database",
+      "adminChannelAdded": "[ADMIN] [CHANNEL-REGISTRATION] AdminChannel toegevoegd aan de database",
+      "serverAdded": "[ADMIN] [SERVER-REGISTRATION] {{guild_name}} {{guild_id}} toegevoegd aan de database"
+    }
+  },
+  "dm": {
+    "accessRemovedWithPaypal": "Hallo {{memberUsername}}!\n\n Je rol **{{rNameName}}** op **{{configServerName}}** is verwijderd.\n Als je wilt toegang wilt behouden doe dan nog een bijdrage.\n\nBedankt.\nPaypal: {{configPaypalUrl}}",
+    "accessExpiringWithPaypal": "Hallo {{memberUsername}}!\n\n Jou rol **{{rNameName}}** op server **{{configServerName}}** zal worden verwijderd op {{finalDate}}. \n Als je toegang wilt behouden, doe dan nog een bijdrage. \n\n Bedankt. \n PayPal: {{configPaypalUrl}}",
+    "accessExpiringNoPaypal": "Hallo {{memberUsername}}!\n\n Jou rol **{{rNameName}}** op server **{{configServerName}}** zal worden verwijderd op {{finalDate}}. \n Als je toegang wilt behouden, doe dan nog een bijdrage. \n\n Bedankt.",
+    "accessExtended": "Hallo {{mentionedUsername}}!\n\n🎉 Je toegang is verlegnd🎉..\n Het is nu geldig tot {{finalDate}}.\n\n Bedankt voor je lid bent!",
+    "accessExpiresWithMap": "Hallo {{mentionedUsername}} Je toegang zal verlopen op {{finalDateDisplay}}.\n\n Bedankt voor lidmaatschap.\n\n LiveMap: {{map}}."
+  },
+  "messages": {
+    "roleExpiryInfo": "✅ {{mentionedUsername}} zal zijn toegang verliezen: **{{rowTempRole}}** op: `{{finalDate}}`! Ze zijn toegevoegd op: `{{startDateTime}}`",
+    "selfRoleExpiryInfo": "✅ Je zult de rol verliezen: **{{rowTempRole}}** op: `{{finalDate}}`! De rol is toegevoegd op: `{{startDateTime}}`",
+    "timeAdded": "✅ {{mentionedUsername}} heeft tijd toegevoegd tot: `{{finalDate}}`! Het is toegevoegd op: `{{startDateTime}}`",
+    "tempRoleAssigned": "🎉 {{mentionedUsername}} kreeg de **tijdelijke** rol: **{{daRole}}**, veel plezier! Toegang verloopt op: `{{finalDateDisplay}}`",
+    "modRoleRegistered": "🎉 {{modRole}} is geregistreerd!",
+    "modRoleAlreadyRegistered": "🎉 {{modRole}} is al geregistreerd!",
+    "adminRoleRegistered": "🎉 {{adminRole}} is geregistreerd!",
+    "adminRoleAlreadyRegistered": "🎉 {{adminRole}} is al geregistreerd!",
+    "channelRegistered": "🎉 Channel is geregistreerd!",
+    "channelAlreadyRegistered": "🎉 Channel is al geregistreerd!",
+    "adminChannelRegistered": "🎉 AdminChannel is geregistreerd!",
+    "adminChannelAlreadyRegistered": "🎉 AdminChannel is al geregistreerd!",
+    "serverRegistered": "🎉 {{guild_name}} is geregistreerd!",
+    "serverAlreadyRegistered": "🎉 {{guild_name}} is al geregistreerd!",
+    "webmap": "Onze link naar de map is: {{configMapUrl}}"
+  },
+  "paypal": {
+    "thanks": "Hartelijk dank. \n Uw bijdrage is belangrijk voor ons.",
+    "subscribe": "Klik HIER om lid te worden"
+  }
+}

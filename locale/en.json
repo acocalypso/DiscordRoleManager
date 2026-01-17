@@ -1,0 +1,88 @@
+{
+  "app": {
+    "ready": "Ready"
+  },
+  "db": {
+    "noEntries": "No one is in the DataBase",
+    "updateUsername": "Updated the username for {{memberID}} to {{name}}",
+    "updateGuildId": "Updated guild_id for {{name}}"
+  },
+  "errors": {
+    "initdb": {
+      "roleCheckQuery": "[InitDB] Failed to execute role check query",
+      "guildMemberRemove": "[InitDB] Failed to execute query in guildMemberRemove",
+      "mainChannelId": "[InitDB] Failed to execute mainChannelID"
+    },
+    "configAdminRoleMissing": "[ERROR] [CONFIG] I could not find admin role: {{configAdminRoleName}}",
+    "configModRoleMissing": "[ERROR] [CONFIG] I could not find mod role: {{configModRoleName}}",
+    "notAllowedHelp": "you are **NOT** allowed to use this command! \ntry using: {{configCMDPrefix}}help",
+    "notAllowed": "you are **NOT** allowed to use this command!",
+    "roleNotFound": "I couldn't find such role, please check the spelling and try again.",
+    "notInDbForRole": "⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the `DataBase` for the role {{daRole}}",
+    "notInDb": "⚠ [ERROR] {{mentionedUsername}} is __NOT__ in the database",
+    "authorNotInDbForRole": "⚠ [ERROR] {{mAuthorUsername}} is __NOT__ in the database for the role {{daRole}}.",
+    "invalidDays": "Error: second value has to be **X** number of days, IE:\n `{{configCMDPrefix}}{{command}} add @{{mentionedUsername}} 90 {{daRole}}`",
+    "temproleSyntax": "syntax:\n `{{configCMDPrefix}}temprole @mention <DAYS> @<ROLE-NAME>`,\n or `{{configCMDPrefix}}temprole remove @mention @<ROLE-NAME>`\n or `{{configCMDPrefix}}temprole check @mention @<ROLE-NAME>`",
+    "temproleMentionRequired": "please `@mention` a person you want me to give/remove `{{configCMDPrefix}}temprole` to...",
+    "temproleIncompleteData": "incomplete data, please try: \n `{{configCMDPrefix}}temprole @mention <DAYS> <@ROLE-NAME>`,\n or `{{configCMDPrefix}}temprole remove @mention @<ROLE-NAME>`\n or `{{configCMDPrefix}}temprole check @mention @<ROLE-NAME>`",
+    "missingMentionAddTime": "please `@mention` a person you want me to add time to...",
+    "missingDays": "for how **many** days do you want {{mentionedUsername}} to have to have this role?",
+    "userAlreadyHasRole": "This user already has the role **{{daRole}}** try using `{{configCMDPrefix}}temprole remove @{{mentionedUsername}} {{daRole}} ` if you want to reset their role.",
+    "dmFailed": "Failed to send a DM to user: {{memberID}} - {{err}}",
+    "removeRoleFailed": "**⚠ Could not remove the {{rNameName}} role from {{memberUsername}}!**",
+    "checkRolePromptMention": "Please enter the role you want to check like `{{configCMDPrefix}}check @<ROLE-NAME>`"
+  },
+  "admin": {
+    "tempRole": {
+      "userLeftNotice": "⚠ {{rowUsername}} has **left** the server and **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭",
+      "userLeftLog": "[ADMIN] [TEMPORARY-ROLE] {{rowUsername}} - {{rowUserID}} has left the server and lost their role: {{rNameName}} ... time EXPIRED",
+      "memberExpiredNotice": "⚠ {{memberUsername}} has **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭",
+      "memberExpiredLog": "[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - {{memberId}} have lost their role: {{rNameName}} ... time EXPIRED",
+      "memberExpiringAdminNotice": "⚠ {{memberUsername}} - {{memberUserTag}} will lose their role of: **{{rNameName}}** in less than 5 days on {{finalDate}}.",
+      "memberExpiringLog": "[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - ({{memberID}}) has been notified that they will lose their role {{rNameName}} in less than 5 days on {{finalDate}}",
+      "removedAccessLog": "[ADMIN] [TEMPORARY-ROLE] {{mUserUsername}} ({{mID}}) removed the access from {{mentionedUsername}} ({{mentionedID}})",
+      "removedAccessNotice": "⚠ {{mentionedUsername}} has **lost** their role of: **{{theirRoleName}}** and has been removed from the database",
+      "addedDaysLog": "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given {{days}} days by: {{mUserUsername}} ({{mID}}) for the role: {{daRole}}",
+      "assignedRoleLog": "[ADMIN] [TEMPORARY-ROLE] {{mentionedUsername}} ({{mentionedID}}) was given the {{daRole}} role by {{mUserUsername}} ({{mID}})",
+      "leftMarkedLog": "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) has left the server. All role assignments have been marked in the database.",
+      "leftNotice": ":exclamation: {{name}} has left the server.",
+      "leftRemovedLog": "[ADMIN] [TEMPORARY-ROLE] {{name}} ({{memberID}}) got removed from the database.",
+      "leftRemovedNotice": ":exclamation: {{name}} all access removed from database."
+    },
+    "registration": {
+      "modRoleAdded": "[ADMIN] [ROLE-REGISTRATION] Role {{modRole}} on {{guild_name}} added to database",
+      "adminRoleAdded": "[ADMIN] [ROLE-REGISTRATION] Role {{adminRole}} on {{guild_name}} added to database",
+      "channelAdded": "[ADMIN] [CHANNEL-REGISTRATION] Channel added to database",
+      "adminChannelAdded": "[ADMIN] [CHANNEL-REGISTRATION] AdminChannel added to database",
+      "serverAdded": "[ADMIN] [SERVER-REGISTRATION] {{guild_name}} {{guild_id}} added to database"
+    }
+  },
+  "dm": {
+    "accessRemovedWithPaypal": "Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** has been removed.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: {{configPaypalUrl}}",
+    "accessExpiringWithPaypal": "Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** will be removed at {{finalDate}}.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: {{configPaypalUrl}}",
+    "accessExpiringNoPaypal": "Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** will be removed at {{finalDate}}.\nIf you want to continue, please do another donation.\n\nThank you.",
+    "accessExtended": "Hello {{mentionedUsername}}!\n\n🎉Your access has been extended🎉.\nIt is now valid till {{finalDate}}.\n\nThanks for your support",
+    "accessExpiresWithMap": "Hello {{mentionedUsername}}!\n\nYour access expires at {{finalDateDisplay}}.\n\nThanks for your support.\n\nLiveMap: {{map}}."
+  },
+  "messages": {
+    "roleExpiryInfo": "✅ {{mentionedUsername}} will lose the role: **{{rowTempRole}}** on: `{{finalDate}}`! They were added on: `{{startDateTime}}`",
+    "selfRoleExpiryInfo": "✅ You will lose the role: **{{rowTempRole}}** on: `{{finalDate}}`! The role was added on: `{{startDateTime}}`",
+    "timeAdded": "✅ {{mentionedUsername}} has had time added until: `{{finalDate}}`! They were added on: `{{startDateTime}}`",
+    "tempRoleAssigned": "🎉 {{mentionedUsername}} has been given a **temporary** role of: **{{daRole}}**, enjoy! They will lose this role on: `{{finalDateDisplay}}`",
+    "modRoleRegistered": "🎉 {{modRole}} has been registered!",
+    "modRoleAlreadyRegistered": "🎉 {{modRole}} has already been registered!",
+    "adminRoleRegistered": "🎉 {{adminRole}} has been registered!",
+    "adminRoleAlreadyRegistered": "🎉 {{adminRole}} has already been registered!",
+    "channelRegistered": "🎉 Channel has been registered!",
+    "channelAlreadyRegistered": "🎉 Channel has already been registered!",
+    "adminChannelRegistered": "🎉 AdminChannel has been registered!",
+    "adminChannelAlreadyRegistered": "🎉 AdminChannel has already been registered!",
+    "serverRegistered": "🎉 {{guild_name}} has been registered!",
+    "serverAlreadyRegistered": "🎉 {{guild_name}} has already been registered!",
+    "webmap": "Our official webmap: {{configMapUrl}}"
+  },
+  "paypal": {
+    "thanks": "Thank you! \nYour support is greatly appreciated",
+    "subscribe": "Click HERE to Subscribe"
+  }
+}

@@ -13,7 +13,7 @@ const bot = new Client({
   ],
 });
 // init internationalization / localization class
-const i18nModule = require('i18n-nodejs');
+const i18n = require('./module/i18n');
 const config = require('./config/config.json');
 const web = require('./module/backend');
 const sqlConnectionDiscord = require('./module/database/database_discord');
@@ -25,18 +25,11 @@ if (config.webinterface.disabled === 'no') {
   web.website();
 }
 
-const i18nconfig = {
-  lang: config.language,
-  langFile: './../../locale/locale.json',
-};
-
-const i18n = new i18nModule(i18nconfig.lang, i18nconfig.langFile);
-
 bot.login(config.token);
 
 bot.on('clientReady', () => {
   helper.myLogger.log('Bot started');
-  console.log(i18n.__('Ready'));
+  console.log(i18n.__('app.ready'));
   sqlConnectionDiscord.InitDB();
 });
 

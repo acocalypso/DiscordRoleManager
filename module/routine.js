@@ -1,15 +1,8 @@
-﻿const i18nmodule = require('i18n-nodejs');
+﻿const i18n = require('./i18n');
 const sqlConnectionDiscord = require('./database/database_discord');
 const helper = require('./helper');
 const config = require('../config/config.json');
 const discordcommands = require('./discordcommands');
-
-const i18nconfig = {
-  lang: config.language,
-  langFile: './../../locale/locale.json',
-};
-
-const i18n = new i18nmodule(i18nconfig.lang, i18nconfig.langFile);
 
 async function housekeeping(bot) {
   // check for expired users
@@ -20,7 +13,7 @@ async function housekeeping(bot) {
   await sqlConnectionDiscord.query('SELECT * FROM temporary_roles')
     .then(async (rows) => {
       if (!rows[0]) {
-        helper.myLogger.log(i18n.__('No one is in the DataBase'));
+        helper.myLogger.log(i18n.__('db.noEntries'));
         return;
       }
       for (let rowNumber = 0; rowNumber < rows.length; rowNumber += 1) {
@@ -40,14 +33,14 @@ async function housekeeping(bot) {
         if (!rows[rowNumber].username && !leftServer) {
           await sqlConnectionDiscord.query(`UPDATE temporary_roles SET username="${name}" WHERE userID="${member.id}" AND guild_id="${member.guild.id}"`)
             .catch((err) => {
-              helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 4: ' + err);
+              helper.myLogger.error(helper.GetTimestamp() + i18n.__('errors.initdb.roleCheckQuery') + ' 4: ' + err);
             });
-          helper.myLogger.log(i18n.__('Updated the username for {{memberId}} to {{name}}', {
+          helper.myLogger.log(i18n.__('db.updateUsername', {
             memberID: member.id,
             // name: name
             name,
           }));
-          helper.myLogger.log(helper.GetTimestamp() + i18n.__('Updated the username for {{memberId}} to {{name}}', {
+          helper.myLogger.log(helper.GetTimestamp() + i18n.__('db.updateUsername', {
             memberID: member.id,
             // name: name
             name,
@@ -57,9 +50,9 @@ async function housekeeping(bot) {
           const guild_id = member.guild.id;
           await sqlConnectionDiscord.query(`UPDATE temporary_roles SET guild_id="${guild_id}" WHERE userID="${rows[rowNumber].userID}"`)
             .catch((err) => {
-              helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 4: ' + err);
+              helper.myLogger.error(helper.GetTimestamp() + i18n.__('errors.initdb.roleCheckQuery') + ' 4: ' + err);
             });
-          helper.myLogger.log(helper.GetTimestamp() + i18n.__('Updated guild_id for {{name}}', {
+          helper.myLogger.log(helper.GetTimestamp() + i18n.__('db.updateGuildId', {
             // name: name
             name,
           }));
@@ -73,17 +66,17 @@ async function housekeeping(bot) {
               if (leftServer) {
                 await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${rows[rowNumber].userID}' AND temporaryRole='${rName.name}' AND guild_id="${member.guild.id}"`)
                   .catch((err) => {
-                    helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 5: ' + err);
+                    helper.myLogger.error(helper.GetTimestamp() + i18n.__('errors.initdb.roleCheckQuery') + ' 5: ' + err);
                     process.exit(-1);
                   });
-                bot.channels.cache.get(result[0].adminChannelID).send(i18n.__('⚠ {{rowUsername}} has **left** the server and **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭', {
+                bot.channels.cache.get(result[0].adminChannelID).send(i18n.__('admin.tempRole.userLeftNotice', {
                   rowUsername: rows[rowNumber].username,
                   rNameName: rName.name,
                 })).catch((err) => {
                   helper.myLogger.error(helper.GetTimestamp() + err);
                   helper.myLogger.error('Error while fetching user for left server: ' + err);
                 });
-                helper.myLogger.log(helper.GetTimestamp() + i18n.__('[ADMIN] [TEMPORARY-ROLE] {{rowUsername}} - {{rowUserID}} has left the server and lost their role: {{rNameName}} ... time EXPIRED', {
+                helper.myLogger.log(helper.GetTimestamp() + i18n.__('admin.tempRole.userLeftLog', {
                   rowUsername: rows[rowNumber].username,
                   rowUserID: rows[rowNumber].userID,
                   rNameName: rName.name,
@@ -91,11 +84,11 @@ async function housekeeping(bot) {
               }
               // REMOVE ROLE FROM MEMBER IN GUILD
               member.roles.remove(rName).then(async (member) => {
-                bot.channels.cache.get(result[0].adminChannelID).send(i18n.__('⚠ {{memberUsername}} has **lost** their role of: **{{rNameName}}** - their **temporary** access has __EXPIRED__ 😭', {
+                bot.channels.cache.get(result[0].adminChannelID).send(i18n.__('admin.tempRole.memberExpiredNotice', {
                   memberUsername: member.user.username,
                   rNameName: rName.name,
                 })).catch((err) => { console.error(helper.GetTimestamp() + err); });
-                member.send(i18n.__('Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** has been removed.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: {{configPaypalUrl}}', {
+                member.send(i18n.__('dm.accessRemovedWithPaypal', {
                   memberUsername: member.user.username,
                   rNameName: rName.name,
                   configServerName: result[0].guild_name,
@@ -109,17 +102,17 @@ async function housekeeping(bot) {
                 // REMOVE DATABASE ENTRY
                 await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${member.id}' AND temporaryRole='${rName.name}' AND guild_id="${member.guild.id}"`)
                   .catch((err) => {
-                    console.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 2: ' + err);
+                    console.error(helper.GetTimestamp() + i18n.__('errors.initdb.roleCheckQuery') + ' 2: ' + err);
                     process.exit(-1);
                   });
-                helper.myLogger.log(helper.GetTimestamp() + i18n.__('[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - {{memberId}} have lost their role: {{rNameName}} ... time EXPIRED', {
+                helper.myLogger.log(helper.GetTimestamp() + i18n.__('admin.tempRole.memberExpiredLog', {
                   memberUsername: member.user.username,
                   memberId: member.id,
                   rNameName: rName.name,
                 }));
               }).catch((error) => {
                 helper.myLogger.error(helper.GetTimestamp() + error.message);
-                bot.channels.cache.get(result[0].adminChannelID).send(i18n.__('**⚠ Could not remove the {{rNameName}} role from {{memberUsername}}!**', {
+                bot.channels.cache.get(result[0].adminChannelID).send(i18n.__('errors.removeRoleFailed', {
                   rNameName: rName.name,
                   memberUsername: member.user.username,
                 })).catch((err) => { console.error(helper.GetTimestamp() + err); });
@@ -132,33 +125,33 @@ async function housekeeping(bot) {
               const finalDate = await helper.formatTimeString(endDateVal);
               // NOTIFY THE USER IN DM THAT THEY WILL EXPIRE
               if (config.paypal.enabled === 'yes') {
-                member.send(i18n.__('Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** will be removed at {{finalDate}}.\nIf you want to continue, please do another donation.\n\nThank you.\nPaypal: {{configPaypalUrl}}', {
+                member.send(i18n.__('dm.accessExpiringWithPaypal', {
                   memberUsername: member.user.username,
                   rNameName: rName.name,
                   configServerName: result[0].guild_name,
                   finalDate,
                   configPaypalUrl: config.paypal.url,
                 })).catch((err) => {
-                  helper.myLogger.error(helper.GetTimestamp() + i18n.__('Failed to send a DM to user: {{memberID}} - {{err}}', {
+                  helper.myLogger.error(helper.GetTimestamp() + i18n.__('errors.dmFailed', {
                     memberID: member.id,
                     err,
                   }));
                 });
               } else {
-                member.send(i18n.__('Hello {{memberUsername}}!\n\nYour role **{{rNameName}}** on **{{configServerName}}** will be removed at {{finalDate}}.\nIf you want to continue, please do another donation.\n\nThank you.', {
+                member.send(i18n.__('dm.accessExpiringNoPaypal', {
                   memberUsername: member.user.username,
                   rNameName: rName.name,
                   configServerName: result[0].guild_name,
                   finalDate,
                 })).catch((err) => {
-                  helper.myLogger.error(helper.GetTimestamp() + i18n.__('Failed to send a DM to user: {{memberID}} - {{err}}', {
+                  helper.myLogger.error(helper.GetTimestamp() + i18n.__('errors.dmFailed', {
                     memberID: member.id,
                     err,
                   }));
                 });
               }
               // NOTIFY THE ADMINS OF THE PENDING EXPIRY
-              bot.channels.cache.get(result[0].adminChannelID).send(i18n.__('⚠ {{memberUsername}} - {{memberUserTag}} will lose their role of: **{{rNameName}}** in less than 5 days on {{finalDate}}.', {
+              bot.channels.cache.get(result[0].adminChannelID).send(i18n.__('admin.tempRole.memberExpiringAdminNotice', {
                 memberUsername: member.user.username,
                 memberUserTag: member.user.tag,
                 rNameName: rName.name,
@@ -168,10 +161,10 @@ async function housekeeping(bot) {
               const name = member.user.username.replace(/[^a-zA-Z0-9]/g, '');
               await sqlConnectionDiscord.query(`UPDATE temporary_roles SET notified=1, username="${name}" WHERE userID="${member.id}" AND temporaryRole="${rName.name}" AND guild_id="${member.guild.id}"`)
                 .catch((err) => {
-                  helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 3: ' + err);
+                  helper.myLogger.error(helper.GetTimestamp() + i18n.__('errors.initdb.roleCheckQuery') + ' 3: ' + err);
                   process.exit(-1);
                 });
-              helper.myLogger.log(helper.GetTimestamp() + i18n.__('[ADMIN] [TEMPORARY-ROLE] {{memberUsername}} - ({{memberID}}) has been notified that they will lose their role {{rNameName}} in less than 5 days on {{finalDate}}', {
+              helper.myLogger.log(helper.GetTimestamp() + i18n.__('admin.tempRole.memberExpiringLog', {
                 memberUsername: member.user.username,
                 memberID: member.id,
                 rNameName: rName.name,
@@ -182,7 +175,7 @@ async function housekeeping(bot) {
       }
     })
     .catch((err) => {
-      helper.myLogger.error(helper.GetTimestamp() + i18n.__('[InitDB] Failed to execute role check query') + ' 1:' + err);
+      helper.myLogger.error(helper.GetTimestamp() + i18n.__('errors.initdb.roleCheckQuery') + ' 1:' + err);
       process.exit(-1);
     });
 }
