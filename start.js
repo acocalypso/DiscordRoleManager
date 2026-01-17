@@ -34,7 +34,7 @@ const i18n = new i18nModule(i18nconfig.lang, i18nconfig.langFile);
 
 bot.login(config.token);
 
-bot.on('ready', () => {
+bot.on('clientReady', () => {
   helper.myLogger.log('Bot started');
   console.log(i18n.__('Ready'));
   sqlConnectionDiscord.InitDB();
