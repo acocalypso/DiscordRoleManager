@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+* {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.glass {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  box-shadow: 0 20px 80px rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(18px);
+}
+
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: 1rem;
+  background: linear-gradient(120deg, rgba(59, 130, 246, 0.45), rgba(16, 185, 129, 0.4), rgba(14, 165, 233, 0.35));
+}

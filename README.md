@@ -94,10 +94,10 @@ Install NodeJS version 22.x!
 npm install
 ```
 
-Now start the bot
+Now start the bot (this builds the frontend and starts the bot)
 
 ```
-node start.js
+npm run start
 ```
 
 You may want to use pm2 or systemd to run it as a service

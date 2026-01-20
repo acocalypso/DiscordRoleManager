@@ -44,12 +44,12 @@ function website(bot) {
 
   // Static Files (React app)
   backend.use(webLimiter);
-  backend.use(express.static(path.join(__dirname, '../public')));
+  backend.use(express.static(path.join(__dirname, '../dist')));
 
   backend.use('/', routes);
 
   backend.use((req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
   });
   backend.listen(PORT, () => {
     console.log(`Now listening to requests on Port ${PORT}`);

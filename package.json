@@ -6,22 +6,31 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon start.js",
-    "start": "node start.js"
+    "start": "vite build && node start.js",
+    "build": "vite build",
+    "web:dev": "vite",
+    "web:preview": "vite preview"
   },
   "author": "AcoVanConis",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "6.0.0",
-    "better-sqlite3": "12.6.2",
-    "body-parser": "2.2.2",
-    "discord.js": "^14.2.0",
-    "express": "5.2.1",
-    "express-session": "^1.17.3",
-    "express-rate-limit": "^7.3.1",
-    "lusca": "^1.7.0",
-    "log-to-file": "^3.0.0",
+    "@tailwindcss/vite": "4.1.18",
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^12.6.2",
+    "body-parser": "^2.2.2",
     "date-fns": "^4.1.0",
-    "mysql": "^2.18.1"
+    "discord.js": "^14.25.1",
+    "eslint": "9.39.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "express-session": "^1.17.3",
+    "log-to-file": "^3.0.0",
+    "lusca": "^1.7.0",
+    "mysql": "^2.18.1",
+    "nodemon": "^3.0.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "vite": "^5.4.14"
   },
   "engines": {
     "node": ">=22.1.0"
@@ -35,7 +44,12 @@
   },
   "homepage": "https://github.com/acocalypso/DiscordRoleManager#readme",
   "devDependencies": {
+    "@vitejs/plugin-react": "5.1.2",
+    "autoprefixer": "^10.4.21",
     "eslint": "9.39.2",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "4.1.18",
+    "vite": "7.3.1"
   }
 }
