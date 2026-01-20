@@ -27,13 +27,14 @@ function website(bot) {
     cookie: {
       path: '/',
       name: 'rolebot',
-      maxAge: 1000 * 60 * 24,
+      maxAge: 1000 * 60 * 60 * 24,
       httpOnly: true,
       sameSite: 'lax',
       secure: 'auto',
     },
     secret: config.webinterface.secret,
-    resave: true,
+    resave: false,
+    rolling: true,
     saveUninitialized: true,
   }));
 
