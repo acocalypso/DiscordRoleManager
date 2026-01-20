@@ -103,6 +103,8 @@
     "mainChannelPlaceholder": "Colar o ID do canal principal",
     "adminChannelLabel": "ID do canal admin",
     "adminChannelPlaceholder": "Colar o ID do canal admin",
+    "defaultRolePlaceholder": "Cargo temporário padrão (opcional)",
+    "defaultRolePrompt": "Seleciona um cargo temporário padrão (opcional).",
     "instructions": "Seleciona os cargos e canais abaixo e clica em Guardar.",
     "save": "Guardar",
     "cancel": "Cancelar",

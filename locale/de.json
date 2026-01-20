@@ -103,6 +103,8 @@
     "mainChannelPlaceholder": "Hauptkanal-ID einfügen",
     "adminChannelLabel": "Admin-Kanal-ID",
     "adminChannelPlaceholder": "Admin-Kanal-ID einfügen",
+    "defaultRolePlaceholder": "Standard-Temprolle (optional)",
+    "defaultRolePrompt": "Standard-Temprolle auswählen (optional).",
     "instructions": "Wähle unten Rollen und Kanäle aus und klicke dann Speichern.",
     "save": "Speichern",
     "cancel": "Abbrechen",

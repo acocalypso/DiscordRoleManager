@@ -179,8 +179,8 @@ const App = () => {
     event.preventDefault();
     setStatus({ type: 'info', message: '' });
 
-    if (!form.guildId || !form.userId || !form.roleId || !form.days) {
-      setStatus({ type: 'error', message: 'Please select a guild, user, role, and days.' });
+    if (!form.guildId || !form.userId || !form.days) {
+      setStatus({ type: 'error', message: 'Please select a guild, user, and days.' });
       return;
     }
 
@@ -373,8 +373,8 @@ const App = () => {
         <div className="glass gradient-border rounded-2xl p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-white">Temporary roles</h2>
-              <p className="text-sm text-slate-400">Manage manual role entries</p>
+              <h2 className="text-lg font-semibold text-white">Usermanagement</h2>
+              <p className="text-sm text-slate-400">Manage user entries</p>
             </div>
             {loadingUsers ? <StatusPill text="Syncing" tone="slate" /> : null}
           </div>
@@ -521,14 +521,13 @@ const App = () => {
               </select>
             </div>
             <div>
-              <label className="text-xs uppercase tracking-wide text-slate-400">Role</label>
+              <label className="text-xs uppercase tracking-wide text-slate-400">Role (optional)</label>
               <select
                 className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
                 value={form.roleId}
                 onChange={(event) => setForm((prev) => ({ ...prev, roleId: event.target.value }))}
-                required
               >
-                <option value="">Select a role</option>
+                <option value="">Use default role</option>
                 {roles.map((role) => (
                   <option value={role.id} key={role.id}>
                     {role.name}

@@ -103,6 +103,8 @@
     "mainChannelPlaceholder": "Plak het hoofdkanaal ID",
     "adminChannelLabel": "Admin-kanaal ID",
     "adminChannelPlaceholder": "Plak het admin-kanaal ID",
+    "defaultRolePlaceholder": "Standaard tijdelijke rol (optioneel)",
+    "defaultRolePrompt": "Selecteer een standaard tijdelijke rol (optioneel).",
     "instructions": "Selecteer hieronder de rollen en kanalen en klik daarna op Opslaan.",
     "save": "Opslaan",
     "cancel": "Annuleren",

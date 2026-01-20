@@ -4,6 +4,17 @@ const helper = require('../../module/helper');
 const i18n = require('../../module/i18n');
 const config = require('../../config/config.json');
 
+async function resolveDefaultRoleId(guildId) {
+  if (config.defaultDonatorRole) {
+    return config.defaultDonatorRole;
+  }
+  const rows = await sqlConnectionDiscord.query(
+    'SELECT defaultRoleId FROM registration WHERE guild_id = ?;',
+    [guildId]
+  );
+  return rows[0]?.defaultRoleId || null;
+}
+
 exports.csrf = (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 };
@@ -257,10 +268,18 @@ exports.assignTempRole = async (req, res) => {
     return;
   }
 
-  const { guildId, userId, roleId, days } = req.body;
+  let { guildId, userId, roleId, days } = req.body;
   const parsedDays = Number(days);
-  if (!guildId || !userId || !roleId || !Number.isInteger(parsedDays) || parsedDays <= 0) {
+  if (!guildId || !userId || !Number.isInteger(parsedDays) || parsedDays <= 0) {
     res.status(400).json({ error: 'Missing or invalid fields' });
+    return;
+  }
+
+  if (!roleId) {
+    roleId = await resolveDefaultRoleId(guildId);
+  }
+  if (!roleId) {
+    res.status(400).json({ error: 'No role selected and no default role configured.' });
     return;
   }
 

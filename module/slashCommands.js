@@ -187,19 +187,36 @@ async function handleRegisterSave(interaction) {
 
   const existing = await isRegistered(interaction.guild.id);
   const modRoleValue = modRoleId ? `"${modRoleId}"` : 'NULL';
+  const sendDefaultRoleSelect = async () => {
+    const defaultRoleSelect = new RoleSelectMenuBuilder()
+      .setCustomId('register:defaultRoleOnly')
+      .setPlaceholder(i18n.__('register.defaultRolePlaceholder'))
+      .setMinValues(0)
+      .setMaxValues(1);
+    await interaction.followUp({
+      content: i18n.__('register.defaultRolePrompt'),
+      components: [new ActionRowBuilder().addComponents(defaultRoleSelect)],
+      flags: MessageFlags.Ephemeral,
+    });
+  };
+
   if (existing) {
     await sqlConnectionDiscord.query(
       `UPDATE registration SET guild_name="${interaction.guild.name}", mainChannelID="${mainChannelId}", adminRoleName="${adminRoleId}", modRoleName=${modRoleValue}, adminChannelID="${adminChannelId}" WHERE guild_id="${interaction.guild.id}"`,
     );
     await interaction.reply({ content: i18n.__('register.updated'), flags: MessageFlags.Ephemeral });
-    registerSessions.delete(interaction.user.id);
+    await sendDefaultRoleSelect();
+    session.defaultRolePending = true;
+    registerSessions.set(interaction.user.id, session);
     return;
   }
 
-  const values = `${interaction.guild.id},'${interaction.guild.name}','${mainChannelId}','${adminRoleId}',${modRoleValue},'${adminChannelId}'`;
-  await sqlConnectionDiscord.query(`INSERT INTO registration (guild_id, guild_name, mainChannelID, adminRoleName, modRoleName, adminChannelID) VALUES(${values});`);
+  const values = `${interaction.guild.id},'${interaction.guild.name}','${mainChannelId}','${adminRoleId}',${modRoleValue},'${adminChannelId}',NULL`;
+  await sqlConnectionDiscord.query(`INSERT INTO registration (guild_id, guild_name, mainChannelID, adminRoleName, modRoleName, adminChannelID, defaultRoleId) VALUES(${values});`);
   await interaction.reply({ content: i18n.__('register.success'), flags: MessageFlags.Ephemeral });
-  registerSessions.delete(interaction.user.id);
+  await sendDefaultRoleSelect();
+  session.defaultRolePending = true;
+  registerSessions.set(interaction.user.id, session);
 }
 
 async function ensureRegistered(interaction) {
@@ -215,6 +232,16 @@ async function ensureRegistered(interaction) {
   }
 
   return row;
+}
+
+function resolveDefaultRoleId(registration) {
+  if (config.defaultDonatorRole) {
+    return config.defaultDonatorRole;
+  }
+  if (registration && registration.defaultRoleId) {
+    return registration.defaultRoleId;
+  }
+  return null;
 }
 
 async function handleTemprole(interaction) {
@@ -335,7 +362,8 @@ async function handleCheck(interaction) {
 
   const g = interaction.guild;
   const m = interaction.member;
-  const role = interaction.options.getRole('role') || g.roles.cache.get(config.defaultDonatorRole);
+  const fallbackRoleId = resolveDefaultRoleId(registration);
+  const role = interaction.options.getRole('role') || (fallbackRoleId ? g.roles.cache.get(fallbackRoleId) : null);
 
   if (!role) {
     await interaction.reply({ content: i18n.__('errors.checkRolePromptMention', { configCMDPrefix: config.cmdPrefix }), flags: MessageFlags.Ephemeral });
@@ -430,7 +458,7 @@ async function handleInteraction(interaction) {
   }
 
   if (interaction.isRoleSelectMenu() || interaction.isChannelSelectMenu()) {
-      if (interaction.customId.startsWith('register:')) {
+      if (interaction.customId.startsWith('register:') && interaction.customId !== 'register:defaultRoleOnly') {
         const session = registerSessions.get(interaction.user.id);
         if (!session) {
           await interaction.reply({ content: i18n.__('register.sessionExpired'), flags: MessageFlags.Ephemeral });
@@ -452,6 +480,19 @@ async function handleInteraction(interaction) {
         await interaction.deferUpdate();
         return;
       }
+  }
+
+  if (interaction.isRoleSelectMenu() && interaction.customId === 'register:defaultRoleOnly') {
+    const [scope] = interaction.values;
+    const defaultRoleValue = scope ? `"${scope}"` : 'NULL';
+    await sqlConnectionDiscord.query(
+      `UPDATE registration SET defaultRoleId=${defaultRoleValue} WHERE guild_id="${interaction.guild.id}"`,
+    );
+    await interaction.reply({ content: i18n.__('register.updated'), flags: MessageFlags.Ephemeral });
+    if (registerSessions.has(interaction.user.id)) {
+      registerSessions.delete(interaction.user.id);
+    }
+    return;
   }
 
   if (interaction.isUserSelectMenu() || interaction.isRoleSelectMenu()) {
@@ -564,7 +605,8 @@ async function handleInteraction(interaction) {
 
       const g = interaction.guild;
       const m = interaction.member;
-      const role = roleId ? g.roles.cache.get(roleId) : g.roles.cache.get(config.defaultDonatorRole);
+      const fallbackRoleId = resolveDefaultRoleId(registration);
+      const role = roleId ? g.roles.cache.get(roleId) : (fallbackRoleId ? g.roles.cache.get(fallbackRoleId) : null);
       if (!role) {
         await interaction.reply({ content: i18n.__('temprole.missingRole'), flags: MessageFlags.Ephemeral });
         return;
@@ -679,7 +721,8 @@ async function handleInteraction(interaction) {
 
       const g = interaction.guild;
       const m = interaction.member;
-      const role = roleId ? g.roles.cache.get(roleId) : g.roles.cache.get(config.defaultDonatorRole);
+      const fallbackRoleId = resolveDefaultRoleId(registration);
+      const role = roleId ? g.roles.cache.get(roleId) : (fallbackRoleId ? g.roles.cache.get(fallbackRoleId) : null);
       if (!role) {
         await interaction.reply({ content: i18n.__('temprole.missingRole'), flags: MessageFlags.Ephemeral });
         return;
@@ -739,7 +782,8 @@ async function handleInteraction(interaction) {
       }
 
       const g = interaction.guild;
-      const role = roleId ? g.roles.cache.get(roleId) : g.roles.cache.get(config.defaultDonatorRole);
+      const fallbackRoleId = resolveDefaultRoleId(registration);
+      const role = roleId ? g.roles.cache.get(roleId) : (fallbackRoleId ? g.roles.cache.get(fallbackRoleId) : null);
       if (!role) {
         await interaction.reply({ content: i18n.__('temprole.missingRole'), flags: MessageFlags.Ephemeral });
         return;

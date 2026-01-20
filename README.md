@@ -36,6 +36,7 @@ The /register flow is interactive (select menus). It will ask for:
 - Mod role (optional)
 - Main channel (where the bot accepts commands)
 - Admin channel (expiry alerts and admin info)
+- Default temp role (optional, shown in a follow-up message after Save)
 
 ```sh
 #Please remove all comments as this is currently not handled by the bot!
@@ -46,7 +47,7 @@ The /register flow is interactive (select menus). It will ask for:
   "guildID": "", // optional: guild id for instant slash command updates
   "clientSecret": "", //bot client secret
   "ownerID": "", // Your discord id
-  "defaultDonatorRole": "1234567896548" // default donator role if you don't want to specify it in the command
+  "defaultDonatorRole": "1234567896548", // default donator role if you don't want to specify it in the command
   "language": "", // en, de, pt, nl, fr
   "cmdPrefix": "?", // legacy only (slash commands are used now)
   "checkIntervall": 60, // check every 60 min for expired or soon to expire users

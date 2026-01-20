@@ -103,6 +103,8 @@
     "mainChannelPlaceholder": "Paste the main channel ID",
     "adminChannelLabel": "Admin channel ID",
     "adminChannelPlaceholder": "Paste the admin channel ID",
+    "defaultRolePlaceholder": "Default temp role (optional)",
+    "defaultRolePrompt": "Select a default temp role (optional).",
     "instructions": "Select the roles and channels below, then click Save.",
     "save": "Save",
     "cancel": "Cancel",

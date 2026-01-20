@@ -103,6 +103,8 @@
     "mainChannelPlaceholder": "Coller l'ID du canal principal",
     "adminChannelLabel": "ID du canal admin",
     "adminChannelPlaceholder": "Coller l'ID du canal admin",
+    "defaultRolePlaceholder": "Rôle temporaire par défaut (optionnel)",
+      "defaultRolePrompt": "Sélectionnez un rôle temporaire par défaut (optionnel).",
     "instructions": "Sélectionnez les rôles et canaux ci-dessous, puis cliquez sur Enregistrer.",
     "save": "Enregistrer",
     "cancel": "Annuler",
