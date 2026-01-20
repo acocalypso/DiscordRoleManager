@@ -93,29 +93,40 @@ async function guildMemberRemove(bot, member, guildID) {
 async function getMember(bot, userID, guildID) {
   return new Promise(async (resolve) => {
     let member = {};
-    await bot.guilds.cache.get(guildID).members.fetch();
-    member = bot.guilds.cache.get(guildID).members.cache.get(userID);
+    const guild = bot.guilds.cache.get(guildID);
+    if (!guild) {
+      helper.myLogger.error(helper.GetTimestamp() + `Failed to find guild for ID: ${guildID}`);
+      return resolve(false);
+    }
+
+    member = guild.members.cache.get(userID);
+    if (!member) {
+      try {
+        member = await guild.members.fetch(userID);
+      } catch (err) {
+        if (err?.name === 'GatewayRateLimitError' && err?.data?.retry_after) {
+          await wait(Number(err.data.retry_after) * 1000);
+          try {
+            member = await guild.members.fetch(userID);
+          } catch (retryErr) {
+            helper.myLogger.error(helper.GetTimestamp() + `Failed to fetch member for ID: ${userID}. ${retryErr}`);
+          }
+        } else {
+          helper.myLogger.error(helper.GetTimestamp() + `Failed to fetch member for ID: ${userID}. ${err}`);
+        }
+      }
+    }
     // Check if we pulled the member's information correctly or if they left the server.
     if (!member) {
       await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id=${guildID};`)
         .then(async (result) => {
           helper.myLogger.error(helper.GetTimestamp() + '[ADMIN] [MEMBER] Failed to get user ID: ' + userID);
           bot.channels.cache.get(result[0].mainChannelID).send(':exclamation: Failed to get user ID: '
-          + userID + ' <@' + userID + '> from the cache. Tagging them to force the cache update.')
+          + userID + ' <@' + userID + '>. They may have left the server.')
             .catch((err) => { helper.myLogger.error(helper.GetTimestamp() + err); });
-          await bot.guilds.cache.get(guildID).members.fetch();
-          await wait(1 * 1000); // 1 second
-          member = bot.guilds.cache.get(guildID).members.cache.get(userID);
-          // If it still doesn't exist, return an error
-          if (!member) {
-            helper.myLogger.error(helper.GetTimestamp() + 'Failed to find a user for ID: ' + userID + '. They may have left the server.');
-            bot.channels.cache.get(result[0].mainChannelID).send('**:x: Could not find a user for ID: '
-            + userID + ' <@' + userID + '>. They may have left the server.**')
-              .catch((err) => { helper.myLogger.error(helper.GetTimestamp() + err); });
-            member = { guild: { id: guildID }, id: userID };
-            await guildMemberRemove(bot, member, guildID);
-            return resolve(false);
-          }
+          member = { guild: { id: guildID }, id: userID };
+          await guildMemberRemove(bot, member, guildID);
+          return resolve(false);
         });
     }
     return resolve(member);

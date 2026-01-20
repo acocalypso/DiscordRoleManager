@@ -29,6 +29,25 @@ async function housekeeping(bot) {
         if (!member && !leftServer) {
           continue;
         }
+        if (!leftServer && rName && member && !member.roles.cache.has(rName.id)) {
+          await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID='${member.id}' AND temporaryRole='${rName.name}' AND guild_id="${member.guild.id}"`)
+            .catch((err) => {
+              helper.myLogger.error(helper.GetTimestamp() + i18n.__('errors.initdb.roleCheckQuery') + ' 5: ' + err);
+            });
+          bot.channels.cache.get((await sqlConnectionDiscord.query(`SELECT * FROM registration WHERE guild_id=${member.guild.id};`))[0].adminChannelID)
+            .send(i18n.__('admin.tempRole.removedAccessNotice', {
+              mentionedUsername: member.user.username,
+              theirRoleName: rName.name,
+            }))
+            .catch((err) => { helper.myLogger.error(helper.GetTimestamp() + err); });
+          helper.myLogger.log(helper.GetTimestamp() + i18n.__('admin.tempRole.removedAccessLog', {
+            mUserUsername: 'SYSTEM',
+            mID: 'SYSTEM',
+            mentionedUsername: member.user.username,
+            mentionedID: member.id,
+          }));
+          continue;
+        }
         // Update usernames for legacy data
         if (!rows[rowNumber].username && !leftServer) {
           await sqlConnectionDiscord.query(`UPDATE temporary_roles SET username="${name}" WHERE userID="${member.id}" AND guild_id="${member.guild.id}"`)
