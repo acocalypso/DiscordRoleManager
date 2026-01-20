@@ -30,6 +30,7 @@ const App = () => {
   const [sortBy, setSortBy] = useState('username');
   const [sortDir, setSortDir] = useState('asc');
   const [search, setSearch] = useState('');
+  const [memberSearch, setMemberSearch] = useState('');
 
   const apiFetch = useMemo(() => {
     return async (url, options = {}) => {
@@ -288,6 +289,19 @@ const App = () => {
       return 0;
     });
 
+  const filteredMembers = useMemo(() => {
+    if (!memberSearch.trim()) {
+      return members;
+    }
+    const query = memberSearch.trim().toLowerCase();
+    return members.filter((member) => {
+      const name = (member.displayName || '').toLowerCase();
+      const tag = (member.tag || '').toLowerCase();
+      const id = (member.id || '').toLowerCase();
+      return name.includes(query) || tag.includes(query) || id.includes(query);
+    });
+  }, [memberSearch, members]);
+
   if (session.loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -486,14 +500,15 @@ const App = () => {
               <select
                 className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
                 value={form.guildId}
-                onChange={(event) =>
+                onChange={(event) => {
                   setForm((prev) => ({
                     ...prev,
                     guildId: event.target.value,
                     userId: '',
                     roleId: '',
-                  }))
-                }
+                  }));
+                  setMemberSearch('');
+                }}
                 required
               >
                 <option value="">Select a guild</option>
@@ -506,6 +521,12 @@ const App = () => {
             </div>
             <div>
               <label className="text-xs uppercase tracking-wide text-slate-400">User</label>
+              <input
+                className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
+                value={memberSearch}
+                onChange={(event) => setMemberSearch(event.target.value)}
+                placeholder="Search by name, tag, or ID"
+              />
               <select
                 className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40"
                 value={form.userId}
@@ -513,7 +534,7 @@ const App = () => {
                 required
               >
                 <option value="">Select a user</option>
-                {members.map((member) => (
+                {filteredMembers.map((member) => (
                   <option value={member.id} key={member.id}>
                     {member.displayName} ({member.tag})
                   </option>
