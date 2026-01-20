@@ -167,6 +167,27 @@ http://localhost:<backendPort>
 - Run /register at least once per guild so it appears in the guild dropdown.
 - Users must allow DMs from the server if you want them to receive extension/assignment messages.
 
+## Role hierarchy (Discord)
+
+Discord only allows a bot to manage roles that are **below** the bot’s highest role in the server role list.
+If the bot’s role is lower than the target role, role add/remove actions will fail with permission errors.
+
+To fix this:
+- Move the bot’s role **above** the roles it should manage.
+- Ensure the bot has the **Manage Roles** permission.
+
+## Troubleshooting
+
+- **Permission errors when adding/removing roles**: Verify the bot’s role is above the target role and has **Manage Roles**.
+- **No guilds in the webinterface**: Run `/register` at least once per guild.
+- **DM notifications not delivered**: The user must allow DMs from server members.
+- **Login/session issues**: Clear cookies for the webinterface and restart the bot.
+
+If the issue persists, please open an issue and include:
+- A short description of what you tried and what failed
+- Relevant excerpts from the latest log file in `logs/`
+- Your OS and Node.js version
+
 ## Grafana 8.x Support
 
 ![alt text](https://raw.githubusercontent.com/acocalypso/DiscordRoleManager/master/grafana_donators.PNG)
