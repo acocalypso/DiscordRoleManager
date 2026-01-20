@@ -244,6 +244,20 @@ function resolveDefaultRoleId(registration) {
   return null;
 }
 
+function getDurationOptions() {
+  const fallback = [7, 14, 30, 60, 90, 180, 365];
+  const rawOptions = config?.temporaryRoles?.durationOptions;
+  const source = Array.isArray(rawOptions) ? rawOptions : fallback;
+  const cleaned = [...new Set(source
+    .map((value) => Number(value))
+    .filter((value) => Number.isInteger(value) && value > 0))];
+  const finalOptions = cleaned.length > 0 ? cleaned : fallback;
+  return finalOptions.slice(0, 24).map((days) => ({
+    label: `${days}`,
+    value: `${days}`,
+  }));
+}
+
 async function handleTemprole(interaction) {
   const registration = await ensureRegistered(interaction);
   if (!registration) return;
@@ -294,17 +308,12 @@ async function handleTemprole(interaction) {
     ];
 
     if (action === 'add') {
+      const durationOptions = getDurationOptions();
       const daysSelect = new StringSelectMenuBuilder()
         .setCustomId('temprole:daysSelect')
         .setPlaceholder(i18n.__('temprole.daysPlaceholder'))
         .addOptions(
-          { label: '7', value: '7' },
-          { label: '14', value: '14' },
-          { label: '30', value: '30' },
-          { label: '60', value: '60' },
-          { label: '90', value: '90' },
-          { label: '180', value: '180' },
-          { label: '365', value: '365' },
+          ...durationOptions,
           { label: i18n.__('temprole.customDays'), value: 'custom' },
         );
 

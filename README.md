@@ -51,6 +51,9 @@ The /register flow is interactive (select menus). It will ask for:
   "language": "", // en, de, pt, nl, fr
   "cmdPrefix": "?", // legacy only (slash commands are used now)
   "checkIntervall": 60, // check every 60 min for expired or soon to expire users
+  "temporaryRoles": {
+    "durationOptions": [7, 14, 30, 60, 90, 180, 365] // max 24 options, "custom" is always available
+  },
   "migrateSQLITE": {
     "migrate": true, // do you want to migrate your user from sqlite?
     "path": "" // path to your sqlite file
