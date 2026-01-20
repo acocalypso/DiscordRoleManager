@@ -603,7 +603,22 @@ async function handleInteraction(interaction) {
         const values = `${mentioned.user.id},'${role.name}',${Math.round(now / 1000)},${Math.round(finalDate / 1000)},${m.id},0,'${name}',0,${g.id}`;
         try {
           await sqlConnectionDiscord.query(`INSERT INTO temporary_roles (userID, temporaryRole, startDate, endDate, addedBy, notified, username, leftServer, guild_id) VALUES(${values}) ON DUPLICATE KEY UPDATE startDate=VALUES(startDate), endDate=VALUES(endDate), addedBy=VALUES(addedBy), notified=0, username=VALUES(username), leftServer=0, guild_id=VALUES(guild_id);`);
-          await mentioned.roles.add(role).catch((err) => { helper.myLogger.error(err); });
+          try {
+            await mentioned.roles.add(role);
+          } catch (err) {
+            helper.myLogger.error(err);
+            await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}" AND temporaryRole="${role.name}"`);
+            const reason = err?.code === 50013 ? i18n.__('errors.missingRolePermissions') : (err?.message || 'Unknown error');
+            await respond({
+              content: i18n.__('errors.roleAssignFailed', {
+                rNameName: role.name,
+                memberUsername: mentioned.user.username,
+                reason,
+              }),
+              flags: MessageFlags.Ephemeral,
+            });
+            return;
+          }
         } catch (error) {
           helper.myLogger.error(helper.GetTimestamp() + `[TEMPOROLE] Insert failed: ${error}`);
           await respond({ content: i18n.__('temprole.saveFailed'), flags: MessageFlags.Ephemeral });
@@ -677,7 +692,21 @@ async function handleInteraction(interaction) {
         return;
       }
 
-      await mentioned.roles.remove(role, 'Donation Expired');
+      try {
+        await mentioned.roles.remove(role, 'Donation Expired');
+      } catch (err) {
+        helper.myLogger.error(err);
+        const reason = err?.code === 50013 ? i18n.__('errors.missingRolePermissions') : (err?.message || 'Unknown error');
+        await interaction.reply({
+          content: i18n.__('errors.roleRemoveFailed', {
+            rNameName: role.name,
+            memberUsername: mentioned.user.username,
+            reason,
+          }),
+          flags: MessageFlags.Ephemeral,
+        });
+        return;
+      }
       await sqlConnectionDiscord.query(`DELETE FROM temporary_roles WHERE userID="${mentioned.id}" AND guild_id="${g.id}" AND temporaryRole="${role.name}"`);
 
       helper.myLogger.log(helper.GetTimestamp() + i18n.__('admin.tempRole.removedAccessLog', {

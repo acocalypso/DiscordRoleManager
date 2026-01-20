@@ -194,14 +194,55 @@ exports.updateUser = async (req, res) => {
 };
 
 exports.deleteUser = async (req, res) => {
-  const { userId, role } = req.body;
-  if (!userId || !role) {
+  const bot = req.app.get('discordBot');
+  if (!bot) {
+    res.status(500).json({ error: 'Discord client unavailable' });
+    return;
+  }
+
+  const { userId, role, guildId } = req.body;
+  if (!userId || !role || !guildId) {
     res.status(400).json({ error: 'Missing required fields' });
     return;
   }
 
   try {
-    await sqlConnectionDiscord.query('DELETE FROM temporary_roles WHERE userID = ? AND temporaryRole = ?;', [userId, role]);
+    const guild = bot.guilds.cache.get(guildId);
+    if (!guild) {
+      res.status(404).json({ error: 'Guild not found' });
+      return;
+    }
+
+    const dbRow = await sqlConnectionDiscord.query(
+      'SELECT * FROM temporary_roles WHERE userID = ? AND temporaryRole = ? AND guild_id = ?;',
+      [userId, role, guildId]
+    );
+
+    if (!dbRow[0]) {
+      res.status(404).json({ error: 'Entry not found in database' });
+      return;
+    }
+
+    const discordRole = guild.roles.cache.find((r) => r.name === role);
+    if (!discordRole) {
+      res.status(404).json({ error: 'Role not found in guild' });
+      return;
+    }
+
+    const member = await guild.members.fetch(userId);
+    try {
+      await member.roles.remove(discordRole, 'Removed via web interface');
+    } catch (err) {
+      helper.myLogger.error(helper.GetTimestamp() + `[DeleteUser] Failed to remove role: ${err}`);
+      const reason = err?.code === 50013 ? 'Missing permissions to manage this role.' : (err?.message || 'Unknown error');
+      res.status(403).json({ error: `Cannot remove role ${role}: ${reason}` });
+      return;
+    }
+
+    await sqlConnectionDiscord.query(
+      'DELETE FROM temporary_roles WHERE userID = ? AND temporaryRole = ? AND guild_id = ?;',
+      [userId, role, guildId]
+    );
     res.json({ ok: true });
   } catch (err) {
     helper.myLogger.error(helper.GetTimestamp() + `[DeleteUser] Failed to delete user: ${err}`);
@@ -262,9 +303,20 @@ exports.assignTempRole = async (req, res) => {
     }
 
     if (!member.roles.cache.has(role.id)) {
-      await member.roles.add(role).catch((err) => {
+      try {
+        await member.roles.add(role);
+      } catch (err) {
         helper.myLogger.error(helper.GetTimestamp() + `[TempRole] Failed to add role: ${err}`);
-      });
+        if (!existing[0]) {
+          await sqlConnectionDiscord.query(
+            'DELETE FROM temporary_roles WHERE userID = ? AND temporaryRole = ? AND guild_id = ?;',
+            [member.id, role.name, guild.id]
+          );
+        }
+        const reason = err?.code === 50013 ? 'Missing permissions to manage this role.' : (err?.message || 'Unknown error');
+        res.status(403).json({ error: `Cannot assign role ${role.name}: ${reason}` });
+        return;
+      }
     }
 
     const finalDate = await helper.formatTimeString(new Date(endDate));

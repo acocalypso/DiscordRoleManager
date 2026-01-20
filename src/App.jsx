@@ -221,7 +221,11 @@ const App = () => {
     try {
       await apiFetch('/api/users', {
         method: 'DELETE',
-        body: JSON.stringify({ userId: row.userID, role: row.temporaryRole }),
+        body: JSON.stringify({
+          userId: row.userID,
+          role: row.temporaryRole,
+          guildId: row.guildId || form.guildId,
+        }),
       });
       setStatus({ type: 'success', message: 'User removed.' });
       await loadUsers();
