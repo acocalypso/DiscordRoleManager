@@ -586,6 +586,8 @@ async function handleInteraction(interaction) {
     }
 
     if (interaction.customId === 'temprole:save') {
+      const registration = await ensureRegistered(interaction);
+      if (!registration) return;
       const session = tempRoleSessions.get(interaction.user.id);
       if (!session) {
         await interaction.reply({ content: i18n.__('temprole.sessionExpired'), flags: MessageFlags.Ephemeral });
@@ -707,6 +709,8 @@ async function handleInteraction(interaction) {
     }
 
     if (interaction.customId === 'temprole:remove') {
+      const registration = await ensureRegistered(interaction);
+      if (!registration) return;
       const session = tempRoleSessions.get(interaction.user.id);
       if (!session) {
         await interaction.reply({ content: i18n.__('temprole.sessionExpired'), flags: MessageFlags.Ephemeral });
@@ -769,6 +773,8 @@ async function handleInteraction(interaction) {
     }
 
     if (interaction.customId === 'temprole:check') {
+      const registration = await ensureRegistered(interaction);
+      if (!registration) return;
       const session = tempRoleSessions.get(interaction.user.id);
       if (!session) {
         await interaction.reply({ content: i18n.__('temprole.sessionExpired'), flags: MessageFlags.Ephemeral });
