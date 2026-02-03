@@ -44,7 +44,7 @@
   },
   "homepage": "https://github.com/acocalypso/DiscordRoleManager#readme",
   "devDependencies": {
-    "@vitejs/plugin-react": "5.1.2",
+    "@vitejs/plugin-react": "5.1.3",
     "autoprefixer": "^10.4.21",
     "eslint": "9.39.2",
     "nodemon": "^3.0.1",
