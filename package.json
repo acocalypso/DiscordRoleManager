@@ -29,7 +29,7 @@
     "mysql": "^2.18.1",
     "nodemon": "^3.0.1",
     "react": "19.2.3",
-    "react-dom": "19.2.3",
+    "react-dom": "19.2.4",
     "vite": "^5.4.14"
   },
   "engines": {
